@@ -1,0 +1,7 @@
+# Wrangler 临时文件
+.wrangler/
+node_modules/
+
+# 系统/编辑器
+.DS_Store
+*.log
