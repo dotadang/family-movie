@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亲子动画打卡 · 和宝贝一起补经典</title>
+<style>
+  :root{
+    --bg:#0f1424;
+    --bg-2:#161d33;
+    --card:#1e2745;
+    --card-2:#26305a;
+    --text:#eef1ff;
+    --muted:#9aa3c7;
+    --accent:#ffd166;
+    --accent-2:#06d6a0;
+    --pink:#ef476f;
+    --blue:#4cc9f0;
+    --radius:18px;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+    background:radial-gradient(1200px 600px at 80% -10%,#243056 0,transparent 60%),
+               radial-gradient(900px 500px at -10% 20%,#2a1f3d 0,transparent 55%),
+               var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 20px 80px}
+
+  /* ===== Header ===== */
+  header.hero{
+    display:flex;flex-wrap:wrap;align-items:center;gap:24px;
+    background:linear-gradient(135deg,rgba(76,201,240,.12),rgba(239,71,111,.12));
+    border:1px solid rgba(255,255,255,.07);
+    padding:28px 30px;border-radius:24px;box-shadow:var(--shadow);
+    margin-bottom:20px;
+  }
+  .hero-text{flex:1;min-width:260px}
+  .hero h1{font-size:30px;font-weight:800;letter-spacing:.5px}
+  .hero h1 .spark{color:var(--accent)}
+  .hero p{color:var(--muted);margin-top:8px;font-size:15px}
+  .overall{
+    display:flex;align-items:center;gap:16px;background:rgba(0,0,0,.2);
+    padding:14px 20px;border-radius:16px;
+  }
+  .ring{
+    --p:0;
+    width:74px;height:74px;border-radius:50%;
+    background:
+      conic-gradient(var(--accent-2) calc(var(--p)*1%), rgba(255,255,255,.08) 0);
+    display:grid;place-items:center;position:relative;
+  }
+  .ring::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--bg-2)}
+  .ring span{position:relative;font-weight:800;font-size:18px;color:var(--text)}
+  .overall small{display:block;color:var(--muted);font-size:12px}
+
+  /* ===== API Key banner ===== */
+  .apikey{
+    background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(76,201,240,.1));
+    border:1px solid rgba(6,214,160,.25);
+    border-radius:18px;padding:18px 22px;margin-bottom:22px;
+  }
+  .apikey h3{font-size:16px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .apikey ol{margin:8px 0 12px 18px;color:var(--muted);font-size:13.5px;line-height:1.8}
+  .apikey ol a{color:var(--blue)}
+  .apikey .input-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .apikey input{
+    flex:1;min-width:220px;background:var(--bg-2);border:1px solid rgba(255,255,255,.12);
+    color:var(--text);padding:11px 14px;border-radius:11px;font-size:14px;outline:0;font-family:inherit;
+  }
+  .apikey input:focus{border-color:var(--accent-2)}
+  .btn{
+    cursor:pointer;border:0;font-weight:700;font-size:14px;padding:11px 20px;border-radius:11px;
+    background:var(--accent-2);color:#0f1424;transition:.15s;
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--text)}
+  .apikey-set{background:rgba(76,201,240,.08);border-color:rgba(76,201,240,.2)}
+
+  /* ===== Controls ===== */
+  .controls{
+    position:sticky;top:0;z-index:20;
+    background:linear-gradient(var(--bg) 70%,transparent);
+    padding:14px 0 18px;margin:0 -4px;
+  }
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:240px}
+  .chip{
+    cursor:pointer;border:1px solid rgba(255,255,255,.1);
+    background:var(--card);color:var(--muted);
+    padding:8px 14px;border-radius:999px;font-size:13.5px;font-weight:600;
+    transition:.18s;display:inline-flex;align-items:center;gap:6px;
+  }
+  .chip:hover{color:var(--text);border-color:rgba(255,255,255,.25)}
+  .chip.active{color:#0f1424;background:var(--accent);border-color:var(--accent)}
+  .chip .dot{width:9px;height:9px;border-radius:50%}
+  .chip .cnt{opacity:.7;font-variant-numeric:tabular-nums}
+
+  .search{
+    flex:1;min-width:200px;display:flex;align-items:center;gap:8px;
+    background:var(--card);border:1px solid rgba(255,255,255,.1);
+    padding:9px 14px;border-radius:12px;
+  }
+  .search input{
+    flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:14px;
+  }
+  .filter-group{display:flex;gap:6px;background:var(--card);padding:4px;border-radius:12px;border:1px solid rgba(255,255,255,.08)}
+  .filter-group button{
+    cursor:pointer;border:0;background:transparent;color:var(--muted);
+    padding:6px 12px;border-radius:9px;font-size:13px;font-weight:600;transition:.15s;
+  }
+  .filter-group button.active{background:var(--card-2);color:var(--text)}
+  .btn-add{
+    cursor:pointer;border:0;background:var(--accent);color:#0f1424;font-weight:700;
+    padding:9px 16px;border-radius:12px;font-size:13.5px;transition:.15s;white-space:nowrap;
+  }
+  .btn-add:hover{filter:brightness(1.08);transform:translateY(-1px)}
+
+  /* ===== Section ===== */
+  .studio-section{margin-top:26px}
+  .studio-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .studio-head h2{font-size:19px;font-weight:800}
+  .studio-head .bar-wrap{
+    flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;
+  }
+  .studio-head .bar{height:100%;width:0;border-radius:999px;transition:width .5s ease}
+  .studio-head .pct{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+
+  /* ===== Movie Grid ===== */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+  .card{
+    position:relative;background:var(--card);border:1px solid rgba(255,255,255,.07);
+    border-radius:var(--radius);overflow:hidden;cursor:pointer;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s;
+    display:flex;flex-direction:column;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:rgba(255,255,255,.2)}
+  .poster{
+    aspect-ratio:2/3;display:grid;place-items:center;position:relative;
+    font-size:46px;color:rgba(255,255,255,.92);
+    text-shadow:0 2px 12px rgba(0,0,0,.4);
+    background-size:cover;background-position:center;
+  }
+  .poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .poster .fallback{position:relative;z-index:1}
+  .poster .yr{
+    position:absolute;left:8px;top:8px;font-size:11px;font-weight:700;
+    background:rgba(0,0,0,.55);padding:3px 7px;border-radius:6px;color:#fff;z-index:2;
+  }
+  .badge{
+    position:absolute;right:8px;top:8px;font-size:10px;font-weight:700;
+    padding:3px 7px;border-radius:6px;color:#0f1424;z-index:2;
+  }
+  .card-body{padding:11px 12px 13px}
+  .card-body h3{font-size:14.5px;font-weight:700;line-height:1.3}
+  .card-body p{font-size:12px;color:var(--muted);margin-top:5px;min-height:32px}
+  .check{
+    position:absolute;right:10px;bottom:10px;width:30px;height:30px;border-radius:50%;
+    background:rgba(0,0,0,.4);display:grid;place-items:center;
+    border:2px solid rgba(255,255,255,.5);transition:.18s;z-index:2;
+  }
+  .check svg{width:16px;height:16px;opacity:0;transform:scale(.5);transition:.18s}
+  .card.watched{border-color:var(--accent-2)}
+  .card.watched .poster{filter:saturate(.9)}
+  .card.watched .check{background:var(--accent-2);border-color:var(--accent-2)}
+  .card.watched .check svg{opacity:1;transform:scale(1)}
+  .card.watched .card-body h3{color:var(--accent-2)}
+  .card.watched::after{
+    content:"已看";position:absolute;left:10px;bottom:10px;font-size:11px;font-weight:700;
+    color:var(--accent-2);z-index:2;
+  }
+  .poster-load{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--muted);z-index:1}
+  .del-btn{
+    position:absolute;left:8px;bottom:8px;width:24px;height:24px;border-radius:50%;
+    background:rgba(239,71,111,.9);color:#fff;border:0;cursor:pointer;z-index:3;
+    display:none;place-items:center;font-size:14px;line-height:1;
+  }
+  .card.custom:hover .del-btn{display:grid}
+  .card.watched.custom::after{left:40px}
+
+  .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;font-size:14px}
+
+  footer{margin-top:50px;text-align:center;color:var(--muted);font-size:12.5px}
+  footer .frow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  footer button{
+    cursor:pointer;border:1px solid rgba(255,255,255,.15);
+    background:transparent;color:var(--muted);padding:8px 16px;border-radius:10px;font-size:12.5px;
+  }
+  footer button:hover{color:var(--pink);border-color:var(--pink)}
+
+  /* ===== Modal ===== */
+  .modal-mask{
+    position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;
+    display:none;place-items:center;padding:20px;backdrop-filter:blur(3px);
+  }
+  .modal-mask.show{display:grid}
+  .modal{
+    background:var(--bg-2);border:1px solid rgba(255,255,255,.12);
+    border-radius:20px;padding:26px;width:100%;max-width:440px;box-shadow:var(--shadow);
+    max-height:90vh;overflow:auto;
+  }
+  .modal h3{font-size:19px;margin-bottom:18px}
+  .modal label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px;font-weight:600}
+  .modal input,.modal select,.modal textarea{
+    width:100%;background:var(--card);border:1px solid rgba(255,255,255,.12);
+    color:var(--text);padding:10px 13px;border-radius:10px;font-size:14px;outline:0;font-family:inherit;
+  }
+  .modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--accent-2)}
+  .modal textarea{resize:vertical;min-height:56px}
+  .modal .emoji-pick{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .modal .emoji-pick span{
+    cursor:pointer;font-size:22px;padding:4px 8px;border-radius:8px;
+    border:1px solid transparent;transition:.12s;
+  }
+  .modal .emoji-pick span:hover{background:var(--card)}
+  .modal .emoji-pick span.sel{border-color:var(--accent);background:var(--card)}
+  .modal-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .search-row{display:flex;gap:8px}
+  .search-row input{flex:1}
+  .search-status{font-size:12.5px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px}
+  .search-status.err{color:var(--pink)}
+  .search-results{margin-top:10px;display:flex;flex-direction:column;gap:8px;max-height:300px;overflow:auto;padding-right:2px}
+  .result-item{
+    display:flex;gap:10px;padding:8px;border-radius:10px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.08);background:var(--card);transition:.15s;align-items:flex-start;
+  }
+  .result-item:hover{border-color:var(--accent-2);background:var(--card-2)}
+  .result-item .r-poster{width:42px;height:63px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--bg-2)}
+  .result-item .r-noimg{width:42px;height:63px;border-radius:6px;flex-shrink:0;background:var(--bg-2);display:grid;place-items:center;font-size:18px}
+  .result-item .r-info{flex:1;min-width:0}
+  .result-item .r-title{font-weight:700;font-size:14px;line-height:1.3}
+  .result-item .r-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .result-item .r-overview{font-size:11.5px;color:var(--muted);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .selected-preview{
+    display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:10px;
+    background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.3);margin-top:10px;
+  }
+  .selected-preview img{width:54px;height:81px;border-radius:6px;object-fit:cover;flex-shrink:0}
+  .selected-preview .sp-noimg{width:54px;height:81px;border-radius:6px;background:var(--bg-2);display:grid;place-items:center;font-size:22px;flex-shrink:0}
+  .selected-preview .sp-info{flex:1;min-width:0}
+  .selected-preview .sp-title{font-weight:700;font-size:14px}
+  .selected-preview .sp-meta{font-size:12px;color:var(--muted);margin-top:2px}
+  .selected-preview .sp-change{font-size:12px;color:var(--blue);cursor:pointer;margin-top:4px;text-decoration:underline;display:inline-block}
+  .spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent-2);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media(max-width:560px){
+    .hero h1{font-size:24px}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+    .poster{font-size:36px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-text">
+      <h1>亲子动画打卡 <span class="spark">✨</span></h1>
+      <p>和两个小男子汉一起，把童年经典一部部补齐。点一下卡片就能标记「已看」，进度自动保存。</p>
+    </div>
+    <div class="overall">
+      <div class="ring" id="ring"><span id="ringTxt">0%</span></div>
+      <div>
+        <strong id="watchedCount">0</strong> / <span id="totalCount">0</span> 部
+        <small>已陪宝贝看完</small>
+      </div>
+    </div>
+  </header>
+
+  <!-- API Key 设置区 -->
+  <div class="apikey" id="apikeyBox">
+    <h3>🎬 接入高清电影海报（TMDB）</h3>
+    <p style="color:var(--muted);font-size:13.5px">用真实电影海报替换彩色方块。完全免费，只需一次性粘贴一个 API Key：</p>
+    <ol>
+      <li>打开 <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener">themoviedb.org</a> 免费注册一个账号（邮箱即可，无需绑卡）</li>
+      <li>登录后进入 <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">设置 → API</a>，点 <strong>Request a new key</strong>（选 Developer，网址随便填）</li>
+      <li>复制 <strong>API Key (v3 auth)</strong> 那一长串字符，粘贴到下面</li>
+    </ol>
+    <div class="input-row">
+      <input id="apikeyInput" type="text" placeholder="粘贴你的 TMDB API Key（v3）…" autocomplete="off">
+      <button class="btn" id="saveKey">保存并加载海报</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="row">
+      <div class="chips" id="studioChips"></div>
+      <button class="btn-add" id="openAdd">➕ 添加电影</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="search">
+        <span>🔍</span>
+        <input id="search" type="text" placeholder="搜索片名…">
+      </div>
+      <div class="filter-group" id="statusFilter">
+        <button data-s="all" class="active">全部</button>
+        <button data-s="done">已看</button>
+        <button data-s="todo">未看</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <footer>
+    <p>数据保存在本机浏览器，换个设备或清缓存会重置。</p>
+    <div class="frow">
+      <button id="reloadPosters">🔄 重新抓取海报</button>
+      <button id="changeKey">🔑 更换 API Key</button>
+      <button id="reset">🗑 重置观看进度</button>
+    </div>
+  </footer>
+</div>
+
+<!-- 添加电影弹窗 -->
+<div class="modal-mask" id="addModal">
+  <div class="modal">
+    <h3>➕ 添加一部电影</h3>
+
+    <!-- 步骤1：搜索 -->
+    <div id="step-search">
+      <label>搜索片名 *</label>
+      <div class="search-row">
+        <input id="m-search" type="text" placeholder="输入片名，如「铃芽之旅」">
+        <button class="btn" id="doSearch">搜索</button>
+      </div>
+      <div class="search-status" id="searchStatus"></div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- 步骤2：确认信息 -->
+    <div id="step-confirm" style="display:none">
+      <div class="selected-preview" id="selectedPreview"></div>
+
+      <label style="margin-top:16px">分类</label>
+      <select id="m-studio"></select>
+      <div class="hint">选错没关系，之后还能删除重加。</div>
+
+      <label>一句话推荐（可选）</label>
+      <textarea id="m-note" placeholder="写给自己的小备注，比如「适合周末全家看」"></textarea>
+
+      <label>海报图标（无海报时显示）</label>
+      <div class="emoji-pick" id="m-emoji"></div>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="backToSearch">← 重新搜索</button>
+        <button class="btn" id="confirmAdd">添加</button>
+      </div>
+    </div>
+
+    <div class="modal-actions" id="footer-cancel">
+      <button class="btn ghost" id="cancelAdd">取消</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============== 数据 ============== */
+const STUDIOS = [
+  { id:'pixar',     name:'皮克斯', en:'Pixar',         color:'#4cc9f0', emoji:'🚀' },
+  { id:'disney',    name:'迪士尼', en:'Disney',        color:'#ef476f', emoji:'🏰' },
+  { id:'dreamworks',name:'梦工厂', en:'DreamWorks',    color:'#9b5de5', emoji:'🌙' },
+  { id:'ghibli',    name:'吉卜力', en:'Studio Ghibli', color:'#06d6a0', emoji:'🌿' },
+  { id:'shinkai',   name:'新海诚', en:'Makoto Shinkai',color:'#f15bb5', emoji:'🌌' },
+  { id:'other',     name:'其他',   en:'Other',         color:'#fee440', emoji:'⭐' },
+];
+
+// 内置片单
+const BUILTIN_MOVIES = [
+  // ---------- 皮克斯 ----------
+  {s:'pixar', t:'玩具总动员', y:1995, e:'🤠', n:'胡迪与巴斯光年的友谊开端，经典中的经典。'},
+  {s:'pixar', t:'玩具总动员2', y:1999, e:'🤠', n:'翠丝加入，玩具们的冒险升级。'},
+  {s:'pixar', t:'玩具总动员3', y:2010, e:'🤠', n:'安迪长大，最催泪的一集，备好纸巾。'},
+  {s:'pixar', t:'玩具总动员4', y:2019, e:'🤠', n:'叉叉与牧羊女的全新旅程。'},
+  {s:'pixar', t:'虫虫危机', y:1998, e:'🐜', n:'蚂蚁飞力团结马戏团虫虫对抗蝗虫。'},
+  {s:'pixar', t:'怪兽电力公司', y:2001, e:'👹', n:'毛怪与大眼仔保护小女孩阿布。'},
+  {s:'pixar', t:'海底总动员', y:2003, e:'🐠', n:'马林跨洋寻找儿子尼莫。'},
+  {s:'pixar', t:'超人总动员', y:2004, e:'🦸', n:'超人一家重出江湖拯救世界。'},
+  {s:'pixar', t:'赛车总动员', y:2006, e:'🏎️', n:'闪电麦肯在水箱温泉镇学会人生。'},
+  {s:'pixar', t:'料理鼠王', y:2007, e:'🐭', n:'热爱烹饪的小老鼠雷米巴黎追梦。'},
+  {s:'pixar', t:'机器人总动员', y:2008, e:'🤖', n:'孤独清扫机器人瓦力的浪漫星际之旅。'},
+  {s:'pixar', t:'飞屋环游记', y:2009, e:'🎈', n:'开头十分钟就够让人泪目。'},
+  {s:'pixar', t:'勇敢传说', y:2012, e:'🏹', n:'苏格兰公主梅莉达的母女和解。'},
+  {s:'pixar', t:'头脑特工队', y:2015, e:'🧠', n:'五种情绪操控大脑，认识情绪的绝佳启蒙。'},
+  {s:'pixar', t:'恐龙当家', y:2015, e:'🦕', n:'男孩与恐龙的伴行成长。'},
+  {s:'pixar', t:'寻梦环游记', y:2017, e:'🎸', n:'亡灵节里的音乐与亲情，催泪神作。'},
+  {s:'pixar', t:'超人总动员2', y:2018, e:'🦸', n:'弹力女超人挑大梁。'},
+  {s:'pixar', t:'1/2的魔法', y:2020, e:'🪄', n:'精灵兄弟用魔法复活爸爸一天。'},
+  {s:'pixar', t:'心灵奇旅', y:2020, e:'🎵', n:'关于「活着是为了什么」的温柔思考。'},
+  {s:'pixar', t:'夏日友晴天', y:2021, e:'🚲', n:'意大利海岸的少年海怪友谊。'},
+  {s:'pixar', t:'青春变形记', y:2022, e:'🐼', n:'女孩一激动就变红熊猫，青春期共鸣。'},
+  {s:'pixar', t:'疯狂元素城', y:2023, e:'🔥', n:'水火不容却相爱，移民家庭故事。'},
+  {s:'pixar', t:'头脑特工队2', y:2024, e:'🧠', n:'青春期新情绪「焦虑」登场。'},
+
+  // ---------- 迪士尼 ----------
+  {s:'disney', t:'白雪公主与七个小矮人', y:1937, e:'🍎', n:'影史第一部长篇动画，里程碑。'},
+  {s:'disney', t:'木偶奇遇记', y:1940, e:'🤥', n:'匹诺曹学会诚实与勇敢。'},
+  {s:'disney', t:'仙履奇缘', y:1950, e:'👠', n:'灰姑娘的水晶鞋童话。'},
+  {s:'disney', t:'小飞侠', y:1953, e:'🧚', n:'永不长大的彼得·潘与梦幻岛。'},
+  {s:'disney', t:'睡美人', y:1959, e:'👸', n:'真爱之吻唤醒奥萝拉公主。'},
+  {s:'disney', t:'小美人鱼', y:1989, e:'🧜', n:'爱丽儿用声音换取双腿。'},
+  {s:'disney', t:'美女与野兽', y:1991, e:'🌹', n:'贝儿融化野兽的心。'},
+  {s:'disney', t:'阿拉丁', y:1992, e:'🧞', n:'神灯精灵与飞毯冒险。'},
+  {s:'disney', t:'狮子王', y:1994, e:'🦁', n:'辛巴的荣耀石王位归来。'},
+  {s:'disney', t:'花木兰', y:1998, e:'🌸', n:'木兰替父从军，孩子会有共鸣。'},
+  {s:'disney', t:'泰山', y:1999, e:'🌴', n:'猩猩养大的人类之子寻找自我。'},
+  {s:'disney', t:'星际宝贝', y:2002, e:'👽', n:'夏威夷女孩与外星实验体626。'},
+  {s:'disney', t:'魔发奇缘', y:2010, e:'💇', n:'长发公主乐佩探索外面的世界。'},
+  {s:'disney', t:'冰雪奇缘', y:2013, e:'❄️', n:'Let It Go！姐妹情深。'},
+  {s:'disney', t:'超能陆战队', y:2014, e:'🤍', n:'医疗机器人大白暖哭所有人。'},
+  {s:'disney', t:'疯狂动物城', y:2016, e:'🦊', n:'兔子警官朱迪与狐狸尼克的探案。'},
+  {s:'disney', t:'海洋奇缘', y:2016, e:'🌊', n:'莫阿娜扬帆寻找半神毛伊。'},
+  {s:'disney', t:'冰雪奇缘2', y:2019, e:'❄️', n:'艾莎探寻魔力的源头。'},
+  {s:'disney', t:'寻龙传说', y:2021, e:'🐉', n:'拉雅集齐龙晶拯救世界。'},
+  {s:'disney', t:'魔法满屋', y:2021, e:'🏡', n:'哥伦比亚魔法家族里唯一的普通人。'},
+
+  // ---------- 梦工厂 ----------
+  {s:'dreamworks', t:'怪物史莱克', y:2001, e:'🧌', n:'颠覆童话的绿色怪物喜剧。'},
+  {s:'dreamworks', t:'怪物史莱克2', y:2004, e:'🧌', n:'见岳父母，穿靴子的猫首登场。'},
+  {s:'dreamworks', t:'怪物史莱克3', y:2007, e:'🧌', n:'史莱克寻找亚瑟王继承王位。'},
+  {s:'dreamworks', t:'马达加斯加', y:2005, e:'🦁', n:'纽约动物园四宝流落荒岛。'},
+  {s:'dreamworks', t:'功夫熊猫', y:2008, e:'🐼', n:'阿宝成为神龙大侠。'},
+  {s:'dreamworks', t:'功夫熊猫2', y:2011, e:'🐼', n:'阿宝面对身世与沈王爷。'},
+  {s:'dreamworks', t:'功夫熊猫3', y:2016, e:'🐼', n:'阿宝回熊猫村教小伙伴功夫。'},
+  {s:'dreamworks', t:'驯龙高手', y:2010, e:'🐉', n:'希卡普与没牙的友谊。'},
+  {s:'dreamworks', t:'驯龙高手2', y:2014, e:'🐉', n:'希卡普发现母亲与龙族首领。'},
+  {s:'dreamworks', t:'驯龙高手3', y:2019, e:'🐉', n:'与龙族告别，结局动人。'},
+  {s:'dreamworks', t:'超级大坏蛋', y:2010, e:'🦹', n:'反派当主角的爆笑反套路。'},
+  {s:'dreamworks', t:'疯狂原始人', y:2013, e:'🪨', n:'原始人家族走向光明新世界。'},
+  {s:'dreamworks', t:'魔发精灵', y:2016, e:'🌈', n:'色彩缤纷的音乐冒险。'},
+  {s:'dreamworks', t:'穿靴子的猫', y:2011, e:'👢', n:'靴猫的独立传奇冒险。'},
+  {s:'dreamworks', t:'穿靴子的猫2', y:2022, e:'👢', n:'画风惊艳，口碑爆棚的续作。'},
+  {s:'dreamworks', t:'坏蛋联盟', y:2022, e:'🐺', n:'五大坏蛋「改邪归正」的爆笑反转。'},
+
+  // ---------- 吉卜力（宫崎骏等） ----------
+  {s:'ghibli', t:'天空之城', y:1986, e:'☁️', n:'巴鲁与希塔守护悬浮的拉普达。'},
+  {s:'ghibli', t:'龙猫', y:1988, e:'🌳', n:'姐妹俩与森林精灵龙猫的夏天，最治愈。'},
+  {s:'ghibli', t:'魔女宅急便', y:1989, e:'🧹', n:'小魔女琪琪独立生活的成长物语。'},
+  {s:'ghibli', t:'幽灵公主', y:1997, e:'🐺', n:'人与自然的史诗冲突（含战斗场面，建议陪同观看）。'},
+  {s:'ghibli', t:'千与千寻', y:2001, e:'🏮', n:'千寻在神隐世界救父母，宫崎骏巅峰。'},
+  {s:'ghibli', t:'哈尔的移动城堡', y:2004, e:'🏰', n:'苏菲与俊美魔法师哈尔的浪漫。'},
+  {s:'ghibli', t:'悬崖上的金鱼姬', y:2008, e:'🐟', n:'最适合小朋友的宫崎骏，纯真可爱。'},
+  {s:'ghibli', t:'借东西的小人阿莉埃蒂', y:2010, e:'📌', n:'地板下的小人族与人类少年。'},
+  {s:'ghibli', t:'起风了', y:2013, e:'✈️', n:'零式战机设计师的半生（偏成人向）。'},
+  {s:'ghibli', t:'回忆中的玛妮', y:2014, e:'🌙', n:'少女在海边解开身世之谜。'},
+
+  // ---------- 新海诚 ----------
+  {s:'shinkai', t:'星之声', y:2002, e:'💌', n:'新海诚处女作，跨越星际的少男少女短信。'},
+  {s:'shinkai', t:'云之彼端，约定的地方', y:2004, e:'🛰️', n:'平行世界与少年们的约定。'},
+  {s:'shinkai', t:'秒速五厘米', y:2007, e:'🌸', n:'樱花飘落的速度，淡淡的遗憾之美（偏少年向）。'},
+  {s:'shinkai', t:'追逐繁星的孩子', y:2011, e:'⭐', n:'最吉卜力风的一部，地下世界的冒险。'},
+  {s:'shinkai', t:'言叶之庭', y:2013, e:'🌧️', n:'雨中亭子的相遇，画面美到窒息（短片，偏少年向）。'},
+  {s:'shinkai', t:'你的名字', y:2016, e:'☄️', n:'少男少女身体互换+彗星之灾，现象级神作。'},
+  {s:'shinkai', t:'天气之子', y:2019, e:'☔', n:'能改变天气的少女，为爱对抗整个东京的雨。'},
+  {s:'shinkai', t:'铃芽之旅', y:2022, e:'🚪', n:'少女关门之旅，公路冒险，最适合和孩子一起看。'},
+];
+
+const EMOJI_CHOICES = ['🎬','⭐','🌟','💫','🍿','🌈','❤️','🔥','✨','🌙','☀️','🎈','🎪','🎭','🎼','🎸','🚀','🌌','🦄','🐉','🐱','🐶','🦊','🐰','🐻','🐼','🐧','🦖','🤖','👑','💎','🍀'];
+
+/* ============== 状态 ============== */
+const KEY_WATCHED = 'family-movie-watchlist-v1';
+const KEY_APIKEY  = 'family-movie-tmdb-key-v1';
+const KEY_POSTERS = 'family-movie-posters-v1';
+const KEY_CUSTOM  = 'family-movie-custom-v1';
+
+let watched = loadWatched();
+let posters = loadPosters();
+let customMovies = loadCustom();
+let apiKey = localStorage.getItem(KEY_APIKEY) || '';
+let studioFilter = 'all';
+let statusFilter = 'all';
+let query = '';
+
+function loadWatched(){ try{ return new Set(JSON.parse(localStorage.getItem(KEY_WATCHED)||'[]')); }catch(e){ return new Set(); } }
+function loadPosters(){ try{ return JSON.parse(localStorage.getItem(KEY_POSTERS)||'{}'); }catch(e){ return {}; } }
+function loadCustom(){ try{ return JSON.parse(localStorage.getItem(KEY_CUSTOM)||'[]'); }catch(e){ return []; } }
+function saveWatched(){ localStorage.setItem(KEY_WATCHED, JSON.stringify([...watched])); }
+function savePosters(){ localStorage.setItem(KEY_POSTERS, JSON.stringify(posters)); }
+function saveCustom(){ localStorage.setItem(KEY_CUSTOM, JSON.stringify(customMovies)); }
+
+// 合并内置 + 自定义片单
+function allMovies(){ return [...BUILTIN_MOVIES, ...customMovies]; }
+function key(m){ return m.s + '|' + m.t; }
+const IMG = p => p ? `https://image.tmdb.org/t/p/w500${p}` : '';
+
+/* ============== TMDB 抓取 ============== */
+async function fetchPosterPath(movie){
+  const base = 'https://api.themoviedb.org/3/search/movie';
+  const url = `${base}?api_key=${encodeURIComponent(apiKey)}&language=zh-CN&include_adult=false&query=${encodeURIComponent(movie.t)}&page=1`;
+  const res = await fetch(url);
+  if(!res.ok){ if(res.status===401) throw new Error('API Key 无效'); throw new Error('TMDB 请求失败('+res.status+')'); }
+  const data = await res.json();
+  const results = data.results || [];
+  if(!results.length) return null;
+  const hasPoster = r => r.poster_path;
+  const byYear = results.filter(r => hasPoster(r) && r.release_date && Math.abs(new Date(r.release_date).getFullYear() - movie.y) <= 1);
+  const pool = byYear.length ? byYear : results.filter(hasPoster);
+  if(!pool.length) return null;
+  pool.sort((a,b)=>(b.popularity||0)-(a.popularity||0));
+  return pool[0].poster_path;
+}
+
+// 搜索 TMDB，返回多个候选
+async function searchTMDB(queryText){
+  if(!apiKey) throw new Error('NO_KEY');
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${encodeURIComponent(apiKey)}&language=zh-CN&include_adult=false&query=${encodeURIComponent(queryText)}&page=1`;
+  const res = await fetch(url);
+  if(!res.ok){ if(res.status===401) throw new Error('API Key 无效'); throw new Error('TMDB 请求失败('+res.status+')'); }
+  const data = await res.json();
+  return (data.results || [])
+    .sort((a,b)=>(b.popularity||0)-(a.popularity||0))
+    .slice(0, 8);
+}
+
+let fetching = false;
+async function ensurePosters(force=false, onlyMovie=null){
+  if(!apiKey || fetching) return;
+  fetching = true; updateKeyUI();
+  const list = onlyMovie ? [onlyMovie] : allMovies().filter(m => force || !posters[key(m)]);
+  let ok=0, fail=0;
+  for(const m of list){
+    try{ const p = await fetchPosterPath(m); posters[key(m)] = p || '__failed__'; ok++; }
+    catch(e){ posters[key(m)] = '__failed__'; fail++; if(String(e.message).includes('API Key 无效')) break; }
+    savePosters(); refreshCardPoster(m);
+  }
+  fetching = false; updateKeyUI();
+  if(fail>0 && ok===0 && !onlyMovie) alert('海报抓取失败。请检查 API Key 是否正确（v3 auth），或稍后重试。');
+}
+
+/* ============== 渲染 ============== */
+const sectionsEl = document.getElementById('sections');
+const chipsEl = document.getElementById('studioChips');
+
+function renderChips(){
+  const movies = allMovies();
+  const usedStudios = [...new Set(movies.map(m=>m.s))];
+  const order = STUDIOS.filter(s=>usedStudios.includes(s.id));
+  const chips = [`<div class="chip ${studioFilter==='all'?'active':''}" data-studio="all">全部 <span class="cnt">${movies.length}</span></div>`];
+  for(const s of order){
+    const c = movies.filter(m=>m.s===s.id).length;
+    chips.push(`<div class="chip ${studioFilter===s.id?'active':''}" data-studio="${s.id}">
+      <span class="dot" style="background:${s.color}"></span>${s.name} <span class="cnt">${c}</span>
+    </div>`);
+  }
+  chipsEl.innerHTML = chips.join('');
+  chipsEl.querySelectorAll('.chip').forEach(c=>{ c.onclick = ()=>{ studioFilter = c.dataset.studio; render(); }; });
+}
+
+function renderOverall(){
+  const movies = allMovies();
+  const total = movies.length;
+  const done = [...watched].filter(k=>movies.some(m=>key(m)===k)).length;
+  const pct = total? Math.round(done/total*100):0;
+  document.getElementById('ring').style.setProperty('--p', pct);
+  document.getElementById('ringTxt').textContent = pct+'%';
+  document.getElementById('watchedCount').textContent = done;
+  document.getElementById('totalCount').textContent = total;
+}
+
+function matches(m){
+  if(studioFilter!=='all' && m.s!==studioFilter) return false;
+  if(statusFilter==='done' && !watched.has(key(m))) return false;
+  if(statusFilter==='todo' && watched.has(key(m))) return false;
+  if(query){
+    const q = query.toLowerCase();
+    if(!(m.t.toLowerCase().includes(q) || String(m.y).includes(q) || (m.n||'').toLowerCase().includes(q))) return false;
+  }
+  return true;
+}
+
+function render(){
+  renderChips(); renderOverall();
+  const movies = allMovies();
+  const visibleStudios = studioFilter==='all' ? STUDIOS.filter(s=>movies.some(m=>m.s===s.id)) : STUDIOS.filter(s=>s.id===studioFilter);
+  let html = '';
+  for(const s of visibleStudios){
+    const list = movies.filter(m=>m.s===s.id && matches(m));
+    if(list.length===0) continue;
+    const totalInStudio = movies.filter(m=>m.s===s.id).length;
+    const doneInStudio = movies.filter(m=>m.s===s.id && watched.has(key(m))).length;
+    const pct = totalInStudio? Math.round(doneInStudio/totalInStudio*100):0;
+    html += `<section class="studio-section">
+      <div class="studio-head">
+        <h2>${s.emoji} ${s.name} <span style="color:var(--muted);font-weight:500;font-size:13px">${s.en}</span></h2>
+        <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:linear-gradient(90deg,${s.color},${s.color}aa)"></div></div>
+        <div class="pct">${doneInStudio}/${totalInStudio} · ${pct}%</div>
+      </div>
+      <div class="grid">${list.map(cardHtml).join('')}</div>
+    </section>`;
+  }
+  if(!html) html = `<div class="empty">😅 没有匹配的影片，换个筛选条件试试。</div>`;
+  sectionsEl.innerHTML = html;
+  sectionsEl.querySelectorAll('.card').forEach(el=>{
+    el.onclick = e=>{
+      if(e.target.closest('.del-btn')) return;   // 删除按钮单独处理
+      const k = el.dataset.key;
+      if(watched.has(k)) watched.delete(k); else watched.add(k);
+      saveWatched(); render();
+    };
+  });
+  sectionsEl.querySelectorAll('.del-btn').forEach(b=>{
+    b.onclick = e=>{
+      e.stopPropagation();
+      const k = b.dataset.key;
+      if(confirm('从片单删除这部电影？（已看记录也会清掉）')){
+        customMovies = customMovies.filter(m => key(m)!==k);
+        saveCustom(); render();
+      }
+    };
+  });
+}
+
+function studioOf(m){ return STUDIOS.find(x=>x.id===m.s) || STUDIOS.find(x=>x.id==='other'); }
+
+function posterHtml(m){
+  const cached = posters[key(m)];
+  if(cached && cached!=='__failed__') return `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
+  if(cached==='__failed__' || !apiKey) return `<div class="fallback">${m.e}</div>`;
+  return `<div class="poster-load">⏳</div><div class="fallback" style="opacity:.4">${m.e}</div>`;
+}
+
+function cardHtml(m){
+  const k = key(m);
+  const isW = watched.has(k);
+  const s = studioOf(m);
+  const isCustom = customMovies.some(c=>key(c)===k);
+  return `<div class="card ${isW?'watched':''} ${isCustom?'custom':''}" data-key="${k}">
+    <div class="poster" style="background:linear-gradient(150deg,${s.color}55,${s.color}22 60%,#00000033)">
+      <span class="yr">${m.y||''}</span>
+      <span class="badge" style="background:${s.color}">${s.name}</span>
+      ${posterHtml(m)}
+    </div>
+    <div class="card-body"><h3>${m.t}</h3><p>${m.n||''}</p></div>
+    ${isCustom?`<button class="del-btn" data-key="${k}" title="删除">×</button>`:''}
+    <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#0f1424" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+  </div>`;
+}
+
+function refreshCardPoster(m){
+  const el = sectionsEl.querySelector(`.card[data-key="${CSS.escape(key(m))}"] .poster`);
+  if(!el) return;
+  const s = studioOf(m);
+  const cached = posters[key(m)];
+  let inner = `<span class="yr">${m.y||''}</span><span class="badge" style="background:${s.color}">${s.name}</span>`;
+  if(cached && cached!=='__failed__') inner += `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
+  else inner += `<div class="fallback">${m.e}</div>`;
+  el.innerHTML = inner;
+}
+
+/* ============== API Key UI ============== */
+const apikeyBox = document.getElementById('apikeyBox');
+const apikeyInput = document.getElementById('apikeyInput');
+function updateKeyUI(){
+  if(apiKey){
+    apikeyBox.classList.add('apikey-set');
+    let status = '<p style="color:var(--accent-2);font-size:13.5px;margin-top:8px">✅ 海报已启用';
+    if(fetching) status += ' · 正在加载海报…';
+    status += '</p>';
+    apikeyBox.innerHTML = `<h3>🎬 海报已接入（TMDB）</h3>
+      <p style="color:var(--muted);font-size:13.5px">Key 已保存到本机。海报会缓存，下次打开秒加载。</p>
+      ${status}
+      <div class="input-row" style="margin-top:12px"><button class="btn ghost" id="changeKey2">更换 / 清除 API Key</button></div>`;
+    document.getElementById('changeKey2').onclick = clearKey;
+  } else { apikeyBox.classList.remove('apikey-set'); }
+}
+function clearKey(){
+  if(!confirm('清除 API Key？海报会回到彩色卡片（观看进度不受影响）。')) return;
+  apiKey=''; localStorage.removeItem(KEY_APIKEY); updateKeyUI(); render();
+}
+document.getElementById('saveKey').onclick = ()=>{
+  const v = apikeyInput.value.trim();
+  if(!v){ alert('请先粘贴 API Key'); return; }
+  apiKey = v; localStorage.setItem(KEY_APIKEY, v); updateKeyUI(); ensurePosters(true);
+};
+apikeyInput.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('saveKey').click(); });
+
+/* ============== 添加电影弹窗 ============== */
+const modal = document.getElementById('addModal');
+let pickedEmoji = '🎬';
+let selectedResult = null;   // 选中的 TMDB 候选 {title, year, poster_path, ...}
+
+function fillStudioSelect(){
+  document.getElementById('m-studio').innerHTML = STUDIOS.map(s=>`<option value="${s.id}">${s.emoji} ${s.name}</option>`).join('');
+}
+function fillEmojiPicker(){
+  document.getElementById('m-emoji').innerHTML = EMOJI_CHOICES.map(e=>`<span class="${e===pickedEmoji?'sel':''}" data-e="${e}">${e}</span>`).join('');
+  document.querySelectorAll('#m-emoji span').forEach(sp=>{
+    sp.onclick = ()=>{ pickedEmoji = sp.dataset.e; fillEmojiPicker(); };
+  });
+}
+
+function openAdd(){
+  document.getElementById('m-search').value='';
+  document.getElementById('searchStatus').innerHTML='';
+  document.getElementById('searchResults').innerHTML='';
+  selectedResult = null;
+  showStep('search');
+  document.getElementById('footer-cancel').style.display = 'flex';
+  modal.classList.add('show');
+  setTimeout(()=>document.getElementById('m-search').focus(),50);
+}
+function closeAdd(){ modal.classList.remove('show'); }
+
+function showStep(step){
+  document.getElementById('step-search').style.display = step==='search'?'block':'none';
+  document.getElementById('step-confirm').style.display = step==='confirm'?'block':'none';
+  document.getElementById('footer-cancel').style.display = step==='search'?'flex':'none';
+}
+
+// 执行搜索
+async function doSearch(){
+  const q = document.getElementById('m-search').value.trim();
+  const statusEl = document.getElementById('searchStatus');
+  const resultsEl = document.getElementById('searchResults');
+  if(!q){ statusEl.innerHTML = '<span style="color:var(--pink)">请输入片名</span>'; return; }
+  if(!apiKey){
+    statusEl.innerHTML = '<span class="err">⚠️ 还没设置 TMDB API Key，无法搜索。请先在上方设置 API Key。</span>';
+    return;
+  }
+  statusEl.innerHTML = '<span class="spinner"></span> 搜索中…';
+  resultsEl.innerHTML = '';
+  try{
+    const results = await searchTMDB(q);
+    if(!results.length){
+      statusEl.innerHTML = '<span class="err">😕 没找到相关电影，换个关键词试试。</span>';
+      return;
+    }
+    statusEl.innerHTML = `找到 <strong>${results.length}</strong> 个结果，点选正确的一部：`;
+    resultsEl.innerHTML = results.map((r,i)=>resultItemHtml(r,i)).join('');
+    resultsEl.querySelectorAll('.result-item').forEach(el=>{
+      el.onclick = ()=>{
+        const idx = parseInt(el.dataset.idx);
+        selectedResult = results[idx];
+        // 猜分类：根据搜索词匹配厂牌名
+        guessStudio(q);
+        pickedEmoji='🎬'; fillEmojiPicker();
+        renderSelectedPreview();
+        showStep('confirm');
+      };
+    });
+  }catch(e){
+    statusEl.innerHTML = `<span class="err">❌ ${e.message}</span>`;
+  }
+}
+
+function resultItemHtml(r,i){
+  const title = r.title || r.original_title || '未知';
+  const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
+  const poster = r.poster_path
+    ? `<img class="r-poster" src="https://image.tmdb.org/t/p/w154${r.poster_path}" alt="">`
+    : `<div class="r-noimg">🎬</div>`;
+  const overview = r.overview ? `<div class="r-overview">${escapeHtml(r.overview)}</div>` : '';
+  return `<div class="result-item" data-idx="${i}">
+    ${poster}
+    <div class="r-info">
+      <div class="r-title">${escapeHtml(title)}</div>
+      <div class="r-meta">${year} · ${(r.original_language||'').toUpperCase()}</div>
+      ${overview}
+    </div>
+  </div>`;
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// 根据搜索词猜厂牌
+function guessStudio(q){
+  const map = [
+    {re:/玩具总动员|飞屋|寻梦|头脑特工|海底总动员|超人总动员|赛车总动员|料理鼠王|虫虫|怪兽电力|瓦力|wall-?e|勇敢|恐龙当家|1\/2|心灵|夏日友|青春变形|元素|皮克斯|pixar/i, s:'pixar'},
+    {re:/白雪公主|木偶|灰姑娘|仙履|彼得.?潘|小飞侠|睡美人|美人鱼|美女与野兽|阿拉丁|狮子王|花木兰|泰山|星际宝贝|魔发奇缘|冰雪奇缘|超能陆战队|大白|疯狂动物城|海洋奇缘|寻龙|魔法满屋|迪士尼|disney/i, s:'disney'},
+    {re:/史莱克|马达加斯加|功夫熊猫|驯龙高手|没牙|疯狂原始人|魔发精灵|穿靴子|坏蛋联盟|梦工厂|dreamworks/i, s:'dreamworks'},
+    {re:/宫崎骏|吉卜力|龙猫|千与千寻|哈尔|金鱼姬|阿莉埃蒂|幽灵公主|魔女宅急便|天空之城|ghibli/i, s:'ghibli'},
+    {re:/新海诚|你的名字|天气之子|铃芽|秒速|言叶之庭|星之声|云之彼端|shinkai/i, s:'shinkai'},
+  ];
+  for(const m of map){ if(m.re.test(q)){ document.getElementById('m-studio').value = m.s; return; } }
+  // 否则用当前筛选
+  if(studioFilter!=='all') document.getElementById('m-studio').value = studioFilter;
+}
+
+// 渲染已选预览
+function renderSelectedPreview(){
+  const el = document.getElementById('selectedPreview');
+  const r = selectedResult;
+  const title = r.title || r.original_title || '';
+  const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
+  const img = r.poster_path
+    ? `<img src="https://image.tmdb.org/t/p/w300${r.poster_path}" alt="">`
+    : `<div class="sp-noimg">${pickedEmoji}</div>`;
+  el.innerHTML = `<div>
+      ${r.poster_path
+        ? `<img src="https://image.tmdb.org/t/p/w300${r.poster_path}" alt="">`
+        : `<div class="sp-noimg">${pickedEmoji}</div>`}
+    </div>
+    <div class="sp-info">
+      <div class="sp-title">${escapeHtml(title)}</div>
+      <div class="sp-meta">${year} · 海报将自动匹配</div>
+      <span class="sp-change" id="sp-change">← 重新选择</span>
+    </div>`;
+  document.getElementById('sp-change').onclick = ()=>{ selectedResult=null; showStep('search'); document.getElementById('m-search').focus(); };
+}
+
+document.getElementById('openAdd').onclick = openAdd;
+document.getElementById('cancelAdd').onclick = closeAdd;
+document.getElementById('doSearch').onclick = doSearch;
+document.getElementById('m-search').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSearch(); } });
+modal.addEventListener('click', e=>{ if(e.target===modal) closeAdd(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeAdd(); });
+document.getElementById('backToSearch').onclick = ()=>{ selectedResult=null; showStep('search'); document.getElementById('m-search').focus(); };
+
+document.getElementById('confirmAdd').onclick = ()=>{
+  if(!selectedResult){ alert('请先搜索并选择一部电影'); return; }
+  const r = selectedResult;
+  const t = r.title || r.original_title || '';
+  const y = r.release_date ? new Date(r.release_date).getFullYear() : new Date().getFullYear();
+  const newMovie = {
+    s: document.getElementById('m-studio').value,
+    t, e: pickedEmoji, y,
+    n: document.getElementById('m-note').value.trim(),
+  };
+  if(allMovies().some(m=>key(m)===key(newMovie))){
+    alert('片单里已经有「'+t+'」啦（同分类下重名）。'); return;
+  }
+  customMovies.push(newMovie);
+  saveCustom();
+  // 直接把已选海报写进缓存，省去再次抓取
+  if(r.poster_path){ posters[key(newMovie)] = r.poster_path; savePosters(); }
+  closeAdd();
+  render();
+};
+
+/* ============== 其它事件 ============== */
+document.getElementById('statusFilter').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  statusFilter = b.dataset.s;
+  document.querySelectorAll('#statusFilter button').forEach(x=>x.classList.toggle('active', x===b));
+  render();
+});
+document.getElementById('search').addEventListener('input', e=>{ query = e.target.value.trim(); render(); });
+document.getElementById('reset').addEventListener('click', ()=>{
+  if(confirm('确定要清空所有「已看」记录吗？此操作不可撤销。')){ watched.clear(); saveWatched(); render(); }
+});
+document.getElementById('reloadPosters').addEventListener('click', ()=>{ if(!apiKey){ alert('请先设置 API Key'); return; } ensurePosters(true); });
+document.getElementById('changeKey').addEventListener('click', clearKey);
+
+/* 默认示例 */
+if(watched.size===0){
+  watched.add('pixar|玩具总动员'); watched.add('pixar|玩具总动员2'); saveWatched();
+}
+
+/* 初始化 */
+fillStudioSelect();
+render();
+updateKeyUI();
+if(apiKey) ensurePosters(false);
+</script>
+</body>
+</html>
