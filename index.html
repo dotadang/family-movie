@@ -257,6 +257,13 @@
     border:1px solid var(--line);background:#fff;transition:.15s;align-items:flex-start;
   }
   .result-item:hover{border-color:var(--accent-2);background:var(--card-2)}
+  .result-item.selected{border-color:var(--accent-2);background:#f0fbf7;box-shadow:0 0 0 2px rgba(38,185,154,.12)}
+  .result-item .r-check{
+    width:22px;height:22px;border-radius:50%;border:2px solid #cfd7d3;
+    display:grid;place-items:center;flex-shrink:0;margin-top:20px;
+    color:#06251f;font-size:13px;font-weight:900;background:#fff;
+  }
+  .result-item.selected .r-check{background:var(--accent-2);border-color:var(--accent-2)}
   .result-item .r-poster{width:42px;height:63px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--bg-2)}
   .result-item .r-noimg{width:42px;height:63px;border-radius:6px;flex-shrink:0;background:var(--bg-2);display:grid;place-items:center;font-size:18px}
   .result-item .r-info{flex:1;min-width:0}
@@ -273,20 +280,41 @@
   .selected-preview .sp-title{font-weight:700;font-size:14px}
   .selected-preview .sp-meta{font-size:12px;color:var(--muted);margin-top:2px}
   .selected-preview .sp-change{font-size:12px;color:var(--blue);cursor:pointer;margin-top:4px;text-decoration:underline;display:inline-block}
+  .selected-preview.multi{display:block}
+  .selected-preview .sp-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .selected-preview .sp-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)}
+  .selected-preview .sp-thumb{width:28px;height:42px;border-radius:5px;object-fit:cover;background:var(--bg-2);display:grid;place-items:center;flex-shrink:0}
   .spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent-2);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
   @keyframes spin{to{transform:rotate(360deg)}}
 
   @media(max-width:560px){
-    .wrap{padding:18px 14px 64px}
-    header.hero{grid-template-columns:1fr;padding:24px 20px;border-radius:16px}
-    header.hero::after{right:20px;top:18px;font-size:34px}
-    .hero h1{font-size:26px;max-width:250px}
-    .overall{width:100%;justify-content:space-between}
+    .wrap{padding:12px 12px 60px}
+    header.hero{
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:12px;padding:16px;border-radius:14px;margin-bottom:10px;
+    }
+    header.hero::before,header.hero::after{display:none}
+    .hero-text{min-width:0}
+    .hero h1{font-size:23px;line-height:1.15;max-width:none}
+    .hero p{display:none}
+    .overall{width:auto;gap:9px;padding:9px 11px;border-radius:10px;justify-content:flex-start}
+    .ring{width:48px;height:48px}
+    .ring::before{inset:5px}
+    .ring span{font-size:13px}
+    .overall strong{font-size:15px}
+    .overall small{font-size:10.5px;line-height:1.2;white-space:nowrap}
+    .controls{padding:10px 0 14px}
+    .row{gap:8px}
+    .chips{flex:1 1 100%;min-width:0;gap:7px}
+    .chip{padding:7px 12px;font-size:13px}
     .apikey{padding:16px 14px;margin-top:20px}
     .apikey .input-row .btn{width:100%}
-    .btn-add{width:100%;justify-content:center}
+    .search{flex-basis:100%;padding:9px 12px}
     .filter-group{width:100%;justify-content:space-between}
     .filter-group button{flex:1}
+    .studio-section{margin-top:22px}
+    .studio-head{gap:8px;margin-bottom:10px}
+    .studio-head h2{font-size:18px}
     .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
     .poster{font-size:36px}
   }
@@ -312,7 +340,6 @@
   <div class="controls">
     <div class="row">
       <div class="chips" id="studioChips"></div>
-      <button class="btn-add" id="openAdd">➕ 添加电影</button>
     </div>
     <div class="row" style="margin-top:10px">
       <div class="search">
@@ -332,6 +359,7 @@
   <footer>
     <p>数据保存在本机浏览器，换个设备或清缓存会重置。</p>
     <div class="frow">
+      <button class="btn-add" id="openAdd">➕ 添加电影</button>
       <button id="reloadPosters">🔄 重新抓取海报</button>
       <button id="changeKey">🔑 更换 API Key</button>
       <button id="reset">🗑 重置观看进度</button>
@@ -356,7 +384,7 @@
 <!-- 添加电影弹窗 -->
 <div class="modal-mask" id="addModal">
   <div class="modal">
-    <h3>➕ 添加一部电影</h3>
+    <h3>➕ 添加电影</h3>
 
     <!-- 步骤1：搜索 -->
     <div id="step-search">
@@ -367,6 +395,10 @@
       </div>
       <div class="search-status" id="searchStatus"></div>
       <div class="search-results" id="searchResults"></div>
+      <div class="modal-actions" id="search-actions" style="display:none">
+        <button class="btn ghost" id="clearSelected">清空选择</button>
+        <button class="btn" id="useSelected">下一步（0）</button>
+      </div>
     </div>
 
     <!-- 步骤2：确认信息 -->
@@ -375,7 +407,7 @@
 
       <label style="margin-top:16px">分类</label>
       <select id="m-studio"></select>
-      <div class="hint">选错没关系，之后还能删除重加。</div>
+      <div class="hint">会应用到本次选择的所有电影，选错没关系，之后还能删除重加。</div>
 
       <label>一句话推荐（可选）</label>
       <textarea id="m-note" placeholder="写给自己的小备注，比如「适合周末全家看」"></textarea>
@@ -718,7 +750,9 @@ apikeyInput.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getEle
 /* ============== 添加电影弹窗 ============== */
 const modal = document.getElementById('addModal');
 let pickedEmoji = '🎬';
-let selectedResult = null;   // 选中的 TMDB 候选 {title, year, poster_path, ...}
+let selectedResults = [];   // 选中的 TMDB 候选列表
+let searchResultsCache = [];
+let lastSearchQuery = '';
 
 function fillStudioSelect(){
   document.getElementById('m-studio').innerHTML = STUDIOS.map(s=>`<option value="${s.id}">${s.emoji} ${s.name}</option>`).join('');
@@ -734,7 +768,10 @@ function openAdd(){
   document.getElementById('m-search').value='';
   document.getElementById('searchStatus').innerHTML='';
   document.getElementById('searchResults').innerHTML='';
-  selectedResult = null;
+  selectedResults = [];
+  searchResultsCache = [];
+  lastSearchQuery = '';
+  updateSearchActions();
   showStep('search');
   document.getElementById('footer-cancel').style.display = 'flex';
   modal.classList.add('show');
@@ -762,23 +799,16 @@ async function doSearch(){
   resultsEl.innerHTML = '';
   try{
     const results = await searchTMDB(q);
+    searchResultsCache = results;
+    selectedResults = [];
+    lastSearchQuery = q;
+    updateSearchActions();
     if(!results.length){
       statusEl.innerHTML = '<span class="err">😕 没找到相关电影，换个关键词试试。</span>';
       return;
     }
-    statusEl.innerHTML = `找到 <strong>${results.length}</strong> 个结果，点选正确的一部：`;
-    resultsEl.innerHTML = results.map((r,i)=>resultItemHtml(r,i)).join('');
-    resultsEl.querySelectorAll('.result-item').forEach(el=>{
-      el.onclick = ()=>{
-        const idx = parseInt(el.dataset.idx);
-        selectedResult = results[idx];
-        // 猜分类：根据搜索词匹配厂牌名
-        guessStudio(q);
-        pickedEmoji='🎬'; fillEmojiPicker();
-        renderSelectedPreview();
-        showStep('confirm');
-      };
-    });
+    statusEl.innerHTML = `找到 <strong>${results.length}</strong> 个结果，可多选后一起添加：`;
+    renderSearchResults();
   }catch(e){
     statusEl.innerHTML = `<span class="err">❌ ${e.message}</span>`;
   }
@@ -787,11 +817,13 @@ async function doSearch(){
 function resultItemHtml(r,i){
   const title = r.title || r.original_title || '未知';
   const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
+  const selected = selectedResults.some(x => resultKey(x)===resultKey(r));
   const poster = r.poster_path
     ? `<img class="r-poster" src="https://image.tmdb.org/t/p/w154${r.poster_path}" alt="">`
     : `<div class="r-noimg">🎬</div>`;
   const overview = r.overview ? `<div class="r-overview">${escapeHtml(r.overview)}</div>` : '';
-  return `<div class="result-item" data-idx="${i}">
+  return `<div class="result-item ${selected?'selected':''}" data-idx="${i}">
+    <div class="r-check">${selected?'✓':''}</div>
     ${poster}
     <div class="r-info">
       <div class="r-title">${escapeHtml(title)}</div>
@@ -799,6 +831,34 @@ function resultItemHtml(r,i){
       ${overview}
     </div>
   </div>`;
+}
+
+function resultKey(r){
+  return String(r.id || `${r.title || r.original_title || ''}|${r.release_date || ''}`);
+}
+
+function renderSearchResults(){
+  const resultsEl = document.getElementById('searchResults');
+  resultsEl.innerHTML = searchResultsCache.map((r,i)=>resultItemHtml(r,i)).join('');
+  resultsEl.querySelectorAll('.result-item').forEach(el=>{
+    el.onclick = ()=>{
+      const idx = parseInt(el.dataset.idx);
+      const r = searchResultsCache[idx];
+      const k = resultKey(r);
+      if(selectedResults.some(x=>resultKey(x)===k)) selectedResults = selectedResults.filter(x=>resultKey(x)!==k);
+      else selectedResults.push(r);
+      renderSearchResults();
+      updateSearchActions();
+    };
+  });
+}
+
+function updateSearchActions(){
+  const actions = document.getElementById('search-actions');
+  const useBtn = document.getElementById('useSelected');
+  const hasResults = searchResultsCache.length > 0;
+  actions.style.display = hasResults ? 'flex' : 'none';
+  useBtn.textContent = `下一步（${selectedResults.length}）`;
 }
 
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -820,23 +880,39 @@ function guessStudio(q){
 // 渲染已选预览
 function renderSelectedPreview(){
   const el = document.getElementById('selectedPreview');
-  const r = selectedResult;
-  const title = r.title || r.original_title || '';
-  const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
-  const img = r.poster_path
-    ? `<img src="https://image.tmdb.org/t/p/w300${r.poster_path}" alt="">`
-    : `<div class="sp-noimg">${pickedEmoji}</div>`;
-  el.innerHTML = `<div>
-      ${r.poster_path
-        ? `<img src="https://image.tmdb.org/t/p/w300${r.poster_path}" alt="">`
-        : `<div class="sp-noimg">${pickedEmoji}</div>`}
-    </div>
-    <div class="sp-info">
-      <div class="sp-title">${escapeHtml(title)}</div>
-      <div class="sp-meta">${year} · 海报将自动匹配</div>
+  if(selectedResults.length===1){
+    const r = selectedResults[0];
+    const title = r.title || r.original_title || '';
+    const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
+    el.className = 'selected-preview';
+    el.innerHTML = `<div>
+        ${r.poster_path
+          ? `<img src="https://image.tmdb.org/t/p/w300${r.poster_path}" alt="">`
+          : `<div class="sp-noimg">${pickedEmoji}</div>`}
+      </div>
+      <div class="sp-info">
+        <div class="sp-title">${escapeHtml(title)}</div>
+        <div class="sp-meta">${year} · 海报将自动匹配</div>
+        <span class="sp-change" id="sp-change">← 重新选择</span>
+      </div>`;
+  } else {
+    el.className = 'selected-preview multi';
+    el.innerHTML = `<div class="sp-title">已选择 ${selectedResults.length} 部电影</div>
+      <div class="sp-meta">会使用同一个分类和备注添加到片单。</div>
+      <div class="sp-list">
+        ${selectedResults.map(r=>{
+          const title = r.title || r.original_title || '';
+          const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
+          const poster = r.poster_path
+            ? `<img class="sp-thumb" src="https://image.tmdb.org/t/p/w154${r.poster_path}" alt="">`
+            : `<div class="sp-thumb">${pickedEmoji}</div>`;
+          return `<div class="sp-row">${poster}<span>${escapeHtml(title)} · ${year}</span></div>`;
+        }).join('')}
+      </div>
       <span class="sp-change" id="sp-change">← 重新选择</span>
-    </div>`;
-  document.getElementById('sp-change').onclick = ()=>{ selectedResult=null; showStep('search'); document.getElementById('m-search').focus(); };
+    `;
+  }
+  document.getElementById('sp-change').onclick = ()=>{ showStep('search'); document.getElementById('m-search').focus(); };
 }
 
 document.getElementById('openAdd').onclick = openAdd;
@@ -845,27 +921,47 @@ document.getElementById('doSearch').onclick = doSearch;
 document.getElementById('m-search').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSearch(); } });
 modal.addEventListener('click', e=>{ if(e.target===modal) closeAdd(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeAdd(); });
-document.getElementById('backToSearch').onclick = ()=>{ selectedResult=null; showStep('search'); document.getElementById('m-search').focus(); };
+document.getElementById('clearSelected').onclick = ()=>{
+  selectedResults = [];
+  renderSearchResults();
+  updateSearchActions();
+};
+document.getElementById('useSelected').onclick = ()=>{
+  if(selectedResults.length===0){ alert('请先勾选至少一部电影'); return; }
+  guessStudio(lastSearchQuery);
+  pickedEmoji='🎬'; fillEmojiPicker();
+  renderSelectedPreview();
+  showStep('confirm');
+};
+document.getElementById('backToSearch').onclick = ()=>{ showStep('search'); document.getElementById('m-search').focus(); };
 
 document.getElementById('confirmAdd').onclick = ()=>{
-  if(!selectedResult){ alert('请先搜索并选择一部电影'); return; }
-  const r = selectedResult;
-  const t = r.title || r.original_title || '';
-  const y = r.release_date ? new Date(r.release_date).getFullYear() : new Date().getFullYear();
-  const newMovie = {
-    s: document.getElementById('m-studio').value,
-    t, e: pickedEmoji, y,
-    n: document.getElementById('m-note').value.trim(),
-  };
-  if(allMovies().some(m=>key(m)===key(newMovie))){
-    alert('片单里已经有「'+t+'」啦（同分类下重名）。'); return;
+  if(selectedResults.length===0){ alert('请先搜索并选择电影'); return; }
+  const studio = document.getElementById('m-studio').value;
+  const note = document.getElementById('m-note').value.trim();
+  let added = 0;
+  let skipped = 0;
+  for(const r of selectedResults){
+    const t = r.title || r.original_title || '';
+    const y = r.release_date ? new Date(r.release_date).getFullYear() : new Date().getFullYear();
+    const newMovie = { s: studio, t, e: pickedEmoji, y, n: note };
+    if(allMovies().some(m=>key(m)===key(newMovie))){
+      skipped++;
+      continue;
+    }
+    customMovies.push(newMovie);
+    if(r.poster_path) posters[key(newMovie)] = r.poster_path;
+    added++;
   }
-  customMovies.push(newMovie);
+  if(added===0){
+    alert('选中的电影都已经在片单里啦。');
+    return;
+  }
   saveCustom();
-  // 直接把已选海报写进缓存，省去再次抓取
-  if(r.poster_path){ posters[key(newMovie)] = r.poster_path; savePosters(); }
+  savePosters();
   closeAdd();
   render();
+  if(skipped>0) alert(`已添加 ${added} 部，跳过 ${skipped} 部重复电影。`);
 };
 
 /* ============== 其它事件 ============== */
