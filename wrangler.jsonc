@@ -1,8 +1,0 @@
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "family-movie",
-  "compatibility_date": "2026-07-02",
-  "assets": {
-    "directory": "."
-  }
-}
