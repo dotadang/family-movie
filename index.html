@@ -218,6 +218,8 @@
     background:#fff;color:var(--muted);padding:8px 16px;border-radius:8px;font-size:12.5px;
   }
   footer button:hover{color:var(--pink);border-color:var(--pink)}
+  .backup-row{margin-top:8px;opacity:.75;transition:opacity .2s}
+  .backup-row:hover{opacity:1}
 
   /* ===== Modal ===== */
   .modal-mask{
@@ -363,6 +365,11 @@
       <button id="reloadPosters">🔄 重新抓取海报</button>
       <button id="changeKey">🔑 更换 API Key</button>
       <button id="reset">🗑 重置观看进度</button>
+    </div>
+    <div class="frow backup-row">
+      <button id="exportData">📦 备份数据</button>
+      <button id="importData">📥 导入数据</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
     </div>
     <!-- API Key 设置区 -->
     <div class="apikey" id="apikeyBox">
@@ -977,6 +984,47 @@ document.getElementById('reset').addEventListener('click', ()=>{
 });
 document.getElementById('reloadPosters').addEventListener('click', ()=>{ if(!apiKey){ alert('请先设置 API Key'); return; } ensurePosters(true); });
 document.getElementById('changeKey').addEventListener('click', clearKey);
+
+/* ============== 备份/导入 ============== */
+document.getElementById('exportData').onclick = ()=>{
+  const data = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    watched: [...watched],
+    posters,
+    customMovies,
+    apiKey
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `family-movie-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById('importData').onclick = ()=> document.getElementById('importFile').click();
+document.getElementById('importFile').onchange = (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      if(!data.watched || !data.customMovies) throw new Error('格式不对');
+      if(!confirm(`将导入 ${data.customMovies.length} 部自定义电影和 ${data.watched.length} 条观看记录，覆盖当前数据？`)) return;
+      watched = new Set(data.watched);
+      posters = data.posters || {};
+      customMovies = data.customMovies;
+      if(data.apiKey){ apiKey = data.apiKey; localStorage.setItem(KEY_APIKEY, apiKey); }
+      saveWatched(); savePosters(); saveCustom();
+      render();
+      alert('导入成功！');
+    }catch(err){ alert('导入失败：'+err.message); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
 
 /* 默认示例 */
 if(watched.size===0){
