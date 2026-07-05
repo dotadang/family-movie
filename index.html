@@ -220,6 +220,20 @@
   footer button:hover{color:var(--pink);border-color:var(--pink)}
   .backup-row{margin-top:8px;opacity:.75;transition:opacity .2s}
   .backup-row:hover{opacity:1}
+  .btn-share{
+    cursor:pointer;border:0;font-weight:800;font-size:14px;padding:10px 22px;border-radius:8px;
+    background:linear-gradient(135deg,var(--blue),var(--accent-2));color:#fff;
+    box-shadow:0 10px 24px rgba(47,159,211,.22);transition:.18s;white-space:nowrap;
+  }
+  .btn-share:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .share-modal{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:200;
+    display:none;place-items:center;padding:20px;backdrop-filter:blur(4px)}
+  .share-modal.show{display:grid}
+  .share-box{background:var(--bg-2);border-radius:16px;padding:24px;max-width:420px;width:100%;
+    box-shadow:var(--shadow);text-align:center;max-height:90vh;overflow:auto}
+  .share-box h3{font-size:18px;margin-bottom:14px}
+  .share-box img{width:100%;border-radius:10px;margin-bottom:16px;box-shadow:0 8px 20px rgba(0,0,0,.1)}
+  .share-box .modal-actions{justify-content:center}
 
   /* ===== Modal ===== */
   .modal-mask{
@@ -371,6 +385,9 @@
       <button id="importData">📥 导入数据</button>
       <input type="file" id="importFile" accept=".json" style="display:none">
     </div>
+    <div class="frow" style="margin-top:8px">
+      <button class="btn-share" id="shareCard">📤 分享已看清单</button>
+    </div>
     <!-- API Key 设置区 -->
     <div class="apikey" id="apikeyBox">
       <h3>🎬 接入高清电影海报（TMDB）</h3>
@@ -430,6 +447,19 @@
 
     <div class="modal-actions" id="footer-cancel">
       <button class="btn ghost" id="cancelAdd">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- 分享图片弹窗 -->
+<div class="share-modal" id="shareModal">
+  <div class="share-box">
+    <h3>📤 分享已看清单</h3>
+    <img id="sharePreview" src="" alt="已看清单预览">
+    <div class="modal-actions">
+      <button class="btn ghost" id="closeShare">取消</button>
+      <button class="btn" id="downloadShare">💾 保存到本地</button>
+      <button class="btn" id="doShare" style="display:none">📤 分享给朋友</button>
     </div>
   </div>
 </div>
@@ -1030,6 +1060,245 @@ document.getElementById('importFile').onchange = (e)=>{
 if(watched.size===0){
   watched.add('pixar|玩具总动员'); watched.add('pixar|玩具总动员2'); saveWatched();
 }
+
+/* ============== 分享已看清单 ============== */
+let shareBlob = null;
+
+function generateShareCard(){
+  return new Promise((resolve, reject) => {
+    const W = 750, PAD = 40;
+    const movies = allMovies();
+    const watchedSet = watched;
+    const total = movies.length;
+    const done = [...watchedSet].filter(k=>movies.some(m=>key(m)===k)).length;
+    const pct = total ? Math.round(done/total*100) : 0;
+
+    const activeStudios = STUDIOS.filter(s=>movies.some(m=>m.s===s.id));
+
+    // 计算画布高度
+    let H = 56 + 110 + 30; // header + stats + gap
+    for(const s of activeStudios){
+      const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
+      if(!sMovies.length) continue;
+      const rows = Math.ceil(sMovies.length / 5);
+      H += 36 + rows * 130 + 20;
+    }
+    H += 50 + 20 + 60; // summary + date + footer
+
+    const canvas = document.createElement('canvas');
+    const dpr = 2;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // 加载海报图片
+    const imgMap = {};
+    const imgPromises = [];
+    for(const s of activeStudios){
+      const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
+      for(const m of sMovies){
+        const pp = posters[key(m)];
+        if(pp && pp !== '__failed__'){
+          const p = new Promise(res=>{
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = ()=>{ imgMap[key(m)] = img; res(); };
+            img.onerror = ()=>res();
+            img.src = `https://image.tmdb.org/t/p/w200${pp}`;
+          });
+          imgPromises.push(p);
+        }
+      }
+    }
+
+    Promise.all(imgPromises).then(()=>{
+      // 背景
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#fffaf0');
+      bg.addColorStop(0.5, '#f7f4ed');
+      bg.addColorStop(1, '#eef6f5');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // 标题背景
+      ctx.fillStyle = '#202538';
+      roundRect(ctx, PAD, 28, W - PAD*2, 90, 16);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 26px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText('🎬 亲子动画打卡 · 已看清单', PAD + 24, 72);
+      ctx.font = '14px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillStyle = '#bcc4d5';
+      ctx.fillText(`和宝贝一起看过的动画电影`, PAD + 24, 100);
+
+      // 统计卡片
+      const sx = W - PAD - 170;
+      ctx.fillStyle = 'rgba(255,255,255,.12)';
+      roundRect(ctx, sx, 42, 148, 62, 10);
+      ctx.fill();
+      ctx.fillStyle = '#26b99a';
+      ctx.font = 'bold 32px -apple-system, sans-serif';
+      ctx.fillText(`${pct}%`, sx + 16, 82);
+      ctx.fillStyle = '#bcc4d5';
+      ctx.font = '13px -apple-system, sans-serif';
+      ctx.fillText(`${done}/${total} 部`, sx + 86, 72);
+      ctx.fillText('已看完', sx + 86, 90);
+
+      let y = 140;
+
+      // 各厂牌
+      for(const s of activeStudios){
+        const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
+        if(!sMovies.length) continue;
+        const sTotal = movies.filter(m=>m.s===s.id).length;
+        const sPct = Math.round(sMovies.length/sTotal*100);
+
+        // 厂牌标题
+        ctx.fillStyle = '#111827';
+        ctx.font = 'bold 17px -apple-system, "PingFang SC", sans-serif';
+        ctx.fillText(`${s.emoji} ${s.name}`, PAD + 6, y + 14);
+        ctx.fillStyle = '#687083';
+        ctx.font = '13px -apple-system, sans-serif';
+        ctx.fillText(`${sMovies.length}/${sTotal} · ${sPct}%`, W - PAD - 80, y + 14);
+
+        // 进度条
+        const barX = PAD + ctx.measureText(`${s.emoji} ${s.name}`).width + 16;
+        const barW = W - PAD - 100 - barX;
+        if(barW > 40){
+          ctx.fillStyle = '#e7e2d8';
+          roundRect(ctx, barX, y + 5, barW, 8, 4);
+          ctx.fill();
+          ctx.fillStyle = s.color;
+          roundRect(ctx, barX, y + 5, barW * sPct / 100, 8, 4);
+          ctx.fill();
+        }
+
+        y += 32;
+
+        // 海报网格
+        const cols = 5, gap = 10, pw = Math.floor((W - PAD*2 - gap*(cols-1)) / cols), ph = pw * 1.5;
+        for(let i = 0; i < sMovies.length; i++){
+          const col = i % cols, row = Math.floor(i / cols);
+          const px = PAD + col * (pw + gap);
+          const py = y + row * (ph + gap + 22);
+          const m = sMovies[i];
+
+          // 海报
+          ctx.fillStyle = `${s.color}44`;
+          roundRect(ctx, px, py, pw, ph, 6);
+          ctx.fill();
+          const img = imgMap[key(m)];
+          if(img){
+            ctx.save();
+            roundRect(ctx, px, py, pw, ph, 6);
+            ctx.clip();
+            const scale = Math.max(pw / img.width, ph / img.height);
+            const dw = img.width * scale, dh = img.height * scale;
+            ctx.drawImage(img, px + (pw - dw)/2, py + (ph - dh)/2, dw, dh);
+            ctx.restore();
+          } else {
+            ctx.font = `${Math.min(pw, 40)}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText(m.e, px + pw/2, py + ph/2 + 14);
+            ctx.textAlign = 'left';
+          }
+
+          // 片名
+          ctx.fillStyle = '#111827';
+          ctx.font = 'bold 12px -apple-system, "PingFang SC", sans-serif';
+          const title = m.t.length > 8 ? m.t.slice(0,8)+'…' : m.t;
+          ctx.fillText(title, px + 2, py + ph + 16);
+          ctx.fillStyle = '#687083';
+          ctx.font = '11px -apple-system, sans-serif';
+          ctx.fillText(m.y || '', px + 2, py + ph + 30);
+        }
+
+        const rows = Math.ceil(sMovies.length / cols);
+        y += rows * (ph + gap + 22) + 12;
+      }
+
+      // 底部统计
+      ctx.fillStyle = '#687083';
+      ctx.font = '13px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(`共 ${activeStudios.length} 个厂牌 · ${done} 部已看 · ${total - done} 部待看`, PAD + 6, y + 8);
+      ctx.fillText(new Date().toLocaleDateString('zh-CN'), PAD + 6, y + 28);
+
+      canvas.toBlob(blob => {
+        if(blob) resolve(blob);
+        else reject(new Error('生成图片失败'));
+      }, 'image/png');
+    });
+  });
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+// 分享按钮事件
+document.getElementById('shareCard').onclick = async ()=>{
+  const movies = allMovies();
+  const done = [...watched].filter(k=>movies.some(m=>key(m)===k)).length;
+  if(done === 0){ alert('还没有标记任何电影为「已看」，先去看一部吧！🎬'); return; }
+  const btn = document.getElementById('shareCard');
+  btn.textContent = '⏳ 生成中…';
+  btn.disabled = true;
+  try {
+    shareBlob = await generateShareCard();
+    const url = URL.createObjectURL(shareBlob);
+    document.getElementById('sharePreview').src = url;
+    document.getElementById('shareModal').classList.add('show');
+    // 检查是否支持原生分享
+    if(navigator.share){
+      document.getElementById('doShare').style.display = 'inline-block';
+    }
+  } catch(e){
+    alert('生成图片失败：' + e.message);
+  }
+  btn.textContent = '📤 分享已看清单';
+  btn.disabled = false;
+};
+
+document.getElementById('closeShare').onclick = ()=>{
+  document.getElementById('shareModal').classList.remove('show');
+  const img = document.getElementById('sharePreview');
+  if(img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
+  img.src = '';
+};
+
+document.getElementById('downloadShare').onclick = ()=>{
+  if(!shareBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(shareBlob);
+  a.download = `亲子动画打卡-${new Date().toISOString().slice(0,10)}.png`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById('doShare').onclick = async ()=>{
+  if(!shareBlob || !navigator.share) return;
+  const file = new File([shareBlob], '亲子动画打卡.png', {type:'image/png'});
+  try {
+    await navigator.share({ title:'亲子动画打卡 · 已看清单', files:[file] });
+  } catch(e){
+    if(e.name !== 'AbortError') alert('分享失败：' + e.message);
+  }
+};
+
+document.getElementById('shareModal').addEventListener('click', e=>{
+  if(e.target.id === 'shareModal') document.getElementById('closeShare').click();
+});
 
 /* 初始化 */
 fillStudioSelect();
