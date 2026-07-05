@@ -1098,7 +1098,7 @@ function generateShareCard(){
     // 加载海报图片（fetch blob → crossOrigin 双重回退）
     const imgMap = {};
     const imgPromises = [];
-    const _dbgLoaded = [], _dbgFailed = [];
+    const _dbg = {ok:[], fail:[]};
     function loadImg(url){
       return new Promise(res=>{
         const img = new Image();
@@ -1112,33 +1112,31 @@ function generateShareCard(){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       for(const m of sMovies){
         const pp = posters[key(m)];
-        if(pp && pp !== '__failed__'){
-          const url = `https://image.tmdb.org/t/p/w154${pp}`;
-          const p = fetch(url).then(r=>{ if(!r.ok) throw new Error(r.status); return r.blob(); })
-            .then(blob=>{
-              const objUrl = URL.createObjectURL(blob);
-              return loadImg(objUrl).then(img=>{
-                if(img){ imgMap[key(m)] = img; _dbgLoaded.push(m.t); }
-                else _dbgFailed.push(m.t+'(blob-img-fail)');
-              });
-            }).catch(()=>{
-              // fetch 失败，尝试 crossOrigin 直接加载
-              return loadImg(url).then(img=>{
-                if(img){ imgMap[key(m)] = img; _dbgLoaded.push(m.t+'(co)'); }
-                else _dbgFailed.push(m.t+'(fetch+co-fail)');
-              });
-            });
-          imgPromises.push(p);
-        } else {
-          _dbgFailed.push(m.t+'(no-path)');
+        if(!pp || pp==='__failed__'){
+          _dbg.fail.push(m.t+'(无路径)');
+          continue;
         }
+        const url = `https://image.tmdb.org/t/p/w154${pp}`;
+        const p = fetch(url).then(r=>{ if(!r.ok) throw new Error(r.status); return r.blob(); })
+          .then(blob=>{
+            const objUrl = URL.createObjectURL(blob);
+            return loadImg(objUrl).then(img=>{
+              if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t); }
+              else _dbg.fail.push(m.t+'(blob加载失败)');
+            });
+          }).catch(()=>{
+            return loadImg(url).then(img=>{
+              if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+'(co)'); }
+              else _dbg.fail.push(m.t+'(全部失败,路径:'+pp+')');
+            });
+          });
+        imgPromises.push(p);
       }
     }
 
     Promise.all(imgPromises).then(()=>{
-      console.log('[ShareCard] 海报加载成功:', _dbgLoaded.length, _dbgLoaded);
-      console.log('[ShareCard] 海报加载失败:', _dbgFailed.length, _dbgFailed);
-      if(_dbgFailed.length > 0) alert('海报调试\n成功:'+_dbgLoaded.length+' '+_dbgLoaded.join(',')+'\n失败:'+_dbgFailed.length+' '+_dbgFailed.join(','));
+      console.log('[ShareCard] 海报:', _dbg);
+      if(_dbg.fail.length > 0) alert('海报调试\n成功:'+_dbg.ok.length+' '+_dbg.ok.join(',')+'\n失败:'+_dbg.fail.length+' '+_dbg.fail.join(','));
       // 背景
       const bg = ctx.createLinearGradient(0, 0, 0, H);
       bg.addColorStop(0, '#fffaf0');
