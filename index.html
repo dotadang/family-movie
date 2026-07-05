@@ -1138,6 +1138,7 @@ function generateShareCard(){
     Promise.all(imgPromises).then(()=>{
       console.log('[ShareCard] 海报加载成功:', _dbgLoaded.length, _dbgLoaded);
       console.log('[ShareCard] 海报加载失败:', _dbgFailed.length, _dbgFailed);
+      if(_dbgFailed.length > 0) alert('海报调试\n成功:'+_dbgLoaded.length+' '+_dbgLoaded.join(',')+'\n失败:'+_dbgFailed.length+' '+_dbgFailed.join(','));
       // 背景
       const bg = ctx.createLinearGradient(0, 0, 0, H);
       bg.addColorStop(0, '#fffaf0');
