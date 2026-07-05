@@ -1076,7 +1076,7 @@ function generateShareCard(){
     const activeStudios = STUDIOS.filter(s=>movies.some(m=>m.s===s.id));
 
     // 计算画布高度
-    const CW = 106, CH = 68, CGAP = 5, COLS = 6, ROW_H = CH + 24 + CGAP;
+    const CW = 108, CH = 66, CGAP = 4, COLS = 6, ROW_H = CH + 22 + CGAP;
     let H = 56 + 110 + 30;
     for(const s of activeStudios){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
@@ -1158,24 +1158,29 @@ function generateShareCard(){
         // 厂牌标题
         ctx.fillStyle = '#111827';
         ctx.font = 'bold 17px -apple-system, "PingFang SC", sans-serif';
-        ctx.fillText(`${s.emoji} ${s.name}`, PAD + 6, y + 14);
+        const label = `${s.emoji} ${s.name}`;
+        ctx.fillText(label, PAD + 6, y + 14);
         ctx.fillStyle = '#687083';
         ctx.font = '13px -apple-system, sans-serif';
-        ctx.fillText(`${sMovies.length}/${sTotal} · ${sPct}%`, W - PAD - 80, y + 14);
+        const statText = `${sMovies.length}/${sTotal} · ${sPct}%`;
+        ctx.fillText(statText, W - PAD - ctx.measureText(statText).width - 6, y + 14);
 
         // 进度条
-        const barX = PAD + ctx.measureText(`${s.emoji} ${s.name}`).width + 16;
-        const barW = W - PAD - 100 - barX;
+        ctx.font = 'bold 17px -apple-system, "PingFang SC", sans-serif';
+        const barX = PAD + ctx.measureText(label).width + 20;
+        const statW = ctx.measureText(statText).width;
+        const barEndX = W - PAD - statW - 16;
+        const barW = barEndX - barX;
         if(barW > 40){
           ctx.fillStyle = '#e7e2d8';
-          roundRect(ctx, barX, y + 5, barW, 8, 4);
+          roundRect(ctx, barX, y + 7, barW, 6, 3);
           ctx.fill();
           ctx.fillStyle = s.color;
-          roundRect(ctx, barX, y + 5, barW * sPct / 100, 8, 4);
+          roundRect(ctx, barX, y + 7, barW * sPct / 100, 6, 3);
           ctx.fill();
         }
 
-        y += 32;
+        y += 28;
 
         // 横条卡片网格
         for(let i = 0; i < sMovies.length; i++){
@@ -1194,7 +1199,7 @@ function generateShareCard(){
           ctx.stroke();
 
           // 缩略图
-          const thumbW = 44, thumbH = CH;
+          const thumbW = 40, thumbH = CH;
           const img = imgMap[key(m)];
           if(img){
             ctx.save();
@@ -1208,22 +1213,22 @@ function generateShareCard(){
             ctx.fillStyle = `${s.color}33`;
             roundRect(ctx, px, py, thumbW, thumbH, 6);
             ctx.fill();
-            ctx.font = '22px sans-serif';
+            ctx.font = '20px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(m.e, px + thumbW/2, py + thumbH/2 + 8);
+            ctx.fillText(m.e || '🎬', px + thumbW/2, py + thumbH/2 + 7);
             ctx.textAlign = 'left';
           }
 
           // 片名 + 年份
-          const tx = px + thumbW + 6, tw = CW - thumbW - 10;
+          const tx = px + thumbW + 5;
           ctx.fillStyle = '#111827';
-          ctx.font = 'bold 11px -apple-system, "PingFang SC", sans-serif';
-          const maxChars = 4;
+          ctx.font = 'bold 10px -apple-system, "PingFang SC", sans-serif';
+          const maxChars = 6;
           const title = m.t.length > maxChars ? m.t.slice(0,maxChars)+'…' : m.t;
-          ctx.fillText(title, tx, py + 28);
+          ctx.fillText(title, tx, py + 26);
           ctx.fillStyle = '#687083';
-          ctx.font = '11px -apple-system, sans-serif';
-          ctx.fillText(m.y || '', tx, py + 44);
+          ctx.font = '9.5px -apple-system, sans-serif';
+          ctx.fillText(m.y || '', tx, py + 42);
         }
 
         const rows = Math.ceil(sMovies.length / COLS);
