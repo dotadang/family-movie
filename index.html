@@ -1076,14 +1076,15 @@ function generateShareCard(){
     const activeStudios = STUDIOS.filter(s=>movies.some(m=>m.s===s.id));
 
     // 计算画布高度
-    let H = 56 + 110 + 30; // header + stats + gap
+    const CW = 106, CH = 68, CGAP = 5, COLS = 6, ROW_H = CH + 24 + CGAP;
+    let H = 56 + 110 + 30;
     for(const s of activeStudios){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       if(!sMovies.length) continue;
-      const rows = Math.ceil(sMovies.length / 5);
-      H += 36 + rows * 130 + 20;
+      const rows = Math.ceil(sMovies.length / COLS);
+      H += 36 + rows * ROW_H + 20;
     }
-    H += 50 + 20 + 60; // summary + date + footer
+    H += 50 + 20 + 20; // summary + date + footer
 
     const canvas = document.createElement('canvas');
     const dpr = 2;
@@ -1105,7 +1106,7 @@ function generateShareCard(){
             img.crossOrigin = 'anonymous';
             img.onload = ()=>{ imgMap[key(m)] = img; res(); };
             img.onerror = ()=>res();
-            img.src = `https://image.tmdb.org/t/p/w200${pp}`;
+            img.src = `https://image.tmdb.org/t/p/w154${pp}`;
           });
           imgPromises.push(p);
         }
@@ -1176,46 +1177,57 @@ function generateShareCard(){
 
         y += 32;
 
-        // 海报网格
-        const cols = 5, gap = 10, pw = Math.floor((W - PAD*2 - gap*(cols-1)) / cols), ph = pw * 1.5;
+        // 横条卡片网格
         for(let i = 0; i < sMovies.length; i++){
-          const col = i % cols, row = Math.floor(i / cols);
-          const px = PAD + col * (pw + gap);
-          const py = y + row * (ph + gap + 22);
+          const col = i % COLS, row = Math.floor(i / COLS);
+          const px = PAD + col * (CW + CGAP);
+          const py = y + row * ROW_H;
           const m = sMovies[i];
 
-          // 海报
-          ctx.fillStyle = `${s.color}44`;
-          roundRect(ctx, px, py, pw, ph, 6);
+          // 卡片背景
+          ctx.fillStyle = '#fff';
+          roundRect(ctx, px, py, CW, CH, 6);
           ctx.fill();
+          ctx.strokeStyle = 'rgba(0,0,0,.06)';
+          ctx.lineWidth = 1;
+          roundRect(ctx, px, py, CW, CH, 6);
+          ctx.stroke();
+
+          // 缩略图
+          const thumbW = 44, thumbH = CH;
           const img = imgMap[key(m)];
           if(img){
             ctx.save();
-            roundRect(ctx, px, py, pw, ph, 6);
+            roundRect(ctx, px, py, thumbW, thumbH, 6);
             ctx.clip();
-            const scale = Math.max(pw / img.width, ph / img.height);
+            const scale = Math.max(thumbW / img.width, thumbH / img.height);
             const dw = img.width * scale, dh = img.height * scale;
-            ctx.drawImage(img, px + (pw - dw)/2, py + (ph - dh)/2, dw, dh);
+            ctx.drawImage(img, px + (thumbW - dw)/2, py + (thumbH - dh)/2, dw, dh);
             ctx.restore();
           } else {
-            ctx.font = `${Math.min(pw, 40)}px sans-serif`;
+            ctx.fillStyle = `${s.color}33`;
+            roundRect(ctx, px, py, thumbW, thumbH, 6);
+            ctx.fill();
+            ctx.font = '22px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(m.e, px + pw/2, py + ph/2 + 14);
+            ctx.fillText(m.e, px + thumbW/2, py + thumbH/2 + 8);
             ctx.textAlign = 'left';
           }
 
-          // 片名
+          // 片名 + 年份
+          const tx = px + thumbW + 6, tw = CW - thumbW - 10;
           ctx.fillStyle = '#111827';
-          ctx.font = 'bold 12px -apple-system, "PingFang SC", sans-serif';
-          const title = m.t.length > 8 ? m.t.slice(0,8)+'…' : m.t;
-          ctx.fillText(title, px + 2, py + ph + 16);
+          ctx.font = 'bold 11px -apple-system, "PingFang SC", sans-serif';
+          const maxChars = 4;
+          const title = m.t.length > maxChars ? m.t.slice(0,maxChars)+'…' : m.t;
+          ctx.fillText(title, tx, py + 28);
           ctx.fillStyle = '#687083';
           ctx.font = '11px -apple-system, sans-serif';
-          ctx.fillText(m.y || '', px + 2, py + ph + 30);
+          ctx.fillText(m.y || '', tx, py + 44);
         }
 
-        const rows = Math.ceil(sMovies.length / cols);
-        y += rows * (ph + gap + 22) + 12;
+        const rows = Math.ceil(sMovies.length / COLS);
+        y += rows * ROW_H + 12;
       }
 
       // 底部统计
