@@ -1219,16 +1219,25 @@ function generateShareCard(){
             ctx.textAlign = 'left';
           }
 
-          // 片名 + 年份
+          // 片名（自动换行）+ 年份
           const tx = px + thumbW + 5;
+          const maxW = CW - thumbW - 9;
           ctx.fillStyle = '#111827';
           ctx.font = 'bold 10px -apple-system, "PingFang SC", sans-serif';
-          const maxChars = 6;
-          const title = m.t.length > maxChars ? m.t.slice(0,maxChars)+'…' : m.t;
-          ctx.fillText(title, tx, py + 26);
+          const name = m.t;
+          let line1, line2 = '';
+          if(name.length <= 5){
+            line1 = name;
+          } else {
+            line1 = name.slice(0, 5);
+            line2 = name.slice(5);
+            if(ctx.measureText(line2).width > maxW) line2 = line2.slice(0, 5) + '…';
+          }
+          ctx.fillText(line1, tx, py + 24);
+          if(line2) ctx.fillText(line2, tx, py + 36);
           ctx.fillStyle = '#687083';
           ctx.font = '9.5px -apple-system, sans-serif';
-          ctx.fillText(m.y || '', tx, py + 42);
+          ctx.fillText(m.y || '', tx, py + 48);
         }
 
         const rows = Math.ceil(sMovies.length / COLS);
