@@ -725,8 +725,8 @@ function studioOf(m){ return STUDIOS.find(x=>x.id===m.s) || STUDIOS.find(x=>x.id
 function posterHtml(m){
   const cached = posters[key(m)];
   if(cached && cached!=='__failed__') return `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
-  if(cached==='__failed__' || !apiKey) return `<div class="fallback">${m.e}</div>`;
-  return `<div class="poster-load">⏳</div><div class="fallback" style="opacity:.4">${m.e}</div>`;
+  if(!cached || cached==='__failed__' || !apiKey) return `<div class="fallback">${m.e||'🎬'}</div>`;
+  return `<div class="poster-load">⏳</div><div class="fallback" style="opacity:.4">${m.e||'🎬'}</div>`;
 }
 
 function cardHtml(m){
@@ -753,7 +753,7 @@ function refreshCardPoster(m){
   const cached = posters[key(m)];
   let inner = `<span class="yr">${m.y||''}</span><span class="badge" style="background:${s.color}d9">${s.name}</span>`;
   if(cached && cached!=='__failed__') inner += `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
-  else inner += `<div class="fallback">${m.e}</div>`;
+  else inner += `<div class="fallback">${m.e||'🎬'}</div>`;
   el.innerHTML = inner;
 }
 
@@ -1095,9 +1095,18 @@ function generateShareCard(){
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    // 加载海报图片（fetch 为 blob 避免 CORS canvas 污染）
+    // 加载海报图片（fetch blob → crossOrigin 双重回退）
     const imgMap = {};
     const imgPromises = [];
+    function loadImg(url){
+      return new Promise(res=>{
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = ()=>res(img);
+        img.onerror = ()=>res(null);
+        img.src = url;
+      });
+    }
     for(const s of activeStudios){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       for(const m of sMovies){
@@ -1107,13 +1116,11 @@ function generateShareCard(){
           const p = fetch(url).then(r=>r.ok?r.blob():Promise.reject())
             .then(blob=>{
               const objUrl = URL.createObjectURL(blob);
-              return new Promise(res=>{
-                const img = new Image();
-                img.onload = ()=>{ imgMap[key(m)] = img; res(); };
-                img.onerror = ()=>res();
-                img.src = objUrl;
-              });
-            }).catch(()=>{});
+              return loadImg(objUrl).then(img=>{ if(img) imgMap[key(m)] = img; });
+            }).catch(()=>{
+              // fetch 失败，尝试 crossOrigin 直接加载
+              return loadImg(url).then(img=>{ if(img) imgMap[key(m)] = img; });
+            });
           imgPromises.push(p);
         }
       }
