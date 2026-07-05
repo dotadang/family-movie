@@ -1075,16 +1075,18 @@ function generateShareCard(){
 
     const activeStudios = STUDIOS.filter(s=>movies.some(m=>m.s===s.id));
 
-    // 计算画布高度
+    // 预计算实际绘制高度
     const CW = 108, CH = 66, CGAP = 4, COLS = 6, ROW_H = CH + 22 + CGAP;
-    let H = 56 + 110 + 30;
+    let H = 56 + 110 + 30; // header
+    let yy = H;
     for(const s of activeStudios){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       if(!sMovies.length) continue;
       const rows = Math.ceil(sMovies.length / COLS);
-      H += 36 + rows * ROW_H + 20;
+      yy += 28 + rows * ROW_H + 12;
     }
-    H += 50 + 20 + 20; // summary + date + footer
+    yy += 38; // summary + date + minimal padding
+    H = yy;
 
     const canvas = document.createElement('canvas');
     const dpr = 2;
