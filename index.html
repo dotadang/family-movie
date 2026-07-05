@@ -1095,7 +1095,7 @@ function generateShareCard(){
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    // 加载海报图片（fetch blob → crossOrigin 双重回退）
+    // 加载海报图片（fetch blob → 多尺寸重试 → crossOrigin 回退）
     const imgMap = {};
     const imgPromises = [];
     const _dbg = {ok:[], fail:[]};
@@ -1108,6 +1108,13 @@ function generateShareCard(){
         img.src = url;
       });
     }
+    function fetchImg(url){
+      return fetch(url).then(r=>{ if(!r.ok) throw new Error(r.status); return r.blob(); })
+        .then(blob=>{
+          const objUrl = URL.createObjectURL(blob);
+          return loadImg(objUrl);
+        });
+    }
     for(const s of activeStudios){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       for(const m of sMovies){
@@ -1116,20 +1123,20 @@ function generateShareCard(){
           _dbg.fail.push(m.t+'(无路径)');
           continue;
         }
-        const url = `https://image.tmdb.org/t/p/w154${pp}`;
-        const p = fetch(url).then(r=>{ if(!r.ok) throw new Error(r.status); return r.blob(); })
-          .then(blob=>{
-            const objUrl = URL.createObjectURL(blob);
-            return loadImg(objUrl).then(img=>{
-              if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t); }
-              else _dbg.fail.push(m.t+'(blob加载失败)');
-            });
-          }).catch(()=>{
-            return loadImg(url).then(img=>{
-              if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+'(co)'); }
-              else _dbg.fail.push(m.t+'(全部失败,路径:'+pp+')');
-            });
-          });
+        const sizes = ['w154','w300','w500'];
+        const p = (async ()=>{
+          for(const sz of sizes){
+            const url = `https://image.tmdb.org/t/${sz}${pp}`;
+            try{
+              const img = await fetchImg(url);
+              if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t); return; }
+            }catch(e){}
+          }
+          // 所有 fetch 都失败，crossOrigin 最后尝试
+          const img = await loadImg(`https://image.tmdb.org/t/p/w154${pp}`);
+          if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+'(co)'); }
+          else _dbg.fail.push(m.t+'(路径:'+pp+')');
+        })();
         imgPromises.push(p);
       }
     }
