@@ -1098,6 +1098,7 @@ function generateShareCard(){
     // 加载海报图片（fetch blob → crossOrigin 双重回退）
     const imgMap = {};
     const imgPromises = [];
+    const _dbgLoaded = [], _dbgFailed = [];
     function loadImg(url){
       return new Promise(res=>{
         const img = new Image();
@@ -1113,20 +1114,30 @@ function generateShareCard(){
         const pp = posters[key(m)];
         if(pp && pp !== '__failed__'){
           const url = `https://image.tmdb.org/t/p/w154${pp}`;
-          const p = fetch(url).then(r=>r.ok?r.blob():Promise.reject())
+          const p = fetch(url).then(r=>{ if(!r.ok) throw new Error(r.status); return r.blob(); })
             .then(blob=>{
               const objUrl = URL.createObjectURL(blob);
-              return loadImg(objUrl).then(img=>{ if(img) imgMap[key(m)] = img; });
+              return loadImg(objUrl).then(img=>{
+                if(img){ imgMap[key(m)] = img; _dbgLoaded.push(m.t); }
+                else _dbgFailed.push(m.t+'(blob-img-fail)');
+              });
             }).catch(()=>{
               // fetch 失败，尝试 crossOrigin 直接加载
-              return loadImg(url).then(img=>{ if(img) imgMap[key(m)] = img; });
+              return loadImg(url).then(img=>{
+                if(img){ imgMap[key(m)] = img; _dbgLoaded.push(m.t+'(co)'); }
+                else _dbgFailed.push(m.t+'(fetch+co-fail)');
+              });
             });
           imgPromises.push(p);
+        } else {
+          _dbgFailed.push(m.t+'(no-path)');
         }
       }
     }
 
     Promise.all(imgPromises).then(()=>{
+      console.log('[ShareCard] 海报加载成功:', _dbgLoaded.length, _dbgLoaded);
+      console.log('[ShareCard] 海报加载失败:', _dbgFailed.length, _dbgFailed);
       // 背景
       const bg = ctx.createLinearGradient(0, 0, 0, H);
       bg.addColorStop(0, '#fffaf0');
