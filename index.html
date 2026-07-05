@@ -1095,7 +1095,7 @@ function generateShareCard(){
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    // 加载海报图片
+    // 加载海报图片（fetch 为 blob 避免 CORS canvas 污染）
     const imgMap = {};
     const imgPromises = [];
     for(const s of activeStudios){
@@ -1103,13 +1103,17 @@ function generateShareCard(){
       for(const m of sMovies){
         const pp = posters[key(m)];
         if(pp && pp !== '__failed__'){
-          const p = new Promise(res=>{
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = ()=>{ imgMap[key(m)] = img; res(); };
-            img.onerror = ()=>res();
-            img.src = `https://image.tmdb.org/t/p/w154${pp}`;
-          });
+          const url = `https://image.tmdb.org/t/p/w154${pp}`;
+          const p = fetch(url).then(r=>r.ok?r.blob():Promise.reject())
+            .then(blob=>{
+              const objUrl = URL.createObjectURL(blob);
+              return new Promise(res=>{
+                const img = new Image();
+                img.onload = ()=>{ imgMap[key(m)] = img; res(); };
+                img.onerror = ()=>res();
+                img.src = objUrl;
+              });
+            }).catch(()=>{});
           imgPromises.push(p);
         }
       }
