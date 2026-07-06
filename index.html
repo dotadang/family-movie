@@ -78,15 +78,14 @@
 
   /* ===== API Key banner ===== */
   .apikey{
-    background:#fffdf8;
-    border:1px solid rgba(38,185,154,.28);
-    border-left:5px solid var(--accent-2);
-    border-radius:12px;padding:18px 20px;margin:22px auto 0;
-    box-shadow:0 10px 28px rgba(38,185,154,.08);
-    max-width:900px;text-align:left;
+    background:rgba(255,255,255,.68);
+    border:1px solid rgba(38,185,154,.2);
+    border-radius:8px;padding:14px 16px;margin-top:16px;
+    box-shadow:none;text-align:left;
   }
-  .apikey h3{font-size:16px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-  .apikey ol{margin:8px 0 12px 18px;color:var(--muted);font-size:13.5px;line-height:1.8}
+  .apikey h3{font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .apikey p{color:var(--muted);font-size:13px}
+  .apikey ol{margin:8px 0 12px 18px;color:var(--muted);font-size:13px;line-height:1.75}
   .apikey ol a{color:var(--blue)}
   .apikey .input-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .apikey input{
@@ -100,7 +99,14 @@
   }
   .btn:hover{filter:brightness(1.08)}
   .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--text);box-shadow:none}
-  .apikey-set{background:#f4fbf9;border-color:rgba(47,159,211,.22)}
+  .apikey-set{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    background:rgba(240,251,247,.72);border-color:rgba(38,185,154,.24);
+  }
+  .apikey-set h3{margin:0;font-size:14px;color:#12806b}
+  .apikey-set p{margin:2px 0 0}
+  .apikey-set .input-row{margin:0;flex-shrink:0}
+  .apikey-set .btn{padding:8px 12px;font-size:12.5px}
 
   /* ===== Controls ===== */
   .controls{
@@ -146,7 +152,18 @@
   /* ===== Section ===== */
   .studio-section{margin-top:28px}
   .studio-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-  .studio-head h2{font-size:20px;font-weight:900;color:var(--ink)}
+  .studio-head h2{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:900;color:var(--ink)}
+  .studio-logo{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:46px;height:22px;padding:0 8px;border-radius:6px;
+    color:#111827;font-size:10px;font-weight:950;letter-spacing:.04em;line-height:1;
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.12),0 5px 12px rgba(53,45,28,.08);
+  }
+  .studio-logo.logo-disney{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:11px;letter-spacing:0}
+  .studio-logo.logo-dreamworks{min-width:68px;font-size:9px}
+  .studio-logo.logo-ghibli{min-width:58px}
+  .studio-logo.logo-shinkai{min-width:60px}
+  .studio-logo.logo-other{min-width:42px}
   .studio-head .bar-wrap{
     flex:1;height:9px;background:#e7e2d8;border-radius:999px;overflow:hidden;
   }
@@ -186,11 +203,11 @@
   .card-body h3{font-size:15px;font-weight:850;line-height:1.32;color:var(--ink)}
   .card-body p{font-size:12.5px;color:var(--muted);margin-top:6px;min-height:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .check{
-    position:absolute;right:10px;bottom:12px;width:24px;height:24px;border-radius:50%;
+    position:absolute;right:11px;bottom:13px;width:20px;height:20px;border-radius:50%;
     background:rgba(255,255,255,.82);display:grid;place-items:center;
-    border:1.5px solid rgba(104,112,131,.28);transition:.18s;z-index:2;
+    border:1.3px solid rgba(104,112,131,.28);transition:.18s;z-index:2;
   }
-  .check svg{width:13px;height:13px;opacity:0;transform:scale(.5);transition:.18s}
+  .check svg{width:11px;height:11px;opacity:0;transform:scale(.5);transition:.18s}
   .card.watched{border-color:rgba(38,185,154,.75);box-shadow:0 12px 26px rgba(38,185,154,.13)}
   .card.watched .poster{filter:saturate(.9)}
   .card.watched .check{background:var(--accent-2);border-color:var(--accent-2)}
@@ -211,19 +228,36 @@
 
   .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;font-size:14px}
 
-  footer{margin-top:54px;text-align:center;color:var(--muted);font-size:12.5px}
-  footer .frow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-  footer button{
-    cursor:pointer;border:1px solid var(--line);
-    background:#fff;color:var(--muted);padding:8px 16px;border-radius:8px;font-size:12.5px;
+  footer{margin-top:54px;color:var(--muted);font-size:12.5px}
+  .footer-panel{
+    width:100%;padding:14px 16px;
+    background:rgba(255,253,248,.72);border:1px solid rgba(32,37,56,.08);
+    border-radius:10px;box-shadow:0 10px 26px rgba(53,45,28,.07);
   }
-  footer button:hover{color:var(--pink);border-color:var(--pink)}
-  .backup-row{margin-top:8px;opacity:.75;transition:opacity .2s}
+  .footer-note{text-align:left;margin-bottom:12px}
+  .footer-actions{display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .footer-main{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .footer-tools{
+    display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end;align-content:center;
+    padding-left:12px;border-left:1px solid rgba(32,37,56,.08);
+  }
+  footer button{
+    cursor:pointer;border:1px solid rgba(32,37,56,.1);
+    background:rgba(255,255,255,.78);color:var(--muted);padding:7px 11px;border-radius:7px;
+    font-size:12px;font-weight:700;transition:.15s;white-space:nowrap;line-height:1.25;
+  }
+  footer button:hover{color:var(--text);border-color:#cfc6b6;background:#fff}
+  footer .danger:hover{color:var(--pink);border-color:rgba(240,92,120,.5)}
+  .footer-main .btn-add{
+    width:auto;font-size:12.5px;padding:8px 13px;border-radius:7px;
+    box-shadow:0 8px 16px rgba(32,37,56,.1);
+  }
+  .backup-row{opacity:.72;transition:opacity .2s}
   .backup-row:hover{opacity:1}
   .btn-share{
-    cursor:pointer;border:0;font-weight:800;font-size:14px;padding:10px 22px;border-radius:8px;
+    cursor:pointer;border:0;font-weight:800;font-size:12.5px;padding:8px 13px;border-radius:7px;
     background:linear-gradient(135deg,var(--blue),var(--accent-2));color:#fff;
-    box-shadow:0 10px 24px rgba(47,159,211,.22);transition:.18s;white-space:nowrap;
+    box-shadow:0 8px 18px rgba(47,159,211,.18);transition:.18s;white-space:nowrap;width:auto;
   }
   .btn-share:hover{filter:brightness(1.08);transform:translateY(-1px)}
   .share-modal{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:200;
@@ -303,6 +337,83 @@
   .spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent-2);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  @media(prefers-color-scheme:dark){
+    :root{
+      color-scheme:dark;
+      --bg:#11151d;
+      --bg-2:#171c25;
+      --card:#1d2430;
+      --card-2:#242c38;
+      --text:#e7ebf3;
+      --muted:#9ca6b8;
+      --line:#313947;
+      --ink:#f7f9fc;
+      --shadow:0 18px 44px rgba(0,0,0,.36);
+    }
+    body{
+      background:
+        radial-gradient(760px 420px at 10% -8%,rgba(255,207,90,.16),transparent 62%),
+        radial-gradient(780px 460px at 92% 0%,rgba(38,185,154,.14),transparent 60%),
+        linear-gradient(180deg,#10141c 0,#151922 46%,#111a1d 100%);
+    }
+    header.hero{
+      background:
+        linear-gradient(135deg,rgba(30,37,49,.96),rgba(34,32,41,.92) 48%,rgba(24,45,45,.9)),
+        var(--card);
+      border-color:rgba(255,255,255,.08);
+      box-shadow:0 18px 44px rgba(0,0,0,.28);
+    }
+    header.hero::before{opacity:.26}
+    .overall{background:#101522;box-shadow:0 14px 28px rgba(0,0,0,.24)}
+    .ring::before{background:#1b2332}
+    .controls{
+      background:linear-gradient(180deg,rgba(17,21,29,.96) 74%,rgba(17,21,29,0));
+    }
+    .chip,.search,.filter-group,footer button,.btn.ghost{
+      background:rgba(29,36,48,.86);border-color:rgba(255,255,255,.08);color:var(--muted);
+    }
+    .chip:hover,footer button:hover{background:#242c38;border-color:rgba(255,255,255,.16);color:var(--text)}
+    .chip.active{background:#e9bd47;border-color:#e9bd47;color:#201605}
+    .filter-group button.active{background:#e7ebf3;color:#111827}
+    .search input,.modal input,.modal select,.modal textarea{color:var(--text)}
+    .search input::placeholder,.modal input::placeholder,.modal textarea::placeholder{color:#7f8a9d}
+    .studio-head .bar-wrap{background:#2b3038}
+    .card{
+      background:rgba(29,36,48,.96);border-color:rgba(255,255,255,.08);
+      box-shadow:0 10px 26px rgba(0,0,0,.24);
+    }
+    .card:hover{border-color:rgba(255,255,255,.16);box-shadow:0 20px 44px rgba(0,0,0,.34)}
+    .card-body h3{color:var(--ink)}
+    .card.watched{border-color:rgba(38,185,154,.72);box-shadow:0 12px 28px rgba(38,185,154,.14)}
+    .card.watched .card-body h3{color:#56dcc4}
+    .card.watched .card-body::after{
+      color:#5ce0c8;background:rgba(38,185,154,.13);border-color:rgba(38,185,154,.34);
+    }
+    .check{background:rgba(23,28,37,.78);border-color:rgba(255,255,255,.18)}
+    .footer-panel,.apikey{
+      background:rgba(29,36,48,.72);border-color:rgba(255,255,255,.08);
+      box-shadow:0 14px 34px rgba(0,0,0,.22);
+    }
+    .footer-tools{border-left-color:rgba(255,255,255,.08)}
+    .apikey-set{background:rgba(24,58,54,.48);border-color:rgba(38,185,154,.28)}
+    .apikey-set h3{color:#65e4cc}
+    .apikey input,.modal input,.modal select,.modal textarea{
+      background:#111722;border-color:rgba(255,255,255,.1);
+    }
+    .modal,.share-box{
+      background:#171c25;border-color:rgba(255,255,255,.08);box-shadow:0 24px 60px rgba(0,0,0,.42);
+    }
+    .modal-mask,.share-modal{background:rgba(3,7,12,.68)}
+    .result-item{background:#1d2430;border-color:rgba(255,255,255,.08)}
+    .result-item:hover{background:#242c38;border-color:rgba(38,185,154,.45)}
+    .result-item.selected,.selected-preview{
+      background:rgba(38,185,154,.12);border-color:rgba(38,185,154,.36);
+    }
+    .result-item .r-check{background:#111722;border-color:#4b5563;color:var(--text)}
+    .modal .emoji-pick span:hover{background:#242c38}
+    .modal .emoji-pick span.sel{background:rgba(255,207,90,.18);border-color:var(--accent)}
+  }
+
   @media(max-width:560px){
     .wrap{padding:12px 12px 60px}
     header.hero{
@@ -323,7 +434,14 @@
     .row{gap:8px}
     .chips{flex:1 1 100%;min-width:0;gap:7px}
     .chip{padding:7px 12px;font-size:13px}
-    .apikey{padding:16px 14px;margin-top:20px}
+    .footer-panel{padding:14px}
+    .footer-actions{flex-direction:column;align-items:stretch;gap:10px}
+    .footer-main{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .footer-tools{justify-content:center;border-left:0;border-top:1px solid rgba(32,37,56,.08);padding:10px 0 0}
+    footer button{flex:1 1 auto}
+    .apikey{padding:12px;margin-top:12px}
+    .apikey-set{display:block;text-align:left}
+    .apikey-set .input-row{margin-top:10px}
     .apikey .input-row .btn{width:100%}
     .search{flex-basis:100%;padding:9px 12px}
     .filter-group{width:100%;justify-content:space-between}
@@ -333,6 +451,10 @@
     .studio-head h2{font-size:18px}
     .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
     .poster{font-size:36px}
+  }
+
+  @media(prefers-color-scheme:dark) and (max-width:560px){
+    .footer-tools{border-top-color:rgba(255,255,255,.08)}
   }
 </style>
 </head>
@@ -373,33 +495,35 @@
   <div id="sections"></div>
 
   <footer>
-    <p>数据保存在本机浏览器，换个设备或清缓存会重置。</p>
-    <div class="frow">
-      <button class="btn-add" id="openAdd">➕ 添加电影</button>
-      <button id="reloadPosters">🔄 重新抓取海报</button>
-      <button id="changeKey">🔑 更换 API Key</button>
-      <button id="reset">🗑 重置观看进度</button>
-    </div>
-    <div class="frow backup-row">
-      <button id="exportData">📦 备份数据</button>
-      <button id="importData">📥 导入数据</button>
-      <input type="file" id="importFile" accept=".json" style="display:none">
-    </div>
-    <div class="frow" style="margin-top:8px">
-      <button class="btn-share" id="shareCard">📤 分享已看清单</button>
-    </div>
-    <!-- API Key 设置区 -->
-    <div class="apikey" id="apikeyBox">
-      <h3>🎬 接入高清电影海报（TMDB）</h3>
-      <p style="color:var(--muted);font-size:13.5px">用真实电影海报替换彩色方块。完全免费，只需一次性粘贴一个 API Key：</p>
-      <ol>
-        <li>打开 <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener">themoviedb.org</a> 免费注册一个账号（邮箱即可，无需绑卡）</li>
-        <li>登录后进入 <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">设置 → API</a>，点 <strong>Request a new key</strong>（选 Developer，网址随便填）</li>
-        <li>复制 <strong>API Key (v3 auth)</strong> 那一长串字符，粘贴到下面</li>
-      </ol>
-      <div class="input-row">
-        <input id="apikeyInput" type="text" placeholder="粘贴你的 TMDB API Key（v3）…" autocomplete="off">
-        <button class="btn" id="saveKey">保存并加载海报</button>
+    <div class="footer-panel">
+      <p class="footer-note">数据保存在本机浏览器，换设备或清缓存前记得备份。</p>
+      <div class="footer-actions">
+        <div class="footer-main">
+          <button class="btn-add" id="openAdd">➕ 添加电影</button>
+          <button class="btn-share" id="shareCard">📤 分享已看清单</button>
+        </div>
+        <div class="footer-tools">
+          <button id="reloadPosters">🔄 重新抓取海报</button>
+          <button id="changeKey">🔑 API Key</button>
+          <button class="backup-row" id="exportData">📦 备份</button>
+          <button class="backup-row" id="importData">📥 导入</button>
+          <button class="danger" id="reset">🗑 重置</button>
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </div>
+      </div>
+      <!-- API Key 设置区 -->
+      <div class="apikey" id="apikeyBox">
+        <h3>🎬 接入高清电影海报（TMDB）</h3>
+        <p>用真实电影海报替换彩色方块。完全免费，只需一次性粘贴一个 API Key：</p>
+        <ol>
+          <li>打开 <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener">themoviedb.org</a> 免费注册一个账号（邮箱即可，无需绑卡）</li>
+          <li>登录后进入 <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">设置 → API</a>，点 <strong>Request a new key</strong>（选 Developer，网址随便填）</li>
+          <li>复制 <strong>API Key (v3 auth)</strong> 那一长串字符，粘贴到下面</li>
+        </ol>
+        <div class="input-row">
+          <input id="apikeyInput" type="text" placeholder="粘贴你的 TMDB API Key（v3）…" autocomplete="off">
+          <button class="btn" id="saveKey">保存并加载海报</button>
+        </div>
       </div>
     </div>
   </footer>
@@ -467,12 +591,12 @@
 <script>
 /* ============== 数据 ============== */
 const STUDIOS = [
-  { id:'pixar',     name:'皮克斯', en:'Pixar',         color:'#4cc9f0', emoji:'🚀' },
-  { id:'disney',    name:'迪士尼', en:'Disney',        color:'#ef476f', emoji:'🏰' },
-  { id:'dreamworks',name:'梦工厂', en:'DreamWorks',    color:'#9b5de5', emoji:'🌙' },
-  { id:'ghibli',    name:'吉卜力', en:'Studio Ghibli', color:'#06d6a0', emoji:'🌿' },
-  { id:'shinkai',   name:'新海诚', en:'Makoto Shinkai',color:'#f15bb5', emoji:'🌌' },
-  { id:'other',     name:'其他',   en:'Other',         color:'#fee440', emoji:'⭐' },
+  { id:'pixar',     name:'皮克斯', en:'Pixar',         color:'#4cc9f0', emoji:'🚀', logo:'PIXAR' },
+  { id:'disney',    name:'迪士尼', en:'Disney',        color:'#ef476f', emoji:'🏰', logo:'Disney' },
+  { id:'dreamworks',name:'梦工厂', en:'DreamWorks',    color:'#9b5de5', emoji:'🌙', logo:'DREAM' },
+  { id:'ghibli',    name:'吉卜力', en:'Studio Ghibli', color:'#06d6a0', emoji:'🌿', logo:'GHIBLI' },
+  { id:'shinkai',   name:'新海诚', en:'Makoto Shinkai',color:'#f15bb5', emoji:'🌌', logo:'SHINKAI' },
+  { id:'other',     name:'其他',   en:'Other',         color:'#fee440', emoji:'⭐', logo:'OTHER' },
 ];
 
 // 内置片单
@@ -591,7 +715,23 @@ function saveCustom(){ localStorage.setItem(KEY_CUSTOM, JSON.stringify(customMov
 // 合并内置 + 自定义片单
 function allMovies(){ return [...BUILTIN_MOVIES, ...customMovies]; }
 function key(m){ return m.s + '|' + m.t; }
-const IMG = p => p ? `https://image.tmdb.org/t/p/w500${p}` : '';
+function posterPathOf(m){
+  return posters[key(m)] || m.poster_path || m.p || '';
+}
+function isPosterFailed(p){ return !p || p === '__failed__'; }
+function tmdbImg(p, size='w500'){
+  if(isPosterFailed(p)) return '';
+  if(/^https?:\/\//i.test(p) || /^data:/i.test(p) || /^blob:/i.test(p)) return p;
+  return `https://image.tmdb.org/t/p/${size}${p}`;
+}
+const IMG = p => tmdbImg(p, 'w500');
+function cardPosterSrc(m){
+  const img = sectionsEl.querySelector(`.card[data-key="${CSS.escape(key(m))}"] .poster img`);
+  return img ? (img.currentSrc || img.src || img.getAttribute('src') || '') : '';
+}
+function uniq(list){
+  return [...new Set(list.filter(Boolean))];
+}
 
 /* ============== TMDB 抓取 ============== */
 async function fetchPosterPath(movie){
@@ -691,7 +831,7 @@ function render(){
     const pct = totalInStudio? Math.round(doneInStudio/totalInStudio*100):0;
     html += `<section class="studio-section">
       <div class="studio-head">
-        <h2>${s.emoji} ${s.name} <span style="color:var(--muted);font-weight:500;font-size:13px">${s.en}</span></h2>
+        <h2>${studioLogoHtml(s)} ${s.name} <span style="color:var(--muted);font-weight:500;font-size:13px">${s.en}</span></h2>
         <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:linear-gradient(90deg,${s.color},${s.color}aa)"></div></div>
         <div class="pct">${doneInStudio}/${totalInStudio} · ${pct}%</div>
       </div>
@@ -721,10 +861,13 @@ function render(){
 }
 
 function studioOf(m){ return STUDIOS.find(x=>x.id===m.s) || STUDIOS.find(x=>x.id==='other'); }
+function studioLogoHtml(s){
+  return `<span class="studio-logo logo-${s.id}" style="background:${s.color}">${s.logo || s.name}</span>`;
+}
 
 function posterHtml(m){
-  const cached = posters[key(m)];
-  if(cached && cached!=='__failed__') return `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
+  const cached = posterPathOf(m);
+  if(!isPosterFailed(cached)) return `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
   if(!cached || cached==='__failed__' || !apiKey) return `<div class="fallback">${m.e||'🎬'}</div>`;
   return `<div class="poster-load">⏳</div><div class="fallback" style="opacity:.4">${m.e||'🎬'}</div>`;
 }
@@ -750,39 +893,51 @@ function refreshCardPoster(m){
   const el = sectionsEl.querySelector(`.card[data-key="${CSS.escape(key(m))}"] .poster`);
   if(!el) return;
   const s = studioOf(m);
-  const cached = posters[key(m)];
+  const cached = posterPathOf(m);
   let inner = `<span class="yr">${m.y||''}</span><span class="badge" style="background:${s.color}d9">${s.name}</span>`;
-  if(cached && cached!=='__failed__') inner += `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
+  if(!isPosterFailed(cached)) inner += `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
   else inner += `<div class="fallback">${m.e||'🎬'}</div>`;
   el.innerHTML = inner;
 }
 
 /* ============== API Key UI ============== */
 const apikeyBox = document.getElementById('apikeyBox');
-const apikeyInput = document.getElementById('apikeyInput');
+const apikeySetupHtml = apikeyBox.innerHTML;
+function bindApiKeyForm(){
+  const input = document.getElementById('apikeyInput');
+  const button = document.getElementById('saveKey');
+  if(!input || !button) return;
+  button.onclick = ()=>{
+    const v = input.value.trim();
+    if(!v){ alert('请先粘贴 API Key'); return; }
+    apiKey = v; localStorage.setItem(KEY_APIKEY, v); updateKeyUI(); ensurePosters(true);
+  };
+  input.onkeydown = e=>{ if(e.key==='Enter') button.click(); };
+}
 function updateKeyUI(){
   if(apiKey){
     apikeyBox.classList.add('apikey-set');
-    let status = '<p style="color:var(--accent-2);font-size:13.5px;margin-top:8px">✅ 海报已启用';
+    let status = '✅ 海报已启用';
     if(fetching) status += ' · 正在加载海报…';
-    status += '</p>';
-    apikeyBox.innerHTML = `<h3>🎬 海报已接入（TMDB）</h3>
-      <p style="color:var(--muted);font-size:13.5px">Key 已保存到本机。海报会缓存，下次打开秒加载。</p>
-      ${status}
-      <div class="input-row" style="margin-top:12px"><button class="btn ghost" id="changeKey2">更换 / 清除 API Key</button></div>`;
+    apikeyBox.innerHTML = `<div>
+        <h3>🎬 海报已接入（TMDB）</h3>
+        <p>${status}，Key 已保存到本机。</p>
+      </div>
+      <div class="input-row"><button class="btn ghost" id="changeKey2">更换 / 清除</button></div>`;
     document.getElementById('changeKey2').onclick = clearKey;
-  } else { apikeyBox.classList.remove('apikey-set'); }
+  } else {
+    apikeyBox.classList.remove('apikey-set');
+    if(!document.getElementById('apikeyInput')){
+      apikeyBox.innerHTML = apikeySetupHtml;
+      bindApiKeyForm();
+    }
+  }
 }
 function clearKey(){
   if(!confirm('清除 API Key？海报会回到彩色卡片（观看进度不受影响）。')) return;
   apiKey=''; localStorage.removeItem(KEY_APIKEY); updateKeyUI(); render();
 }
-document.getElementById('saveKey').onclick = ()=>{
-  const v = apikeyInput.value.trim();
-  if(!v){ alert('请先粘贴 API Key'); return; }
-  apiKey = v; localStorage.setItem(KEY_APIKEY, v); updateKeyUI(); ensurePosters(true);
-};
-apikeyInput.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('saveKey').click(); });
+bindApiKeyForm();
 
 /* ============== 添加电影弹窗 ============== */
 const modal = document.getElementById('addModal');
@@ -982,6 +1137,7 @@ document.getElementById('confirmAdd').onclick = ()=>{
     const t = r.title || r.original_title || '';
     const y = r.release_date ? new Date(r.release_date).getFullYear() : new Date().getFullYear();
     const newMovie = { s: studio, t, e: pickedEmoji, y, n: note };
+    if(r.poster_path) newMovie.poster_path = r.poster_path;
     if(allMovies().some(m=>key(m)===key(newMovie))){
       skipped++;
       continue;
@@ -1112,28 +1268,32 @@ function generateShareCard(){
     for(const s of activeStudios){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       for(const m of sMovies){
-        const pp = posters[key(m)];
-        if(!pp || pp==='__failed__'){
+        const pp = posterPathOf(m);
+        const urls = uniq([
+          cardPosterSrc(m),
+          tmdbImg(pp, 'w154'),
+          tmdbImg(pp, 'w300'),
+          tmdbImg(pp, 'w500')
+        ]);
+        if(isPosterFailed(pp) && urls.length===0){
           _dbg.fail.push(m.t+'(无路径)');
           continue;
         }
         const p = (async ()=>{
-          // 尝试3次 crossOrigin，每次间隔500ms（CDN节点可能切换）
-          for(let i=0;i<3;i++){
-            if(i>0) await delay(500);
-            const img = await loadImg(`https://image.tmdb.org/t/p/w154${pp}`);
-            if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+(i>0?'(重试'+i+')':'')); return; }
+          // 优先复用卡片当前显示的海报地址，再按 TMDB 尺寸兜底。
+          for(let i=0;i<urls.length;i++){
+            const img = await loadImg(urls[i]);
+            if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+(i>0?'(候选'+i+')':'')); return; }
           }
           // crossOrigin 全部失败，fetch 作为最后手段
           try{
-            const sizes = ['w154','w300','w500'];
-            for(const sz of sizes){
-              const r = await fetch(`https://image.tmdb.org/t/${sz}${pp}`);
+            for(const url of urls){
+              const r = await fetch(url);
               if(r.ok){
                 const blob = await r.blob();
                 const objUrl = URL.createObjectURL(blob);
                 const img = await loadImg(objUrl);
-                if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+'(fetch-'+sz+')'); return; }
+                if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+'(fetch)'); return; }
               }
             }
           }catch(e){}
@@ -1145,7 +1305,6 @@ function generateShareCard(){
 
     Promise.all(imgPromises).then(()=>{
       console.log('[ShareCard] 海报:', _dbg);
-      if(_dbg.fail.length > 0) alert('海报调试\n成功:'+_dbg.ok.length+' '+_dbg.ok.join(',')+'\n失败:'+_dbg.fail.length+' '+_dbg.fail.join(','));
       // 背景
       const bg = ctx.createLinearGradient(0, 0, 0, H);
       bg.addColorStop(0, '#fffaf0');
@@ -1188,10 +1347,18 @@ function generateShareCard(){
         const sPct = Math.round(sMovies.length/sTotal*100);
 
         // 厂牌标题
+        const logoText = s.logo || s.name;
+        ctx.font = 'bold 9.5px -apple-system, "PingFang SC", sans-serif';
+        const logoW = Math.max(42, ctx.measureText(logoText).width + 14);
+        ctx.fillStyle = s.color;
+        roundRect(ctx, PAD + 6, y - 3, logoW, 20, 5);
+        ctx.fill();
+        ctx.fillStyle = '#111827';
+        ctx.fillText(logoText, PAD + 13, y + 11);
         ctx.fillStyle = '#111827';
         ctx.font = 'bold 17px -apple-system, "PingFang SC", sans-serif';
-        const label = `${s.emoji} ${s.name}`;
-        ctx.fillText(label, PAD + 6, y + 14);
+        const labelX = PAD + 14 + logoW;
+        ctx.fillText(s.name, labelX, y + 14);
         ctx.fillStyle = '#687083';
         ctx.font = '13px -apple-system, sans-serif';
         const statText = `${sMovies.length}/${sTotal} · ${sPct}%`;
@@ -1199,7 +1366,7 @@ function generateShareCard(){
 
         // 进度条
         ctx.font = 'bold 17px -apple-system, "PingFang SC", sans-serif';
-        const barX = PAD + ctx.measureText(label).width + 20;
+        const barX = labelX + ctx.measureText(s.name).width + 20;
         const statW = ctx.measureText(statText).width;
         const barEndX = W - PAD - statW - 16;
         const barW = barEndX - barX;
