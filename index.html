@@ -716,7 +716,9 @@ function saveCustom(){ localStorage.setItem(KEY_CUSTOM, JSON.stringify(customMov
 function allMovies(){ return [...BUILTIN_MOVIES, ...customMovies]; }
 function key(m){ return m.s + '|' + m.t; }
 function posterPathOf(m){
-  return posters[key(m)] || m.poster_path || m.p || '';
+  const cached = posters[key(m)];
+  if(cached && cached !== '__failed__') return cached;
+  return m.poster_path || m.p || '';
 }
 function isPosterFailed(p){ return !p || p === '__failed__'; }
 function tmdbImg(p, size='w500'){
@@ -748,6 +750,28 @@ async function fetchPosterPath(movie){
   if(!pool.length) return null;
   pool.sort((a,b)=>(b.popularity||0)-(a.popularity||0));
   return pool[0].poster_path;
+}
+
+async function recoverPosterPath(movie){
+  if(!apiKey) return '';
+  try{
+    const p = await fetchPosterPath(movie);
+    posters[key(movie)] = p || '__failed__';
+    if(p){
+      const custom = customMovies.find(m => key(m)===key(movie));
+      if(custom && !custom.poster_path && !custom.p){
+        custom.poster_path = p;
+        saveCustom();
+      }
+    }
+    savePosters();
+    refreshCardPoster(movie);
+    return p || '';
+  }catch(e){
+    if(!String(e.message).includes('API Key 无效')) posters[key(movie)] = '__failed__';
+    savePosters();
+    return '';
+  }
 }
 
 // 搜索 TMDB，返回多个候选
@@ -1264,22 +1288,22 @@ function generateShareCard(){
         img.src = url;
       });
     }
-    function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
     for(const s of activeStudios){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       for(const m of sMovies){
-        const pp = posterPathOf(m);
-        const urls = uniq([
-          cardPosterSrc(m),
-          tmdbImg(pp, 'w154'),
-          tmdbImg(pp, 'w300'),
-          tmdbImg(pp, 'w500')
-        ]);
-        if(isPosterFailed(pp) && urls.length===0){
-          _dbg.fail.push(m.t+'(无路径)');
-          continue;
-        }
         const p = (async ()=>{
+          let pp = posterPathOf(m);
+          if(isPosterFailed(pp)) pp = await recoverPosterPath(m);
+          const urls = uniq([
+            cardPosterSrc(m),
+            tmdbImg(pp, 'w154'),
+            tmdbImg(pp, 'w300'),
+            tmdbImg(pp, 'w500')
+          ]);
+          if(isPosterFailed(pp) && urls.length===0){
+            _dbg.fail.push(m.t+'(无路径)');
+            return;
+          }
           // 优先复用卡片当前显示的海报地址，再按 TMDB 尺寸兜底。
           for(let i=0;i<urls.length;i++){
             const img = await loadImg(urls[i]);
