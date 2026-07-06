@@ -731,10 +731,6 @@ function cardPosterSrc(m){
   const img = sectionsEl.querySelector(`.card[data-key="${CSS.escape(key(m))}"] .poster img`);
   return img ? (img.currentSrc || img.src || img.getAttribute('src') || '') : '';
 }
-function cardPosterImg(m){
-  const img = sectionsEl.querySelector(`.card[data-key="${CSS.escape(key(m))}"] .poster img`);
-  return img && img.complete && img.naturalWidth > 0 ? img : null;
-}
 function uniq(list){
   return [...new Set(list.filter(Boolean))];
 }
@@ -895,7 +891,7 @@ function studioLogoHtml(s){
 
 function posterHtml(m){
   const cached = posterPathOf(m);
-  if(!isPosterFailed(cached)) return `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy" crossorigin="anonymous">`;
+  if(!isPosterFailed(cached)) return `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
   if(!cached || cached==='__failed__' || !apiKey) return `<div class="fallback">${m.e||'🎬'}</div>`;
   return `<div class="poster-load">⏳</div><div class="fallback" style="opacity:.4">${m.e||'🎬'}</div>`;
 }
@@ -923,7 +919,7 @@ function refreshCardPoster(m){
   const s = studioOf(m);
   const cached = posterPathOf(m);
   let inner = `<span class="yr">${m.y||''}</span><span class="badge" style="background:${s.color}d9">${s.name}</span>`;
-  if(!isPosterFailed(cached)) inner += `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy" crossorigin="anonymous">`;
+  if(!isPosterFailed(cached)) inner += `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
   else inner += `<div class="fallback">${m.e||'🎬'}</div>`;
   el.innerHTML = inner;
 }
@@ -1296,12 +1292,6 @@ function generateShareCard(){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       for(const m of sMovies){
         const p = (async ()=>{
-          const cardImg = cardPosterImg(m);
-          if(cardImg){
-            imgMap[key(m)] = cardImg;
-            _dbg.ok.push(m.t+'(页面)');
-            return;
-          }
           let pp = posterPathOf(m);
           if(isPosterFailed(pp)) pp = await recoverPosterPath(m);
           const urls = uniq([
