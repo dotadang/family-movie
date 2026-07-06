@@ -1275,59 +1275,72 @@ function generateShareCard(){
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    // 加载海报图片（crossOrigin 直接加载 + 重试，失败则 fetch 兜底）
+    // 加载海报图片：手机端一次性并发加载远程图容易失败，限制并发并优先转成 blob 再画。
     const imgMap = {};
-    const imgPromises = [];
+    const imgTasks = [];
     const _dbg = {ok:[], fail:[]};
-    function loadImg(url){
+    function loadImg(url, useCors=true){
       return new Promise(res=>{
         const img = new Image();
-        img.crossOrigin = 'anonymous';
+        if(useCors) img.crossOrigin = 'anonymous';
         img.onload = ()=>res(img);
         img.onerror = ()=>res(null);
         img.src = url;
       });
     }
+    async function fetchImg(url){
+      try{
+        const r = await fetch(url, {cache:'force-cache'});
+        if(!r.ok) return null;
+        const blob = await r.blob();
+        const objUrl = URL.createObjectURL(blob);
+        return await loadImg(objUrl, false);
+      }catch(e){
+        return null;
+      }
+    }
+    async function runLimited(tasks, limit=4){
+      let next = 0;
+      const workers = Array.from({length:Math.min(limit, tasks.length)}, async ()=>{
+        while(next < tasks.length){
+          const task = tasks[next++];
+          await task();
+        }
+      });
+      await Promise.all(workers);
+    }
     for(const s of activeStudios){
       const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
       for(const m of sMovies){
-        const p = (async ()=>{
+        imgTasks.push(async ()=>{
           let pp = posterPathOf(m);
           if(isPosterFailed(pp)) pp = await recoverPosterPath(m);
           const urls = uniq([
-            cardPosterSrc(m),
             tmdbImg(pp, 'w154'),
             tmdbImg(pp, 'w300'),
-            tmdbImg(pp, 'w500')
+            tmdbImg(pp, 'w500'),
+            cardPosterSrc(m)
           ]);
           if(isPosterFailed(pp) && urls.length===0){
             _dbg.fail.push(m.t+'(无路径)');
             return;
           }
-          // 优先复用卡片当前显示的海报地址，再按 TMDB 尺寸兜底。
+          // 先用 fetch 变成本页 blob，避免移动端 canvas 绘制远程图不稳定。
+          for(let i=0;i<urls.length;i++){
+            const img = await fetchImg(urls[i]);
+            if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+(i>0?'(blob候选'+i+')':'(blob)')); return; }
+          }
+          // fetch 不可用时，再用跨域图片加载兜底。
           for(let i=0;i<urls.length;i++){
             const img = await loadImg(urls[i]);
             if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+(i>0?'(候选'+i+')':'')); return; }
           }
-          // crossOrigin 全部失败，fetch 作为最后手段
-          try{
-            for(const url of urls){
-              const r = await fetch(url);
-              if(r.ok){
-                const blob = await r.blob();
-                const objUrl = URL.createObjectURL(blob);
-                const img = await loadImg(objUrl);
-                if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+'(fetch)'); return; }
-              }
-            }
-          }catch(e){}
           _dbg.fail.push(m.t+'(路径:'+pp+')');
-        })();
-        imgPromises.push(p);
+        });
       }
     }
 
-    Promise.all(imgPromises).then(()=>{
+    runLimited(imgTasks, 4).then(()=>{
       console.log('[ShareCard] 海报:', _dbg);
       // 背景
       const bg = ctx.createLinearGradient(0, 0, 0, H);
