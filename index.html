@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>亲子动画打卡 · 和宝贝一起补经典</title>
+<script>
+  (function(){
+    const params = new URLSearchParams(location.search);
+    const theme = params.get('theme') || localStorage.getItem('family-movie-theme') || '';
+    if(theme){
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem('family-movie-theme', theme);
+    }
+  })();
+</script>
 <style>
   :root{
     --bg:#f7f4ed;
@@ -13,22 +23,23 @@
     --text:#202538;
     --muted:#687083;
     --line:#e4ded3;
-    --accent:#ffcf5a;
-    --accent-2:#26b99a;
-    --pink:#f05c78;
-    --blue:#2f9fd3;
+    --accent:#e8c86c;
+    --accent-2:#68b8a8;
+    --pink:#d9788d;
+    --blue:#6faeca;
     --ink:#111827;
     --radius:8px;
     --shadow:0 18px 44px rgba(53,45,28,.13);
+    --control-h:40px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
     background:
-      radial-gradient(820px 420px at 12% -8%,rgba(255,207,90,.45),transparent 60%),
-      radial-gradient(780px 420px at 92% 2%,rgba(73,190,171,.25),transparent 58%),
-      linear-gradient(180deg,#fffaf0 0,#f6f4ed 42%,#eef6f5 100%);
+      radial-gradient(820px 420px at 12% -8%,rgba(232,200,108,.24),transparent 60%),
+      radial-gradient(780px 420px at 92% 2%,rgba(104,184,168,.16),transparent 58%),
+      linear-gradient(180deg,#fbf7ee 0,#f6f4ed 42%,#eef4f2 100%);
     color:var(--text);
     min-height:100vh;
     line-height:1.5;
@@ -41,7 +52,7 @@
     position:relative;overflow:hidden;
     display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px;
     background:
-      linear-gradient(135deg,rgba(255,255,255,.94),rgba(255,247,225,.88) 48%,rgba(218,245,238,.9)),
+      linear-gradient(135deg,rgba(255,255,255,.94),rgba(250,244,226,.86) 48%,rgba(231,243,239,.88)),
       var(--card);
     border:1px solid rgba(44,62,80,.08);
     padding:34px 32px;border-radius:20px;box-shadow:var(--shadow);
@@ -58,7 +69,7 @@
   }
   .hero-text{flex:1;min-width:260px}
   .hero h1{font-size:34px;font-weight:900;letter-spacing:0;color:var(--ink)}
-  .hero h1 .spark{color:#f5b400}
+  .hero h1 .spark{color:#d9b24d}
   .hero p{color:var(--muted);margin-top:10px;font-size:15.5px;max-width:680px}
   .overall{
     position:relative;z-index:1;
@@ -79,7 +90,7 @@
   /* ===== API Key banner ===== */
   .apikey{
     background:rgba(255,255,255,.68);
-    border:1px solid rgba(38,185,154,.2);
+    border:1px solid rgba(104,184,168,.18);
     border-radius:8px;padding:14px 16px;margin-top:16px;
     box-shadow:none;text-align:left;
   }
@@ -92,18 +103,18 @@
     flex:1;min-width:220px;background:#fff;border:1px solid var(--line);
     color:var(--text);padding:11px 14px;border-radius:8px;font-size:14px;outline:0;font-family:inherit;
   }
-  .apikey input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(38,185,154,.14)}
+  .apikey input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(104,184,168,.12)}
   .btn{
     cursor:pointer;border:0;font-weight:800;font-size:14px;padding:11px 18px;border-radius:8px;
-    background:var(--accent-2);color:#06251f;transition:.15s;box-shadow:0 8px 18px rgba(38,185,154,.18);
+    background:var(--accent-2);color:#08221d;transition:.15s;box-shadow:0 8px 18px rgba(104,184,168,.14);
   }
   .btn:hover{filter:brightness(1.08)}
   .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--text);box-shadow:none}
   .apikey-set{
     display:flex;align-items:center;justify-content:space-between;gap:14px;
-    background:rgba(240,251,247,.72);border-color:rgba(38,185,154,.24);
+    background:rgba(244,250,247,.72);border-color:rgba(104,184,168,.22);
   }
-  .apikey-set h3{margin:0;font-size:14px;color:#12806b}
+  .apikey-set h3{margin:0;font-size:14px;color:#4b9588}
   .apikey-set p{margin:2px 0 0}
   .apikey-set .input-row{margin:0;flex-shrink:0}
   .apikey-set .btn{padding:8px 12px;font-size:12.5px}
@@ -124,24 +135,33 @@
     transition:.18s;display:inline-flex;align-items:center;gap:6px;
   }
   .chip:hover{color:var(--text);border-color:#cfc6b6;background:#fff}
-  .chip.active{color:#392800;background:var(--accent);border-color:#e8b83c;box-shadow:0 8px 16px rgba(255,207,90,.25)}
+  .chip.active{color:#392800;background:var(--accent);border-color:#d7b85e;box-shadow:0 8px 16px rgba(232,200,108,.18)}
   .chip .dot{width:9px;height:9px;border-radius:50%}
   .chip .cnt{opacity:.7;font-variant-numeric:tabular-nums}
 
   .search{
     flex:1;min-width:200px;display:flex;align-items:center;gap:8px;
     background:#fff;border:1px solid var(--line);
-    padding:10px 14px;border-radius:8px;box-shadow:0 8px 18px rgba(53,45,28,.06);
+    height:var(--control-h);padding:0 14px;border-radius:8px;box-shadow:0 8px 18px rgba(53,45,28,.06);
   }
   .search input{
     flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:14px;
   }
-  .filter-group{display:flex;gap:4px;background:#fff;padding:4px;border-radius:8px;border:1px solid var(--line)}
+  .filter-group{display:flex;gap:4px;background:#fff;padding:3px;border-radius:8px;border:1px solid var(--line);height:var(--control-h)}
   .filter-group button{
     cursor:pointer;border:0;background:transparent;color:var(--muted);
-    padding:7px 13px;border-radius:6px;font-size:13px;font-weight:700;transition:.15s;
+    min-width:58px;padding:0 13px;border-radius:6px;font-size:13px;font-weight:700;transition:.15s;
   }
   .filter-group button.active{background:#202538;color:#fff}
+  .view-options{display:flex;gap:8px;flex-wrap:wrap}
+  .view-select{
+    display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);
+    height:var(--control-h);padding:0 11px;border-radius:8px;color:var(--muted);font-size:13px;font-weight:700;
+  }
+  .view-select select{
+    border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;
+    outline:0;cursor:pointer;min-width:82px;
+  }
   .btn-add{
     cursor:pointer;border:0;background:#202538;color:#fff;font-weight:800;
     padding:10px 16px;border-radius:8px;font-size:13.5px;transition:.15s;white-space:nowrap;
@@ -208,14 +228,14 @@
     border:1.3px solid rgba(104,112,131,.28);transition:.18s;z-index:2;
   }
   .check svg{width:11px;height:11px;opacity:0;transform:scale(.5);transition:.18s}
-  .card.watched{border-color:rgba(38,185,154,.75);box-shadow:0 12px 26px rgba(38,185,154,.13)}
+  .card.watched{border-color:rgba(104,184,168,.62);box-shadow:0 12px 26px rgba(104,184,168,.1)}
   .card.watched .poster{filter:saturate(.9)}
   .card.watched .check{background:var(--accent-2);border-color:var(--accent-2)}
   .card.watched .check svg{opacity:1;transform:scale(1)}
-  .card.watched .card-body h3{color:#12806b;padding-right:38px}
+  .card.watched .card-body h3{color:#4b9588;padding-right:38px}
   .card.watched .card-body::after{
     content:"已看";position:absolute;right:10px;top:10px;font-size:11px;font-weight:800;
-    color:#12806b;background:#e8faf4;border:1px solid rgba(38,185,154,.26);
+    color:#4b9588;background:#edf8f4;border:1px solid rgba(104,184,168,.24);
     padding:2px 6px;border-radius:999px;z-index:2;
   }
   .poster-load{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--muted);z-index:1}
@@ -257,7 +277,7 @@
   .btn-share{
     cursor:pointer;border:0;font-weight:800;font-size:12.5px;padding:8px 13px;border-radius:7px;
     background:linear-gradient(135deg,var(--blue),var(--accent-2));color:#fff;
-    box-shadow:0 8px 18px rgba(47,159,211,.18);transition:.18s;white-space:nowrap;width:auto;
+    box-shadow:0 8px 18px rgba(111,174,202,.14);transition:.18s;white-space:nowrap;width:auto;
   }
   .btn-share:hover{filter:brightness(1.08);transform:translateY(-1px)}
   .share-modal{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:200;
@@ -307,7 +327,7 @@
     border:1px solid var(--line);background:#fff;transition:.15s;align-items:flex-start;
   }
   .result-item:hover{border-color:var(--accent-2);background:var(--card-2)}
-  .result-item.selected{border-color:var(--accent-2);background:#f0fbf7;box-shadow:0 0 0 2px rgba(38,185,154,.12)}
+  .result-item.selected{border-color:var(--accent-2);background:#f3f8f5;box-shadow:0 0 0 2px rgba(104,184,168,.1)}
   .result-item .r-check{
     width:22px;height:22px;border-radius:50%;border:2px solid #cfd7d3;
     display:grid;place-items:center;flex-shrink:0;margin-top:20px;
@@ -322,7 +342,7 @@
   .result-item .r-overview{font-size:11.5px;color:var(--muted);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .selected-preview{
     display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:8px;
-    background:#f0fbf7;border:1px solid rgba(38,185,154,.3);margin-top:10px;
+    background:#f3f8f5;border:1px solid rgba(104,184,168,.24);margin-top:10px;
   }
   .selected-preview img{width:54px;height:81px;border-radius:6px;object-fit:cover;flex-shrink:0}
   .selected-preview .sp-noimg{width:54px;height:81px;border-radius:6px;background:var(--bg-2);display:grid;place-items:center;font-size:22px;flex-shrink:0}
@@ -352,13 +372,13 @@
     }
     body{
       background:
-        radial-gradient(760px 420px at 10% -8%,rgba(255,207,90,.16),transparent 62%),
-        radial-gradient(780px 460px at 92% 0%,rgba(38,185,154,.14),transparent 60%),
+        radial-gradient(760px 420px at 10% -8%,rgba(232,200,108,.1),transparent 62%),
+        radial-gradient(780px 460px at 92% 0%,rgba(104,184,168,.1),transparent 60%),
         linear-gradient(180deg,#10141c 0,#151922 46%,#111a1d 100%);
     }
     header.hero{
       background:
-        linear-gradient(135deg,rgba(30,37,49,.96),rgba(34,32,41,.92) 48%,rgba(24,45,45,.9)),
+        linear-gradient(135deg,rgba(30,37,49,.96),rgba(34,32,41,.92) 48%,rgba(27,43,43,.88)),
         var(--card);
       border-color:rgba(255,255,255,.08);
       box-shadow:0 18px 44px rgba(0,0,0,.28);
@@ -372,6 +392,8 @@
     .chip,.search,.filter-group,footer button,.btn.ghost{
       background:rgba(29,36,48,.86);border-color:rgba(255,255,255,.08);color:var(--muted);
     }
+    .view-select{background:rgba(29,36,48,.86);border-color:rgba(255,255,255,.08);color:var(--muted)}
+    .view-select select{color:var(--text);background:#1d2430}
     .chip:hover,footer button:hover{background:#242c38;border-color:rgba(255,255,255,.16);color:var(--text)}
     .chip.active{background:#e9bd47;border-color:#e9bd47;color:#201605}
     .filter-group button.active{background:#e7ebf3;color:#111827}
@@ -384,10 +406,10 @@
     }
     .card:hover{border-color:rgba(255,255,255,.16);box-shadow:0 20px 44px rgba(0,0,0,.34)}
     .card-body h3{color:var(--ink)}
-    .card.watched{border-color:rgba(38,185,154,.72);box-shadow:0 12px 28px rgba(38,185,154,.14)}
-    .card.watched .card-body h3{color:#56dcc4}
+    .card.watched{border-color:rgba(104,184,168,.56);box-shadow:0 12px 28px rgba(104,184,168,.11)}
+    .card.watched .card-body h3{color:#8bcfc2}
     .card.watched .card-body::after{
-      color:#5ce0c8;background:rgba(38,185,154,.13);border-color:rgba(38,185,154,.34);
+      color:#8bcfc2;background:rgba(104,184,168,.12);border-color:rgba(104,184,168,.28);
     }
     .check{background:rgba(23,28,37,.78);border-color:rgba(255,255,255,.18)}
     .footer-panel,.apikey{
@@ -395,8 +417,8 @@
       box-shadow:0 14px 34px rgba(0,0,0,.22);
     }
     .footer-tools{border-left-color:rgba(255,255,255,.08)}
-    .apikey-set{background:rgba(24,58,54,.48);border-color:rgba(38,185,154,.28)}
-    .apikey-set h3{color:#65e4cc}
+    .apikey-set{background:rgba(36,61,58,.42);border-color:rgba(104,184,168,.24)}
+    .apikey-set h3{color:#98d5ca}
     .apikey input,.modal input,.modal select,.modal textarea{
       background:#111722;border-color:rgba(255,255,255,.1);
     }
@@ -405,13 +427,13 @@
     }
     .modal-mask,.share-modal{background:rgba(3,7,12,.68)}
     .result-item{background:#1d2430;border-color:rgba(255,255,255,.08)}
-    .result-item:hover{background:#242c38;border-color:rgba(38,185,154,.45)}
+    .result-item:hover{background:#242c38;border-color:rgba(104,184,168,.32)}
     .result-item.selected,.selected-preview{
-      background:rgba(38,185,154,.12);border-color:rgba(38,185,154,.36);
+      background:rgba(104,184,168,.1);border-color:rgba(104,184,168,.28);
     }
     .result-item .r-check{background:#111722;border-color:#4b5563;color:var(--text)}
     .modal .emoji-pick span:hover{background:#242c38}
-    .modal .emoji-pick span.sel{background:rgba(255,207,90,.18);border-color:var(--accent)}
+    .modal .emoji-pick span.sel{background:rgba(232,200,108,.14);border-color:var(--accent)}
   }
 
   @media(max-width:560px){
@@ -443,9 +465,12 @@
     .apikey-set{display:block;text-align:left}
     .apikey-set .input-row{margin-top:10px}
     .apikey .input-row .btn{width:100%}
-    .search{flex-basis:100%;padding:9px 12px}
+    .search{flex-basis:100%;padding:0 12px}
     .filter-group{width:100%;justify-content:space-between}
     .filter-group button{flex:1}
+    .view-options{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .view-select{justify-content:space-between}
+    .view-select select{min-width:0;max-width:100%}
     .studio-section{margin-top:22px}
     .studio-head{gap:8px;margin-bottom:10px}
     .studio-head h2{font-size:18px}
@@ -455,6 +480,87 @@
 
   @media(prefers-color-scheme:dark) and (max-width:560px){
     .footer-tools{border-top-color:rgba(255,255,255,.08)}
+  }
+
+  :root[data-theme="light"]{
+    color-scheme:light;
+    --bg:#f7f4ed;
+    --bg-2:#fffdf8;
+    --card:#ffffff;
+    --card-2:#f1f5f4;
+    --text:#202538;
+    --muted:#687083;
+    --line:#e4ded3;
+    --ink:#111827;
+    --shadow:0 18px 44px rgba(53,45,28,.13);
+  }
+  :root[data-theme="light"] body{
+    background:
+      radial-gradient(820px 420px at 12% -8%,rgba(232,200,108,.24),transparent 60%),
+      radial-gradient(780px 420px at 92% 2%,rgba(104,184,168,.16),transparent 58%),
+      linear-gradient(180deg,#fbf7ee 0,#f6f4ed 42%,#eef4f2 100%);
+  }
+  :root[data-theme="light"] header.hero{
+    background:
+      linear-gradient(135deg,rgba(255,255,255,.94),rgba(250,244,226,.86) 48%,rgba(231,243,239,.88)),
+      var(--card);
+    border-color:rgba(44,62,80,.08);
+    box-shadow:var(--shadow);
+  }
+  :root[data-theme="light"] header.hero::before{opacity:1}
+  :root[data-theme="light"] .overall{background:#202538;box-shadow:0 18px 36px rgba(32,37,56,.18)}
+  :root[data-theme="light"] .ring::before{background:#2f354d}
+  :root[data-theme="light"] .controls{
+    background:linear-gradient(180deg,rgba(247,244,237,.96) 74%,rgba(247,244,237,0));
+  }
+  :root[data-theme="light"] .chip,
+  :root[data-theme="light"] .search,
+  :root[data-theme="light"] .filter-group,
+  :root[data-theme="light"] footer button,
+  :root[data-theme="light"] .btn.ghost,
+  :root[data-theme="light"] .view-select{
+    background:#fff;border-color:var(--line);color:var(--muted);
+  }
+  :root[data-theme="light"] .view-select select{color:var(--text);background:transparent}
+  :root[data-theme="light"] .chip:hover,
+  :root[data-theme="light"] footer button:hover{color:var(--text);border-color:#cfc6b6;background:#fff}
+  :root[data-theme="light"] .chip.active{color:#392800;background:var(--accent);border-color:#d7b85e}
+  :root[data-theme="light"] .filter-group button.active{background:#202538;color:#fff}
+  :root[data-theme="light"] .search input,
+  :root[data-theme="light"] .modal input,
+  :root[data-theme="light"] .modal select,
+  :root[data-theme="light"] .modal textarea{color:var(--text);background:#fff;border-color:var(--line)}
+  :root[data-theme="light"] .search input::placeholder,
+  :root[data-theme="light"] .modal input::placeholder,
+  :root[data-theme="light"] .modal textarea::placeholder{color:#9aa0ab}
+  :root[data-theme="light"] .studio-head .bar-wrap{background:#e6e1d6}
+  :root[data-theme="light"] .card{background:var(--card);border-color:rgba(44,62,80,.08);box-shadow:0 10px 26px rgba(53,45,28,.09)}
+  :root[data-theme="light"] .card:hover{border-color:rgba(32,37,56,.12);box-shadow:0 20px 44px rgba(53,45,28,.16)}
+  :root[data-theme="light"] .card-body h3{color:var(--ink)}
+  :root[data-theme="light"] .card.watched{border-color:rgba(104,184,168,.62);box-shadow:0 12px 26px rgba(104,184,168,.1)}
+  :root[data-theme="light"] .card.watched .card-body h3{color:#4b9588}
+  :root[data-theme="light"] .card.watched .card-body::after{
+    color:#4b9588;background:#edf8f4;border-color:rgba(104,184,168,.24);
+  }
+  :root[data-theme="light"] .check{background:rgba(255,255,255,.92);border-color:rgba(104,112,131,.28)}
+  :root[data-theme="light"] .footer-panel,
+  :root[data-theme="light"] .apikey{background:rgba(255,255,255,.68);border-color:rgba(104,184,168,.18);box-shadow:none}
+  :root[data-theme="light"] .footer-tools{border-left-color:rgba(32,37,56,.08)}
+  :root[data-theme="light"] .apikey-set{background:rgba(244,250,247,.72);border-color:rgba(104,184,168,.22)}
+  :root[data-theme="light"] .apikey-set h3{color:#4b9588}
+  :root[data-theme="light"] .modal,
+  :root[data-theme="light"] .share-box{background:#fff;border-color:var(--line);box-shadow:0 24px 60px rgba(17,24,39,.24)}
+  :root[data-theme="light"] .modal-mask,
+  :root[data-theme="light"] .share-modal{background:rgba(17,24,39,.55)}
+  :root[data-theme="light"] .result-item{background:#fff;border-color:var(--line)}
+  :root[data-theme="light"] .result-item:hover{background:var(--card-2);border-color:var(--accent-2)}
+  :root[data-theme="light"] .result-item.selected,
+  :root[data-theme="light"] .selected-preview{background:#f3f8f5;border-color:rgba(104,184,168,.24)}
+  :root[data-theme="light"] .result-item .r-check{background:#fff;border-color:#cfd7d3;color:var(--text)}
+  :root[data-theme="light"] .modal .emoji-pick span:hover{background:var(--card-2)}
+  :root[data-theme="light"] .modal .emoji-pick span.sel{background:#fff7d6;border-color:var(--accent)}
+  @media(max-width:560px){
+    :root[data-theme="light"] .footer-tools{border-top-color:rgba(32,37,56,.08)}
   }
 </style>
 </head>
@@ -488,6 +594,28 @@
         <button data-s="all" class="active">全部</button>
         <button data-s="done">已看</button>
         <button data-s="todo">未看</button>
+      </div>
+      <div class="view-options">
+        <label class="view-select">分组
+          <select id="groupBy">
+            <option value="studio">厂牌</option>
+            <option value="decade">年代</option>
+            <option value="year">年份</option>
+            <option value="director">导演</option>
+            <option value="cast">演员</option>
+            <option value="genre">类型</option>
+          </select>
+        </label>
+        <label class="view-select">排序
+          <select id="movieSort">
+            <option value="default">年份顺序</option>
+            <option value="yearAsc">年份 ↑</option>
+            <option value="yearDesc">年份 ↓</option>
+            <option value="title">片名</option>
+            <option value="watchedFirst">已看优先</option>
+            <option value="todoFirst">未看优先</option>
+          </select>
+        </label>
       </div>
     </div>
   </div>
@@ -591,12 +719,12 @@
 <script>
 /* ============== 数据 ============== */
 const STUDIOS = [
-  { id:'pixar',     name:'皮克斯', en:'Pixar',         color:'#4cc9f0', emoji:'🚀', logo:'PIXAR' },
-  { id:'disney',    name:'迪士尼', en:'Disney',        color:'#ef476f', emoji:'🏰', logo:'Disney' },
-  { id:'dreamworks',name:'梦工厂', en:'DreamWorks',    color:'#9b5de5', emoji:'🌙', logo:'DREAM' },
-  { id:'ghibli',    name:'吉卜力', en:'Studio Ghibli', color:'#06d6a0', emoji:'🌿', logo:'GHIBLI' },
-  { id:'shinkai',   name:'新海诚', en:'Makoto Shinkai',color:'#f15bb5', emoji:'🌌', logo:'SHINKAI' },
-  { id:'other',     name:'其他',   en:'Other',         color:'#fee440', emoji:'⭐', logo:'OTHER' },
+  { id:'pixar',     name:'皮克斯', en:'Pixar',         color:'#86bdd0', emoji:'🚀', logo:'PIXAR' },
+  { id:'disney',    name:'迪士尼', en:'Disney',        color:'#d98799', emoji:'🏰', logo:'Disney' },
+  { id:'dreamworks',name:'梦工厂', en:'DreamWorks',    color:'#a98dd4', emoji:'🌙', logo:'DREAM' },
+  { id:'ghibli',    name:'吉卜力', en:'Studio Ghibli', color:'#72c7ae', emoji:'🌿', logo:'GHIBLI' },
+  { id:'shinkai',   name:'新海诚', en:'Makoto Shinkai',color:'#d88bbb', emoji:'🌌', logo:'SHINKAI' },
+  { id:'other',     name:'其他',   en:'Other',         color:'#dfcf75', emoji:'⭐', logo:'OTHER' },
 ];
 
 // 内置片单
@@ -690,31 +818,46 @@ const BUILTIN_MOVIES = [
 ];
 
 const EMOJI_CHOICES = ['🎬','⭐','🌟','💫','🍿','🌈','❤️','🔥','✨','🌙','☀️','🎈','🎪','🎭','🎼','🎸','🚀','🌌','🦄','🐉','🐱','🐶','🦊','🐰','🐻','🐼','🐧','🦖','🤖','👑','💎','🍀'];
+const TMDB_GENRES = {
+  12:'冒险', 14:'奇幻', 16:'动画', 18:'剧情', 28:'动作', 35:'喜剧', 36:'历史',
+  53:'惊悚', 80:'犯罪', 99:'纪录', 878:'科幻', 9648:'悬疑', 10402:'音乐',
+  10749:'爱情', 10751:'家庭', 10752:'战争', 10770:'电视电影'
+};
 
 /* ============== 状态 ============== */
 const KEY_WATCHED = 'family-movie-watchlist-v1';
 const KEY_APIKEY  = 'family-movie-tmdb-key-v1';
 const KEY_POSTERS = 'family-movie-posters-v1';
 const KEY_CUSTOM  = 'family-movie-custom-v1';
+const KEY_META    = 'family-movie-meta-v1';
 
 let watched = loadWatched();
 let posters = loadPosters();
 let customMovies = loadCustom();
+let movieMeta = loadMeta();
 let apiKey = localStorage.getItem(KEY_APIKEY) || '';
 let studioFilter = 'all';
 let statusFilter = 'all';
+let groupBy = 'studio';
+let movieSort = 'default';
 let query = '';
 
 function loadWatched(){ try{ return new Set(JSON.parse(localStorage.getItem(KEY_WATCHED)||'[]')); }catch(e){ return new Set(); } }
 function loadPosters(){ try{ return JSON.parse(localStorage.getItem(KEY_POSTERS)||'{}'); }catch(e){ return {}; } }
 function loadCustom(){ try{ return JSON.parse(localStorage.getItem(KEY_CUSTOM)||'[]'); }catch(e){ return []; } }
+function loadMeta(){ try{ return JSON.parse(localStorage.getItem(KEY_META)||'{}'); }catch(e){ return {}; } }
 function saveWatched(){ localStorage.setItem(KEY_WATCHED, JSON.stringify([...watched])); }
 function savePosters(){ localStorage.setItem(KEY_POSTERS, JSON.stringify(posters)); }
 function saveCustom(){ localStorage.setItem(KEY_CUSTOM, JSON.stringify(customMovies)); }
+function saveMeta(){ localStorage.setItem(KEY_META, JSON.stringify(movieMeta)); }
 
 // 合并内置 + 自定义片单
-function allMovies(){ return [...BUILTIN_MOVIES, ...customMovies]; }
 function key(m){ return m.s + '|' + m.t; }
+function enrichMovie(m){
+  const meta = movieMeta[key(m)] || {};
+  return {...meta, ...m, director:m.director || meta.director, cast:m.cast || meta.cast, genres:m.genres || meta.genres};
+}
+function allMovies(){ return [...BUILTIN_MOVIES, ...customMovies].map(enrichMovie); }
 function posterPathOf(m){
   const cached = posters[key(m)];
   if(cached && cached !== '__failed__') return cached;
@@ -744,6 +887,10 @@ function cardPosterSrc(m){
 }
 function uniq(list){
   return [...new Set(list.filter(Boolean))];
+}
+function asArray(v){
+  if(Array.isArray(v)) return v.filter(Boolean);
+  return v ? [v] : [];
 }
 
 /* ============== TMDB 抓取 ============== */
@@ -797,6 +944,64 @@ async function searchTMDB(queryText){
     .slice(0, 8);
 }
 
+async function findTMDBMovie(movie){
+  if(movie.tmdb_id || movie.id) return {id: movie.tmdb_id || movie.id};
+  const results = await searchTMDB(movie.t);
+  if(!results.length) return null;
+  const withYear = results.filter(r => r.release_date && Math.abs(new Date(r.release_date).getFullYear() - movie.y) <= 1);
+  return (withYear[0] || results[0]) || null;
+}
+
+async function fetchMovieMeta(movie){
+  const found = await findTMDBMovie(movie);
+  if(!found || !found.id) return null;
+  const url = `https://api.themoviedb.org/3/movie/${found.id}?api_key=${encodeURIComponent(apiKey)}&language=zh-CN&append_to_response=credits`;
+  const res = await fetch(url);
+  if(!res.ok){ if(res.status===401) throw new Error('API Key 无效'); throw new Error('TMDB 详情请求失败('+res.status+')'); }
+  const data = await res.json();
+  const crew = data.credits?.crew || [];
+  const cast = data.credits?.cast || [];
+  const director = crew.filter(x=>x.job==='Director').map(x=>x.name).filter(Boolean);
+  const actors = cast.slice(0, 5).map(x=>x.name).filter(Boolean);
+  const genres = (data.genres || []).map(g=>g.name).filter(Boolean);
+  return {
+    tmdb_id: data.id,
+    director,
+    cast: actors,
+    genres,
+    original_title: data.original_title || '',
+    runtime: data.runtime || null,
+    metaFetchedAt: new Date().toISOString()
+  };
+}
+
+function needsMeta(m){
+  if(m.metaFailed) return false;
+  return !asArray(m.director || m.directors).length ||
+    !asArray(m.cast || m.actors).length ||
+    !asArray(m.genres || m.genre).length;
+}
+
+let metadataFetching = false;
+async function ensureMetadata(force=false, onlyMovie=null){
+  if(!apiKey || metadataFetching) return;
+  metadataFetching = true; updateKeyUI();
+  const list = onlyMovie ? [onlyMovie] : allMovies().filter(m => force || needsMeta(m));
+  for(const m of list){
+    try{
+      const meta = await fetchMovieMeta(m);
+      if(meta) movieMeta[key(m)] = {...(movieMeta[key(m)] || {}), ...meta};
+      else movieMeta[key(m)] = {...(movieMeta[key(m)] || {}), metaFailed: true};
+      saveMeta();
+    }catch(e){
+      if(String(e.message).includes('API Key 无效')) break;
+      movieMeta[key(m)] = {...(movieMeta[key(m)] || {}), metaFailed: true};
+      saveMeta();
+    }
+  }
+  metadataFetching = false; updateKeyUI(); render();
+}
+
 let fetching = false;
 async function ensurePosters(force=false, onlyMovie=null){
   if(!apiKey || fetching) return;
@@ -848,27 +1053,80 @@ function matches(m){
   if(statusFilter==='todo' && watched.has(key(m))) return false;
   if(query){
     const q = query.toLowerCase();
-    if(!(m.t.toLowerCase().includes(q) || String(m.y).includes(q) || (m.n||'').toLowerCase().includes(q))) return false;
+    const meta = [...asArray(m.director || m.directors), ...asArray(m.cast || m.actors), ...asArray(m.genres || m.genre)].join(' ').toLowerCase();
+    if(!(m.t.toLowerCase().includes(q) || String(m.y).includes(q) || (m.n||'').toLowerCase().includes(q) || meta.includes(q))) return false;
   }
   return true;
+}
+
+function decadeOf(y){
+  const n = Number(y);
+  if(!n) return '未知年代';
+  return `${Math.floor(n / 10) * 10}s`;
+}
+
+function groupValues(m){
+  const s = studioOf(m);
+  if(groupBy==='studio') return [{id:s.id, title:s.name, sub:s.en, color:s.color, logo:studioLogoHtml(s), order:STUDIOS.findIndex(x=>x.id===s.id)}];
+  if(groupBy==='decade') return [{id:decadeOf(m.y), title:decadeOf(m.y), sub:'按上映年代', color:'#b9a47c', logo:'', order:Number(m.y)||9999}];
+  if(groupBy==='year') return [{id:String(m.y || 'unknown'), title:m.y ? `${m.y}` : '未知年份', sub:'按上映年份', color:'#b9a47c', logo:'', order:Number(m.y)||9999}];
+  if(groupBy==='director'){
+    const names = asArray(m.director || m.directors);
+    return (names.length ? names : ['未知导演']).map(name=>({id:`director|${name}`, title:name, sub:'导演', color:'#9eb3c7', logo:'', order:name.charCodeAt(0)||0}));
+  }
+  if(groupBy==='cast'){
+    const names = asArray(m.cast || m.actors).slice(0, 5);
+    return (names.length ? names : ['未知演员']).map(name=>({id:`cast|${name}`, title:name, sub:'演员', color:'#c5a4bd', logo:'', order:name.charCodeAt(0)||0}));
+  }
+  if(groupBy==='genre'){
+    const names = asArray(m.genres || m.genre);
+    return (names.length ? names : ['未分类']).map(name=>({id:`genre|${name}`, title:name, sub:'类型', color:'#a8b98c', logo:'', order:name.charCodeAt(0)||0}));
+  }
+  return [{id:'all', title:'全部', sub:'', color:'#b9a47c', logo:'', order:0}];
+}
+
+function sortMovies(list){
+  const arr = [...list];
+  if(movieSort==='default' || movieSort==='yearAsc') arr.sort((a,b)=>(a.y||9999)-(b.y||9999) || a.t.localeCompare(b.t,'zh-CN'));
+  else if(movieSort==='yearDesc') arr.sort((a,b)=>(b.y||0)-(a.y||0) || a.t.localeCompare(b.t,'zh-CN'));
+  else if(movieSort==='title') arr.sort((a,b)=>a.t.localeCompare(b.t,'zh-CN'));
+  else if(movieSort==='watchedFirst') arr.sort((a,b)=>Number(watched.has(key(b)))-Number(watched.has(key(a))) || (a.y||9999)-(b.y||9999));
+  else if(movieSort==='todoFirst') arr.sort((a,b)=>Number(watched.has(key(a)))-Number(watched.has(key(b))) || (a.y||9999)-(b.y||9999));
+  return arr;
+}
+
+function groupedMovies(movies){
+  const map = new Map();
+  for(const m of movies){
+    for(const g of groupValues(m)){
+      if(!map.has(g.id)) map.set(g.id, {...g, movies:[]});
+      map.get(g.id).movies.push(m);
+    }
+  }
+  const groups = [...map.values()];
+  if(groupBy==='studio') groups.sort((a,b)=>a.order-b.order);
+  else if(groupBy==='year' || groupBy==='decade') groups.sort((a,b)=>a.order-b.order);
+  else groups.sort((a,b)=>b.movies.length-a.movies.length || a.title.localeCompare(b.title,'zh-CN'));
+  groups.forEach(g=>{ g.movies = sortMovies(g.movies); });
+  return groups;
 }
 
 function render(){
   renderChips(); renderOverall();
   const movies = allMovies();
-  const visibleStudios = studioFilter==='all' ? STUDIOS.filter(s=>movies.some(m=>m.s===s.id)) : STUDIOS.filter(s=>s.id===studioFilter);
+  const filtered = movies.filter(matches);
   let html = '';
-  for(const s of visibleStudios){
-    const list = movies.filter(m=>m.s===s.id && matches(m));
+  for(const g of groupedMovies(filtered)){
+    const list = g.movies;
     if(list.length===0) continue;
-    const totalInStudio = movies.filter(m=>m.s===s.id).length;
-    const doneInStudio = movies.filter(m=>m.s===s.id && watched.has(key(m))).length;
-    const pct = totalInStudio? Math.round(doneInStudio/totalInStudio*100):0;
+    const totalInGroup = list.length;
+    const doneInGroup = list.filter(m=>watched.has(key(m))).length;
+    const pct = totalInGroup? Math.round(doneInGroup/totalInGroup*100):0;
     html += `<section class="studio-section">
       <div class="studio-head">
-        <h2>${studioLogoHtml(s)} ${s.name} <span style="color:var(--muted);font-weight:500;font-size:13px">${s.en}</span></h2>
-        <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:linear-gradient(90deg,${s.color},${s.color}aa)"></div></div>
-        <div class="pct">${doneInStudio}/${totalInStudio} · ${pct}%</div>
+        <h2>${g.logo || ''} ${g.title} <span style="color:var(--muted);font-weight:500;font-size:13px">${g.sub || ''}</span></h2>
+        <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:linear-gradient(90deg,${g.color},${g.color}aa)"></div></div>
+        <div class="pct">${doneInGroup}/${totalInGroup} · ${pct}%</div>
       </div>
       <div class="grid">${list.map(cardHtml).join('')}</div>
     </section>`;
@@ -945,7 +1203,7 @@ function bindApiKeyForm(){
   button.onclick = ()=>{
     const v = input.value.trim();
     if(!v){ alert('请先粘贴 API Key'); return; }
-    apiKey = v; localStorage.setItem(KEY_APIKEY, v); updateKeyUI(); ensurePosters(true);
+    apiKey = v; localStorage.setItem(KEY_APIKEY, v); updateKeyUI(); ensurePosters(true); ensureMetadata(true);
   };
   input.onkeydown = e=>{ if(e.key==='Enter') button.click(); };
 }
@@ -954,6 +1212,7 @@ function updateKeyUI(){
     apikeyBox.classList.add('apikey-set');
     let status = '✅ 海报已启用';
     if(fetching) status += ' · 正在加载海报…';
+    if(metadataFetching) status += ' · 正在补导演/演员…';
     apikeyBox.innerHTML = `<div>
         <h3>🎬 海报已接入（TMDB）</h3>
         <p>${status}，Key 已保存到本机。</p>
@@ -1172,7 +1431,12 @@ document.getElementById('confirmAdd').onclick = ()=>{
     const t = r.title || r.original_title || '';
     const y = r.release_date ? new Date(r.release_date).getFullYear() : new Date().getFullYear();
     const newMovie = { s: studio, t, e: pickedEmoji, y, n: note };
+    if(r.id) newMovie.tmdb_id = r.id;
     if(r.poster_path) newMovie.poster_path = r.poster_path;
+    if(Array.isArray(r.genre_ids)){
+      const genres = r.genre_ids.map(id=>TMDB_GENRES[id]).filter(Boolean);
+      if(genres.length) newMovie.genres = genres;
+    }
     if(allMovies().some(m=>key(m)===key(newMovie))){
       skipped++;
       continue;
@@ -1189,6 +1453,7 @@ document.getElementById('confirmAdd').onclick = ()=>{
   savePosters();
   closeAdd();
   render();
+  if(apiKey) ensureMetadata(false);
   if(skipped>0) alert(`已添加 ${added} 部，跳过 ${skipped} 部重复电影。`);
 };
 
@@ -1200,10 +1465,12 @@ document.getElementById('statusFilter').addEventListener('click', e=>{
   render();
 });
 document.getElementById('search').addEventListener('input', e=>{ query = e.target.value.trim(); render(); });
+document.getElementById('groupBy').addEventListener('change', e=>{ groupBy = e.target.value; render(); });
+document.getElementById('movieSort').addEventListener('change', e=>{ movieSort = e.target.value; render(); });
 document.getElementById('reset').addEventListener('click', ()=>{
   if(confirm('确定要清空所有「已看」记录吗？此操作不可撤销。')){ watched.clear(); saveWatched(); render(); }
 });
-document.getElementById('reloadPosters').addEventListener('click', ()=>{ if(!apiKey){ alert('请先设置 API Key'); return; } ensurePosters(true); });
+document.getElementById('reloadPosters').addEventListener('click', ()=>{ if(!apiKey){ alert('请先设置 API Key'); return; } ensurePosters(true); ensureMetadata(true); });
 document.getElementById('changeKey').addEventListener('click', clearKey);
 
 /* ============== 备份/导入 ============== */
@@ -1214,6 +1481,7 @@ document.getElementById('exportData').onclick = ()=>{
     watched: [...watched],
     posters,
     customMovies,
+    movieMeta,
     apiKey
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
@@ -1237,8 +1505,9 @@ document.getElementById('importFile').onchange = (e)=>{
       watched = new Set(data.watched);
       posters = data.posters || {};
       customMovies = data.customMovies;
+      movieMeta = data.movieMeta || data.meta || {};
       if(data.apiKey){ apiKey = data.apiKey; localStorage.setItem(KEY_APIKEY, apiKey); }
-      saveWatched(); savePosters(); saveCustom();
+      saveWatched(); savePosters(); saveCustom(); saveMeta();
       render();
       alert('导入成功！');
     }catch(err){ alert('导入失败：'+err.message); }
@@ -1376,7 +1645,7 @@ function generateShareCard(){
       ctx.fillStyle = 'rgba(255,255,255,.12)';
       roundRect(ctx, sx, 42, 148, 62, 10);
       ctx.fill();
-      ctx.fillStyle = '#26b99a';
+      ctx.fillStyle = '#68b8a8';
       ctx.font = 'bold 32px -apple-system, sans-serif';
       ctx.fillText(`${pct}%`, sx + 16, 82);
       ctx.fillStyle = '#bcc4d5';
@@ -1576,7 +1845,10 @@ document.getElementById('shareModal').addEventListener('click', e=>{
 fillStudioSelect();
 render();
 updateKeyUI();
-if(apiKey) ensurePosters(false);
+if(apiKey){
+  ensurePosters(false);
+  ensureMetadata(false);
+}
 </script>
 </body>
 </html>
