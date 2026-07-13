@@ -1,0 +1,2753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>亲子动画打卡 · Apple 风格预览</title>
+<meta name="theme-color" content="#f5f5f7">
+<script>
+  (function(){
+    const params = new URLSearchParams(location.search);
+    const theme = params.get('theme') || localStorage.getItem('family-movie-theme') || '';
+    if(theme){
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem('family-movie-theme', theme);
+    }
+  })();
+</script>
+<style>
+  :root{
+    --bg:#f7f4ed;
+    --bg-2:#fffdf8;
+    --card:#ffffff;
+    --card-2:#f1f5f4;
+    --text:#202538;
+    --muted:#687083;
+    --line:#e4ded3;
+    --accent:#e8c86c;
+    --accent-2:#68b8a8;
+    --pink:#d9788d;
+    --blue:#6faeca;
+    --ink:#111827;
+    --radius:10px;
+    --shadow:0 22px 52px rgba(88,72,42,.14),0 5px 16px rgba(88,72,42,.06);
+    --control-h:40px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+    background:
+      radial-gradient(820px 420px at 12% -8%,rgba(232,200,108,.24),transparent 60%),
+      radial-gradient(780px 420px at 92% 2%,rgba(104,184,168,.16),transparent 58%),
+      linear-gradient(180deg,#fbf7ee 0,#f6f4ed 42%,#eef4f2 100%);
+    color:var(--text);
+    min-height:100vh;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:30px 20px 80px}
+
+  /* ===== Header ===== */
+  header.hero{
+    position:relative;overflow:hidden;
+    display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px;
+    background:
+      linear-gradient(135deg,rgba(255,255,255,.94),rgba(250,244,226,.86) 48%,rgba(231,243,239,.88)),
+      var(--card);
+    border:1px solid rgba(44,62,80,.08);
+    padding:34px 32px;border-radius:20px;box-shadow:var(--shadow);
+    margin-bottom:18px;
+  }
+  header.hero::before{
+    content:"";position:absolute;inset:auto 28px -34px auto;width:220px;height:110px;
+    background:repeating-linear-gradient(90deg,rgba(32,37,56,.12) 0 16px,transparent 16px 28px);
+    transform:rotate(-8deg);border-radius:999px;opacity:.55;
+  }
+  header.hero::after{
+    content:"🍿";position:absolute;right:250px;top:24px;font-size:42px;
+    transform:rotate(-10deg);filter:drop-shadow(0 10px 18px rgba(53,45,28,.15));
+  }
+  .hero-text{flex:1;min-width:260px}
+  .hero h1{font-size:34px;font-weight:900;letter-spacing:0;color:var(--ink)}
+  .hero h1 .spark{color:#d9b24d}
+  .hero p{color:var(--muted);margin-top:10px;font-size:15.5px;max-width:680px}
+  .overall{
+    position:relative;z-index:1;
+    display:flex;align-items:center;gap:16px;background:#202538;color:#fff;
+    padding:16px 20px;border-radius:14px;box-shadow:0 14px 28px rgba(32,37,56,.2);
+  }
+  .ring{
+    --p:0;
+    width:74px;height:74px;border-radius:50%;
+    background:
+      conic-gradient(var(--accent-2) calc(var(--p)*1%), rgba(255,255,255,.16) 0);
+    display:grid;place-items:center;position:relative;
+  }
+  .ring::before{content:"";position:absolute;inset:7px;border-radius:50%;background:#283044}
+  .ring span{position:relative;font-weight:900;font-size:18px;color:#fff}
+  .overall small{display:block;color:#bcc4d5;font-size:12px}
+
+  /* ===== API Key banner ===== */
+  .apikey{
+    background:rgba(255,255,255,.68);
+    border:1px solid rgba(104,184,168,.18);
+    border-radius:8px;padding:14px 16px;margin-top:16px;
+    box-shadow:none;text-align:left;
+  }
+  .apikey h3{font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .apikey p{color:var(--muted);font-size:13px}
+  .apikey ol{margin:8px 0 12px 18px;color:var(--muted);font-size:13px;line-height:1.75}
+  .apikey ol a{color:var(--blue)}
+  .apikey .input-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .apikey input{
+    flex:1;min-width:220px;background:#fff;border:1px solid var(--line);
+    color:var(--text);padding:11px 14px;border-radius:8px;font-size:14px;outline:0;font-family:inherit;
+  }
+  .apikey input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(104,184,168,.12)}
+  .btn{
+    cursor:pointer;border:0;font-weight:800;font-size:14px;padding:11px 18px;border-radius:8px;
+    background:var(--accent-2);color:#08221d;transition:.15s;box-shadow:0 8px 18px rgba(104,184,168,.14);
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--text);box-shadow:none}
+  .apikey-set{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    background:rgba(244,250,247,.72);border-color:rgba(104,184,168,.22);
+  }
+  .apikey-set h3{margin:0;font-size:14px;color:#4b9588}
+  .apikey-set p{margin:2px 0 0}
+  .apikey-set .input-row{margin:0;flex-shrink:0}
+  .apikey-set .btn{padding:8px 12px;font-size:12.5px}
+
+  /* ===== Controls ===== */
+  .controls{
+    position:sticky;top:0;z-index:20;
+    background:linear-gradient(180deg,rgba(247,244,237,.96) 74%,rgba(247,244,237,0));
+    backdrop-filter:blur(12px) saturate(130%);
+    -webkit-backdrop-filter:blur(12px) saturate(130%);
+    padding:14px 0 18px;margin:0 -4px;
+  }
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .role-row{align-items:center;flex-wrap:nowrap;overflow:hidden}
+  .hero-profile{display:flex;margin-top:14px}
+  .profile-switch{
+    height:var(--control-h);display:flex;align-items:center;gap:6px;
+    background:#fff;border:1px solid var(--line);border-radius:8px;
+    padding:0 7px 0 11px;box-shadow:0 8px 20px rgba(88,72,42,.05);
+    color:var(--muted);font-size:13px;font-weight:700;flex:0 0 auto;
+  }
+  .profile-switch select{
+    border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;
+    outline:0;cursor:pointer;max-width:96px;
+  }
+  .profile-add{
+    width:26px;height:26px;border:0;border-radius:7px;background:#202538;color:#fff;
+    cursor:pointer;font-weight:900;line-height:1;display:grid;place-items:center;
+  }
+  .profile-add:hover{filter:brightness(1.08)}
+  .chips{
+    display:flex;flex-wrap:nowrap;gap:8px;flex:1 1 0;min-width:0;
+    overflow-x:auto;overflow-y:hidden;padding:0 2px 2px;scrollbar-width:none;
+  }
+  .chips::-webkit-scrollbar{display:none}
+  .chip{
+    flex:0 0 auto;
+    cursor:pointer;border:1px solid var(--line);
+    background:rgba(255,255,255,.82);color:var(--muted);
+    padding:8px 14px;border-radius:999px;font-size:13.5px;font-weight:700;
+    transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease,color .18s ease;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .chip:hover{color:var(--text);border-color:rgba(104,184,168,.36);background:#fff;transform:translateY(-1px)}
+  .chip.active{color:#392800;background:linear-gradient(135deg,var(--accent),#e3c269);border-color:#d7b85e;box-shadow:0 9px 18px rgba(232,200,108,.2)}
+  .chip .dot{width:9px;height:9px;border-radius:50%}
+  .chip .cnt{opacity:.7;font-variant-numeric:tabular-nums}
+
+  .search{
+    flex:0 0 220px;min-width:220px;max-width:220px;display:flex;align-items:center;gap:8px;
+    background:#fff;border:1px solid var(--line);
+    height:var(--control-h);padding:0 12px;border-radius:8px;box-shadow:0 8px 20px rgba(88,72,42,.06);
+  }
+  .search input{
+    flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:14px;
+  }
+  .filter-group{display:flex;gap:4px;background:#fff;padding:3px;border-radius:8px;border:1px solid var(--line);height:var(--control-h);box-shadow:0 8px 20px rgba(88,72,42,.05)}
+  .filter-group button{
+    cursor:pointer;border:0;background:transparent;color:var(--muted);
+    min-width:50px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:700;transition:.15s;
+  }
+  .filter-group button.active{background:#202538;color:#fff}
+  .view-options{display:flex;gap:7px;flex-wrap:nowrap}
+  .view-select{
+    display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);
+    height:var(--control-h);padding:0 9px;border-radius:8px;color:var(--muted);font-size:13px;font-weight:700;
+    box-shadow:0 8px 20px rgba(88,72,42,.05);
+  }
+  .view-select select{
+    border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;
+    outline:0;cursor:pointer;min-width:70px;
+  }
+  .btn-add{
+    cursor:pointer;border:0;background:#202538;color:#fff;font-weight:800;
+    padding:10px 16px;border-radius:8px;font-size:13.5px;transition:.15s;white-space:nowrap;
+    box-shadow:0 10px 18px rgba(32,37,56,.14);
+  }
+  .btn-add:hover{filter:brightness(1.08);transform:translateY(-1px)}
+
+  /* ===== Section ===== */
+  .studio-section{margin-top:28px}
+  .studio-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .studio-head h2{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:900;color:var(--ink)}
+  .studio-logo{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:46px;height:22px;padding:0 8px;border-radius:6px;
+    color:#111827;font-size:10px;font-weight:950;letter-spacing:.04em;line-height:1;
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.12),0 5px 12px rgba(53,45,28,.08);
+  }
+  .studio-logo.logo-disney{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:11px;letter-spacing:0}
+  .studio-logo.logo-dreamworks{min-width:68px;font-size:9px}
+  .studio-logo.logo-ghibli{min-width:58px}
+  .studio-logo.logo-shinkai{min-width:60px}
+  .studio-logo.logo-other{min-width:42px}
+  .studio-head .bar-wrap{
+    flex:1;height:9px;background:#e7e2d8;border-radius:999px;overflow:hidden;
+  }
+  .studio-head .bar{height:100%;width:0;border-radius:999px;transition:width .5s ease}
+  .studio-head .pct{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+
+  /* ===== Movie Grid ===== */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+  .card{
+    position:relative;background:var(--card);border:1px solid rgba(88,72,42,.1);
+    border-radius:var(--radius);overflow:hidden;cursor:pointer;
+    transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    display:flex;flex-direction:column;box-shadow:0 12px 30px rgba(88,72,42,.09);
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:rgba(104,184,168,.34)}
+  .poster{
+    aspect-ratio:2/3;display:grid;place-items:center;position:relative;
+    font-size:50px;color:rgba(255,255,255,.96);
+    text-shadow:0 2px 12px rgba(0,0,0,.4);
+    background-size:cover;background-position:center;
+  }
+  .poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .28s ease}
+  .card:hover .poster img{transform:scale(1.015)}
+  .poster::after{
+    content:"";position:absolute;inset:auto 0 0;height:42%;
+    background:linear-gradient(180deg,transparent,rgba(10,12,20,.45));z-index:1;pointer-events:none;
+  }
+  .poster .fallback{position:relative;z-index:1}
+  .poster .yr{
+    position:absolute;left:8px;top:8px;font-size:11px;font-weight:700;
+    background:rgba(20,24,35,.62);padding:4px 7px;border-radius:6px;color:#fff;z-index:2;
+  }
+  .badge{
+    position:absolute;right:8px;top:8px;font-size:10px;font-weight:700;
+    padding:4px 7px;border-radius:6px;color:#111827;z-index:2;
+  }
+  .card-body{position:relative;padding:12px 42px 13px 13px}
+  .card-body h3{font-size:15px;font-weight:850;line-height:1.32;color:var(--ink)}
+  .card-body p{font-size:12.5px;color:var(--muted);margin-top:6px;min-height:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .check{
+    position:absolute;right:11px;bottom:13px;width:20px;height:20px;border-radius:50%;
+    background:rgba(255,255,255,.82);display:grid;place-items:center;
+    border:1.3px solid rgba(104,112,131,.28);transition:.18s;z-index:2;
+  }
+  .check svg{width:11px;height:11px;opacity:0;transform:scale(.5);transition:.18s}
+  .card.watched{border-color:rgba(104,184,168,.62);box-shadow:0 12px 26px rgba(104,184,168,.1)}
+  .card.watched .poster{filter:saturate(.9)}
+  .card.watched .check{background:var(--accent-2);border-color:var(--accent-2)}
+  .card.watched .check svg{opacity:1;transform:scale(1)}
+  .card.watched .card-body h3{color:#4b9588;padding-right:38px}
+  .card.watched .card-body::after{
+    content:"已看";position:absolute;right:10px;top:10px;font-size:11px;font-weight:800;
+    color:#4b9588;background:#edf8f4;border:1px solid rgba(104,184,168,.24);
+    padding:2px 6px;border-radius:999px;z-index:2;
+  }
+  .poster-load{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--muted);z-index:1}
+  .del-btn{
+    position:absolute;left:8px;bottom:8px;width:24px;height:24px;border-radius:50%;
+    background:rgba(239,71,111,.9);color:#fff;border:0;cursor:pointer;z-index:3;
+    display:none;place-items:center;font-size:14px;line-height:1;
+  }
+  .card.custom:hover .del-btn{display:grid}
+
+  .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;font-size:14px}
+
+  footer{margin-top:54px;color:var(--muted);font-size:12.5px}
+  .footer-panel{
+    width:100%;padding:14px 16px;
+    background:rgba(255,253,248,.72);border:1px solid rgba(32,37,56,.08);
+    border-radius:10px;box-shadow:0 10px 26px rgba(53,45,28,.07);
+  }
+  .footer-note{text-align:left;margin-bottom:12px}
+  .footer-actions{display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .footer-main{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .footer-tools{
+    display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end;align-content:center;
+    padding-left:12px;border-left:1px solid rgba(32,37,56,.08);
+  }
+  footer button{
+    cursor:pointer;border:1px solid rgba(32,37,56,.1);
+    background:rgba(255,255,255,.78);color:var(--muted);padding:7px 11px;border-radius:7px;
+    font-size:12px;font-weight:700;transition:.15s;white-space:nowrap;line-height:1.25;
+  }
+  footer button:hover{color:var(--text);border-color:#cfc6b6;background:#fff}
+  footer .danger:hover{color:var(--pink);border-color:rgba(240,92,120,.5)}
+  .footer-main .btn-add{
+    width:auto;font-size:12.5px;padding:8px 13px;border-radius:7px;
+    box-shadow:0 8px 16px rgba(32,37,56,.1);
+  }
+  .backup-row{opacity:.72;transition:opacity .2s}
+  .backup-row:hover{opacity:1}
+  .btn-share{
+    cursor:pointer;border:0;font-weight:800;font-size:12.5px;padding:8px 13px;border-radius:7px;
+    background:linear-gradient(135deg,var(--blue),var(--accent-2));color:#fff;
+    box-shadow:0 8px 18px rgba(111,174,202,.14);transition:.18s;white-space:nowrap;width:auto;
+  }
+  .btn-share:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .share-modal{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:200;
+    display:none;place-items:center;padding:20px;backdrop-filter:blur(4px)}
+  .share-modal.show{display:grid}
+  .share-box{background:var(--bg-2);border-radius:16px;padding:24px;max-width:420px;width:100%;
+    box-shadow:var(--shadow);text-align:center;max-height:90vh;overflow:auto}
+  .share-box h3{font-size:18px;margin-bottom:14px}
+  .share-box img{width:100%;border-radius:10px;margin-bottom:16px;box-shadow:0 8px 20px rgba(0,0,0,.1)}
+  .share-box .modal-actions{justify-content:center}
+
+  /* ===== Modal ===== */
+  .modal-mask{
+    position:fixed;inset:0;background:rgba(17,24,39,.48);z-index:100;
+    display:none;place-items:center;padding:20px;backdrop-filter:blur(3px);
+  }
+  .modal-mask.show{display:grid}
+  .modal{
+    background:var(--bg-2);border:1px solid rgba(32,37,56,.1);
+    border-radius:12px;padding:26px;width:100%;max-width:460px;box-shadow:var(--shadow);
+    max-height:90vh;overflow:auto;
+  }
+  .modal h3{font-size:19px;margin-bottom:18px}
+  .modal label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px;font-weight:600}
+  .modal input,.modal select,.modal textarea{
+    width:100%;background:#fff;border:1px solid var(--line);
+    color:var(--text);padding:10px 13px;border-radius:8px;font-size:14px;outline:0;font-family:inherit;
+  }
+  .modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--accent-2)}
+  .modal textarea{resize:vertical;min-height:56px}
+  .modal .emoji-pick{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .modal .emoji-pick span{
+    cursor:pointer;font-size:22px;padding:4px 8px;border-radius:8px;
+    border:1px solid transparent;transition:.12s;
+  }
+  .modal .emoji-pick span:hover{background:var(--card-2)}
+  .modal .emoji-pick span.sel{border-color:var(--accent);background:#fff4cf}
+  .modal-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .search-row{display:flex;gap:8px}
+  .search-row input{flex:1}
+  .search-status{font-size:12.5px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px}
+  .search-status.err{color:var(--pink)}
+  .search-results{margin-top:10px;display:flex;flex-direction:column;gap:8px;max-height:300px;overflow:auto;padding-right:2px}
+  .result-item{
+    display:flex;gap:10px;padding:8px;border-radius:8px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;transition:.15s;align-items:flex-start;
+  }
+  .result-item:hover{border-color:var(--accent-2);background:var(--card-2)}
+  .result-item.selected{border-color:var(--accent-2);background:#f3f8f5;box-shadow:0 0 0 2px rgba(104,184,168,.1)}
+  .result-item .r-check{
+    width:22px;height:22px;border-radius:50%;border:2px solid #cfd7d3;
+    display:grid;place-items:center;flex-shrink:0;margin-top:20px;
+    color:#06251f;font-size:13px;font-weight:900;background:#fff;
+  }
+  .result-item.selected .r-check{background:var(--accent-2);border-color:var(--accent-2)}
+  .result-item .r-poster{width:42px;height:63px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--bg-2)}
+  .result-item .r-noimg{width:42px;height:63px;border-radius:6px;flex-shrink:0;background:var(--bg-2);display:grid;place-items:center;font-size:18px}
+  .result-item .r-info{flex:1;min-width:0}
+  .result-item .r-title{font-weight:700;font-size:14px;line-height:1.3}
+  .result-item .r-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .result-item .r-overview{font-size:11.5px;color:var(--muted);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .selected-preview{
+    display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:8px;
+    background:#f3f8f5;border:1px solid rgba(104,184,168,.24);margin-top:10px;
+  }
+  .selected-preview img{width:54px;height:81px;border-radius:6px;object-fit:cover;flex-shrink:0}
+  .selected-preview .sp-noimg{width:54px;height:81px;border-radius:6px;background:var(--bg-2);display:grid;place-items:center;font-size:22px;flex-shrink:0}
+  .selected-preview .sp-info{flex:1;min-width:0}
+  .selected-preview .sp-title{font-weight:700;font-size:14px}
+  .selected-preview .sp-meta{font-size:12px;color:var(--muted);margin-top:2px}
+  .selected-preview .sp-change{font-size:12px;color:var(--blue);cursor:pointer;margin-top:4px;text-decoration:underline;display:inline-block}
+  .selected-preview.multi{display:block}
+  .selected-preview .sp-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .selected-preview .sp-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)}
+  .selected-preview .sp-thumb{width:28px;height:42px;border-radius:5px;object-fit:cover;background:var(--bg-2);display:grid;place-items:center;flex-shrink:0}
+  .spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--accent-2);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media(prefers-color-scheme:dark){
+    :root{
+      color-scheme:dark;
+      --bg:#11151d;
+      --bg-2:#171c25;
+      --card:#1d2430;
+      --card-2:#242c38;
+      --text:#e7ebf3;
+      --muted:#9ca6b8;
+      --line:#313947;
+      --ink:#f7f9fc;
+      --shadow:0 18px 44px rgba(0,0,0,.36);
+    }
+    body{
+      background:
+        radial-gradient(760px 420px at 10% -8%,rgba(232,200,108,.1),transparent 62%),
+        radial-gradient(780px 460px at 92% 0%,rgba(104,184,168,.1),transparent 60%),
+        linear-gradient(180deg,#10141c 0,#151922 46%,#111a1d 100%);
+    }
+    header.hero{
+      background:
+        linear-gradient(135deg,rgba(30,37,49,.96),rgba(34,32,41,.92) 48%,rgba(27,43,43,.88)),
+        var(--card);
+      border-color:rgba(255,255,255,.08);
+      box-shadow:0 18px 44px rgba(0,0,0,.28);
+    }
+    header.hero::before{opacity:.26}
+    .overall{background:#101522;box-shadow:0 14px 28px rgba(0,0,0,.24)}
+    .ring::before{background:#1b2332}
+    .controls{
+      background:linear-gradient(180deg,rgba(17,21,29,.96) 74%,rgba(17,21,29,0));
+    }
+    .chip,.search,.filter-group,footer button,.btn.ghost{
+      background:rgba(29,36,48,.86);border-color:rgba(255,255,255,.08);color:var(--muted);
+    }
+    .view-select{background:rgba(29,36,48,.86);border-color:rgba(255,255,255,.08);color:var(--muted)}
+    .view-select select{color:var(--text);background:#1d2430}
+    .chip:hover,footer button:hover{background:#242c38;border-color:rgba(255,255,255,.16);color:var(--text)}
+    .chip.active{background:#e9bd47;border-color:#e9bd47;color:#201605}
+    .filter-group button.active{background:#e7ebf3;color:#111827}
+    .search input,.modal input,.modal select,.modal textarea{color:var(--text)}
+    .search input::placeholder,.modal input::placeholder,.modal textarea::placeholder{color:#7f8a9d}
+    .studio-head .bar-wrap{background:#2b3038}
+    .card{
+      background:rgba(29,36,48,.96);border-color:rgba(255,255,255,.08);
+      box-shadow:0 10px 26px rgba(0,0,0,.24);
+    }
+    .card:hover{border-color:rgba(255,255,255,.16);box-shadow:0 20px 44px rgba(0,0,0,.34)}
+    .card-body h3{color:var(--ink)}
+    .card.watched{border-color:rgba(104,184,168,.56);box-shadow:0 12px 28px rgba(104,184,168,.11)}
+    .card.watched .card-body h3{color:#8bcfc2}
+    .card.watched .card-body::after{
+      color:#8bcfc2;background:rgba(104,184,168,.12);border-color:rgba(104,184,168,.28);
+    }
+    .check{background:rgba(23,28,37,.78);border-color:rgba(255,255,255,.18)}
+    .footer-panel,.apikey{
+      background:rgba(29,36,48,.72);border-color:rgba(255,255,255,.08);
+      box-shadow:0 14px 34px rgba(0,0,0,.22);
+    }
+    .footer-tools{border-left-color:rgba(255,255,255,.08)}
+    .apikey-set{background:rgba(36,61,58,.42);border-color:rgba(104,184,168,.24)}
+    .apikey-set h3{color:#98d5ca}
+    .apikey input,.modal input,.modal select,.modal textarea{
+      background:#111722;border-color:rgba(255,255,255,.1);
+    }
+    .modal,.share-box{
+      background:#171c25;border-color:rgba(255,255,255,.08);box-shadow:0 24px 60px rgba(0,0,0,.42);
+    }
+    .modal-mask,.share-modal{background:rgba(3,7,12,.68)}
+    .result-item{background:#1d2430;border-color:rgba(255,255,255,.08)}
+    .result-item:hover{background:#242c38;border-color:rgba(104,184,168,.32)}
+    .result-item.selected,.selected-preview{
+      background:rgba(104,184,168,.1);border-color:rgba(104,184,168,.28);
+    }
+    .result-item .r-check{background:#111722;border-color:#4b5563;color:var(--text)}
+    .modal .emoji-pick span:hover{background:#242c38}
+    .modal .emoji-pick span.sel{background:rgba(232,200,108,.14);border-color:var(--accent)}
+  }
+
+  @media(max-width:560px){
+    :root{--control-h:36px}
+    .wrap{padding:12px 12px 60px}
+    header.hero{
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:12px;padding:16px;border-radius:14px;margin-bottom:10px;
+    }
+    header.hero::before,header.hero::after{display:none}
+    .hero-text{min-width:0}
+    .hero h1{font-size:23px;line-height:1.15;max-width:none}
+    .hero p{display:none}
+    .hero-profile{margin-top:8px}
+    .overall{width:auto;gap:9px;padding:9px 11px;border-radius:10px;justify-content:flex-start}
+    .ring{width:48px;height:48px}
+    .ring::before{inset:5px}
+    .ring span{font-size:13px}
+    .overall strong{font-size:15px}
+    .overall small{font-size:10.5px;line-height:1.2;white-space:nowrap}
+    .controls{padding:6px 0 10px;margin:0 -2px}
+    .row{gap:6px}
+    .role-row{flex-wrap:nowrap}
+    .profile-switch{height:34px;padding:0 6px 0 9px;font-size:12.5px;gap:4px}
+    .profile-switch select{font-size:12.5px;max-width:72px}
+    .profile-add{width:24px;height:24px;border-radius:6px}
+    .chips{
+      gap:6px;
+    }
+    .chip{flex:0 0 auto;padding:6px 10px;font-size:12.5px}
+    .footer-panel{padding:14px}
+    .footer-actions{flex-direction:column;align-items:stretch;gap:10px}
+    .footer-main{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .footer-tools{justify-content:center;border-left:0;border-top:1px solid rgba(32,37,56,.08);padding:10px 0 0}
+    footer button{flex:1 1 auto}
+    .apikey{padding:12px;margin-top:12px}
+    .apikey-set{display:block;text-align:left}
+    .apikey-set .input-row{margin-top:10px}
+    .apikey .input-row .btn{width:100%}
+    .search{flex:1 1 100%;min-width:0;max-width:none;padding:0 11px;box-shadow:0 6px 14px rgba(53,45,28,.05)}
+    .search input{font-size:13.5px}
+    .filter-group{width:auto;flex:1 1 164px;min-width:0;justify-content:space-between;gap:2px}
+    .filter-group button{flex:1;min-width:0;padding:0 8px;font-size:12.5px}
+    .view-options{width:auto;flex:999 1 220px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:6px}
+    .view-select{justify-content:space-between;padding:0 9px;gap:4px;font-size:12.5px}
+    .view-select select{min-width:0;max-width:100%;font-size:12.5px}
+    .studio-section{margin-top:22px}
+    .studio-head{gap:8px;margin-bottom:10px}
+    .studio-head h2{font-size:18px}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+    .poster{font-size:36px}
+  }
+
+  @media(prefers-color-scheme:dark) and (max-width:560px){
+    .footer-tools{border-top-color:rgba(255,255,255,.08)}
+  }
+
+  :root[data-theme="light"]{
+    color-scheme:light;
+    --bg:#f7f4ed;
+    --bg-2:#fffdf8;
+    --card:#ffffff;
+    --card-2:#f1f5f4;
+    --text:#202538;
+    --muted:#687083;
+    --line:#e4ded3;
+    --ink:#111827;
+    --shadow:0 22px 52px rgba(88,72,42,.14),0 5px 16px rgba(88,72,42,.06);
+  }
+  :root[data-theme="light"] body{
+    background:
+      radial-gradient(820px 420px at 12% -8%,rgba(232,200,108,.24),transparent 60%),
+      radial-gradient(780px 420px at 92% 2%,rgba(104,184,168,.16),transparent 58%),
+      linear-gradient(180deg,#fbf7ee 0,#f6f4ed 42%,#eef4f2 100%);
+  }
+  :root[data-theme="light"] header.hero{
+    background:
+      linear-gradient(135deg,rgba(255,255,255,.94),rgba(250,244,226,.86) 48%,rgba(231,243,239,.88)),
+      var(--card);
+    border-color:rgba(44,62,80,.08);
+    box-shadow:var(--shadow);
+  }
+  :root[data-theme="light"] header.hero::before{opacity:1}
+  :root[data-theme="light"] .overall{background:#202538;box-shadow:0 18px 36px rgba(32,37,56,.18)}
+  :root[data-theme="light"] .ring::before{background:#2f354d}
+  :root[data-theme="light"] .controls{
+    background:linear-gradient(180deg,rgba(247,244,237,.96) 74%,rgba(247,244,237,0));
+  }
+  :root[data-theme="light"] .chip,
+  :root[data-theme="light"] .search,
+  :root[data-theme="light"] .filter-group,
+  :root[data-theme="light"] footer button,
+  :root[data-theme="light"] .btn.ghost,
+  :root[data-theme="light"] .view-select{
+    background:#fff;border-color:var(--line);color:var(--muted);
+  }
+  :root[data-theme="light"] .view-select select{color:var(--text);background:transparent}
+  :root[data-theme="light"] .chip:hover,
+  :root[data-theme="light"] footer button:hover{color:var(--text);border-color:rgba(104,184,168,.36);background:#fff}
+  :root[data-theme="light"] .chip:hover{transform:translateY(-1px)}
+  :root[data-theme="light"] .chip.active{color:#392800;background:linear-gradient(135deg,var(--accent),#e3c269);border-color:#d7b85e}
+  :root[data-theme="light"] .filter-group button.active{background:#202538;color:#fff}
+  :root[data-theme="light"] .search input,
+  :root[data-theme="light"] .modal input,
+  :root[data-theme="light"] .modal select,
+  :root[data-theme="light"] .modal textarea{color:var(--text);background:#fff;border-color:var(--line)}
+  :root[data-theme="light"] .search input::placeholder,
+  :root[data-theme="light"] .modal input::placeholder,
+  :root[data-theme="light"] .modal textarea::placeholder{color:#9aa0ab}
+  :root[data-theme="light"] .studio-head .bar-wrap{background:#e6e1d6}
+  :root[data-theme="light"] .card{background:var(--card);border-color:rgba(88,72,42,.1);box-shadow:0 12px 30px rgba(88,72,42,.09)}
+  :root[data-theme="light"] .card:hover{border-color:rgba(104,184,168,.34);box-shadow:var(--shadow)}
+  :root[data-theme="light"] .card-body h3{color:var(--ink)}
+  :root[data-theme="light"] .card.watched{border-color:rgba(104,184,168,.62);box-shadow:0 12px 26px rgba(104,184,168,.1)}
+  :root[data-theme="light"] .card.watched .card-body h3{color:#4b9588}
+  :root[data-theme="light"] .card.watched .card-body::after{
+    color:#4b9588;background:#edf8f4;border-color:rgba(104,184,168,.24);
+  }
+  :root[data-theme="light"] .check{background:rgba(255,255,255,.92);border-color:rgba(104,112,131,.28)}
+  :root[data-theme="light"] .footer-panel,
+  :root[data-theme="light"] .apikey{background:rgba(255,255,255,.68);border-color:rgba(104,184,168,.18);box-shadow:none}
+  :root[data-theme="light"] .footer-tools{border-left-color:rgba(32,37,56,.08)}
+  :root[data-theme="light"] .apikey-set{background:rgba(244,250,247,.72);border-color:rgba(104,184,168,.22)}
+  :root[data-theme="light"] .apikey-set h3{color:#4b9588}
+  :root[data-theme="light"] .modal,
+  :root[data-theme="light"] .share-box{background:#fff;border-color:var(--line);box-shadow:0 24px 60px rgba(17,24,39,.24)}
+  :root[data-theme="light"] .modal-mask,
+  :root[data-theme="light"] .share-modal{background:rgba(17,24,39,.55)}
+  :root[data-theme="light"] .result-item{background:#fff;border-color:var(--line)}
+  :root[data-theme="light"] .result-item:hover{background:var(--card-2);border-color:var(--accent-2)}
+  :root[data-theme="light"] .result-item.selected,
+  :root[data-theme="light"] .selected-preview{background:#f3f8f5;border-color:rgba(104,184,168,.24)}
+  :root[data-theme="light"] .result-item .r-check{background:#fff;border-color:#cfd7d3;color:var(--text)}
+  :root[data-theme="light"] .modal .emoji-pick span:hover{background:var(--card-2)}
+  :root[data-theme="light"] .modal .emoji-pick span.sel{background:#fff7d6;border-color:var(--accent)}
+  @media(max-width:560px){
+    :root[data-theme="light"] .footer-tools{border-top-color:rgba(32,37,56,.08)}
+  }
+
+  /* ===== Apple-style preview: visual layer only ===== */
+  :root{
+    color-scheme:light;
+    --bg:#f5f5f7;
+    --bg-2:#fff;
+    --card:#fff;
+    --card-2:#f5f5f7;
+    --text:#1d1d1f;
+    --muted:#6e6e73;
+    --line:rgba(0,0,0,.1);
+    --accent:#0071e3;
+    --accent-2:#0071e3;
+    --pink:#ff375f;
+    --blue:#0071e3;
+    --ink:#1d1d1f;
+    --radius:8px;
+    --shadow:0 18px 50px rgba(0,0,0,.09);
+    --control-h:40px;
+  }
+  html{scroll-padding-top:154px}
+  body{
+    background:#f5f5f7;
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","PingFang SC","Helvetica Neue",Arial,sans-serif;
+    letter-spacing:0;
+  }
+  .wrap{max-width:1240px;padding:28px 24px 72px}
+
+  header.hero{
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:40px;
+    padding:16px 4px 24px;
+    margin-bottom:0;
+    overflow:visible;
+    background:transparent;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+  }
+  header.hero::before,header.hero::after{display:none}
+  .hero h1{
+    color:#1d1d1f;
+    font-size:40px;
+    font-weight:700;
+    line-height:1.12;
+  }
+  .hero h1 .spark{display:none}
+  .hero p{max-width:610px;margin-top:9px;color:#6e6e73;font-size:15px}
+  .hero-profile{margin-top:16px}
+  .profile-switch{
+    height:36px;
+    padding:0 5px 0 13px;
+    gap:7px;
+    color:#6e6e73;
+    background:rgba(255,255,255,.86);
+    border:1px solid rgba(0,0,0,.09);
+    border-radius:999px;
+    box-shadow:0 1px 2px rgba(0,0,0,.04);
+  }
+  .profile-switch select{color:#1d1d1f;font-weight:600}
+  .profile-add{
+    width:26px;height:26px;
+    border-radius:50%;
+    background:#0071e3;
+    color:#fff;
+    box-shadow:none;
+  }
+  .overall{
+    gap:15px;
+    min-width:214px;
+    padding:14px 18px;
+    color:#1d1d1f;
+    background:rgba(255,255,255,.88);
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.07);
+  }
+  .ring{
+    width:64px;height:64px;
+    background:conic-gradient(#0071e3 calc(var(--p)*1%),#e8e8ed 0);
+  }
+  .ring::before{inset:6px;background:#fff}
+  .ring span{color:#1d1d1f;font-size:16px}
+  .overall small{margin-top:2px;color:#86868b}
+
+  .controls{
+    top:10px;
+    width:min(100%,820px);
+    padding:10px;
+    margin:0 0 28px;
+    background:rgba(255,255,255,.82);
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:16px;
+    box-shadow:0 10px 36px rgba(0,0,0,.08);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+  }
+  .controls>.row+.row{margin-top:8px!important}
+  .row{gap:8px}
+  .chips{gap:6px;padding:0}
+  .chip{
+    min-height:34px;
+    padding:7px 13px;
+    color:#515154;
+    background:#f2f2f7;
+    border:1px solid transparent;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    box-shadow:none;
+  }
+  .chip:hover{
+    color:#1d1d1f;
+    background:#e8e8ed;
+    border-color:transparent;
+    transform:none;
+  }
+  .chip.active{
+    color:#fff;
+    background:#0071e3;
+    border-color:#0071e3;
+    box-shadow:none;
+  }
+  .chip.active .dot{box-shadow:0 0 0 2px rgba(255,255,255,.72)}
+  .chip .cnt{opacity:.72}
+  .search{
+    flex:0 0 230px;
+    min-width:230px;
+    max-width:230px;
+    height:var(--control-h);
+    padding:0 13px;
+    background:#f2f2f7;
+    border:1px solid transparent;
+    border-radius:10px;
+    box-shadow:none;
+  }
+  .search:focus-within{
+    background:#fff;
+    border-color:#0071e3;
+    box-shadow:0 0 0 3px rgba(0,113,227,.14);
+  }
+  .search input{color:#1d1d1f;font-size:13.5px}
+  .search input::placeholder{color:#86868b}
+  .filter-group{
+    height:var(--control-h);
+    padding:3px;
+    gap:2px;
+    background:#f2f2f7;
+    border:0;
+    border-radius:10px;
+    box-shadow:none;
+  }
+  .filter-group button{
+    min-width:48px;
+    padding:0 9px;
+    color:#6e6e73;
+    border-radius:7px;
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .filter-group button.active{
+    color:#1d1d1f;
+    background:#fff;
+    box-shadow:0 1px 4px rgba(0,0,0,.12);
+  }
+  .view-options{gap:6px}
+  .view-select{
+    height:var(--control-h);
+    padding:0 10px;
+    gap:5px;
+    color:#86868b;
+    background:#f2f2f7;
+    border:1px solid transparent;
+    border-radius:10px;
+    box-shadow:none;
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .view-select:focus-within{border-color:#0071e3;background:#fff}
+  .view-select select{
+    min-width:68px;
+    color:#1d1d1f;
+    background:transparent;
+    font-size:12.5px;
+    font-weight:600;
+  }
+
+  .studio-section{margin-top:32px}
+  .studio-section:first-child{margin-top:0}
+  .studio-head{gap:12px;margin-bottom:12px;padding:0 2px}
+  .studio-head h2{color:#1d1d1f;font-size:20px;font-weight:700}
+  .studio-logo{
+    height:21px;
+    border-radius:5px;
+    box-shadow:none;
+    opacity:.88;
+  }
+  .studio-head .bar-wrap{height:5px;background:#dedee3}
+  .studio-head .pct{min-width:72px;color:#86868b;font-size:12px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:14px}
+  .card{
+    background:#fff;
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:8px;
+    box-shadow:0 3px 14px rgba(0,0,0,.06);
+    transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    border-color:rgba(0,0,0,.14);
+    box-shadow:0 10px 28px rgba(0,0,0,.1);
+  }
+  .poster::after{height:28%;background:linear-gradient(180deg,transparent,rgba(0,0,0,.22))}
+  .poster img{transition:transform .25s ease}
+  .card:hover .poster img{transform:scale(1.01)}
+  .poster .yr,.badge{
+    top:8px;
+    padding:4px 7px;
+    color:#fff;
+    background:rgba(29,29,31,.62)!important;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:6px;
+    box-shadow:0 1px 5px rgba(0,0,0,.12);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+  .card-body{padding:11px 12px 12px}
+  .card-title-row{display:flex;align-items:flex-start;gap:7px;min-width:0}
+  .card-title-row h3{flex:1;min-width:0}
+  .card-body h3{color:#1d1d1f;font-size:14.5px;font-weight:650}
+  .card-body p{margin-top:5px;color:#86868b;font-size:12px}
+  .check{
+    position:static;
+    flex:0 0 auto;
+    width:auto;height:22px;
+    padding:0 7px;
+    display:inline-flex;align-items:center;gap:4px;
+    color:#86868b;
+    background:#f2f2f7;
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:999px;
+    font-size:10.5px;font-weight:650;line-height:1;
+  }
+  .check svg{width:10px;height:10px;opacity:.45;transform:none}
+  .check svg polyline{stroke:currentColor}
+  .card.watched{
+    border-color:rgba(0,113,227,.42);
+    box-shadow:0 4px 18px rgba(0,113,227,.08);
+  }
+  .card.watched .poster{filter:saturate(.9)}
+  .card.watched .check{color:#fff;background:#0071e3;border-color:#0071e3}
+  .card.watched .check svg{opacity:1;transform:none}
+  .card.watched .card-body h3{color:#1d1d1f;padding-right:0}
+  .card.watched .card-body::after{
+    content:none;
+    display:none;
+  }
+  .del-btn{background:rgba(255,55,95,.92)}
+
+  footer{margin-top:58px}
+  .footer-panel{
+    padding:24px 0 0;
+    background:transparent;
+    border:0;
+    border-top:1px solid rgba(0,0,0,.1);
+    border-radius:0;
+    box-shadow:none;
+  }
+  .footer-note{color:#86868b}
+  .footer-tools{border-left-color:rgba(0,0,0,.1)}
+  footer button,
+  .btn.ghost{
+    min-height:34px;
+    padding:7px 12px;
+    color:#515154;
+    background:#e8e8ed;
+    border:1px solid transparent;
+    border-radius:8px;
+    box-shadow:none;
+  }
+  footer button:hover,.btn.ghost:hover{color:#1d1d1f;background:#dcdce1;border-color:transparent}
+  .footer-main .btn-add,.btn{
+    color:#fff;
+    background:#0071e3;
+    border:0;
+    box-shadow:none;
+  }
+  .footer-main .btn-add:hover,.btn:hover{background:#0077ed;filter:none;transform:none}
+  .btn-share{
+    color:#1d1d1f;
+    background:#e8e8ed;
+    border:0;
+    box-shadow:none;
+  }
+  .btn-share:hover{background:#dcdce1;filter:none;transform:none}
+  .apikey{
+    margin-top:16px;
+    padding:14px 16px;
+    background:#fff;
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:12px;
+    box-shadow:none;
+  }
+  .apikey-set{background:#fff;border-color:rgba(0,0,0,.08)}
+  .apikey-set h3{color:#1d1d1f}
+  .apikey input,
+  .modal input,.modal select,.modal textarea{
+    color:#1d1d1f;
+    background:#f5f5f7;
+    border:1px solid transparent;
+    border-radius:9px;
+  }
+  .apikey input:focus,
+  .modal input:focus,.modal select:focus,.modal textarea:focus{
+    border-color:#0071e3;
+    box-shadow:0 0 0 3px rgba(0,113,227,.13);
+  }
+
+  .modal-mask,.share-modal{
+    background:rgba(0,0,0,.34);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+  }
+  .modal,.share-box{
+    background:rgba(255,255,255,.96);
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:18px;
+    box-shadow:0 28px 80px rgba(0,0,0,.22);
+  }
+  .modal h3,.share-box h3{color:#1d1d1f;font-weight:700}
+  .result-item{
+    background:#f5f5f7;
+    border:1px solid transparent;
+    border-radius:10px;
+  }
+  .result-item:hover{background:#eeeef2;border-color:transparent}
+  .result-item.selected,.selected-preview{
+    background:#eef6ff;
+    border-color:rgba(0,113,227,.22);
+    box-shadow:none;
+  }
+  .result-item .r-check{background:#fff;border-color:#c7c7cc;color:#fff}
+  .result-item.selected .r-check{background:#0071e3;border-color:#0071e3}
+  .modal .emoji-pick span.sel{background:#eef6ff;border-color:#0071e3}
+
+  :root[data-theme="light"]{
+    color-scheme:light;
+    --bg:#f5f5f7;
+    --bg-2:#fff;
+    --card:#fff;
+    --card-2:#f5f5f7;
+    --text:#1d1d1f;
+    --muted:#6e6e73;
+    --line:rgba(0,0,0,.1);
+    --accent:#0071e3;
+    --accent-2:#0071e3;
+    --blue:#0071e3;
+    --ink:#1d1d1f;
+    --shadow:0 18px 50px rgba(0,0,0,.09);
+  }
+  :root[data-theme="light"] body{background:#f5f5f7}
+  :root[data-theme="light"] header.hero{
+    background:transparent;
+    border:0;
+    box-shadow:none;
+  }
+  :root[data-theme="light"] .overall{
+    color:#1d1d1f;
+    background:rgba(255,255,255,.88);
+    border:1px solid rgba(0,0,0,.08);
+    box-shadow:0 10px 30px rgba(0,0,0,.07);
+  }
+  :root[data-theme="light"] .ring::before{background:#fff}
+  :root[data-theme="light"] .controls{
+    background:rgba(255,255,255,.82);
+    border:1px solid rgba(0,0,0,.08);
+    box-shadow:0 10px 36px rgba(0,0,0,.08);
+  }
+  :root[data-theme="light"] .chip{
+    color:#515154;
+    background:#f2f2f7;
+    border-color:transparent;
+  }
+  :root[data-theme="light"] .chip:hover{
+    color:#1d1d1f;
+    background:#e8e8ed;
+    border-color:transparent;
+    transform:none;
+  }
+  :root[data-theme="light"] .chip.active{
+    color:#fff;
+    background:#0071e3;
+    border-color:#0071e3;
+    box-shadow:none;
+  }
+  :root[data-theme="light"] .search,
+  :root[data-theme="light"] .filter-group,
+  :root[data-theme="light"] .view-select{
+    color:#6e6e73;
+    background:#f2f2f7;
+    border-color:transparent;
+    box-shadow:none;
+  }
+  :root[data-theme="light"] .search:focus-within,
+  :root[data-theme="light"] .view-select:focus-within{
+    background:#fff;
+    border-color:#0071e3;
+  }
+  :root[data-theme="light"] .filter-group button.active{
+    color:#1d1d1f;
+    background:#fff;
+    box-shadow:0 1px 4px rgba(0,0,0,.12);
+  }
+  :root[data-theme="light"] .search input,
+  :root[data-theme="light"] .view-select select{
+    color:#1d1d1f;
+    background:transparent;
+    border-color:transparent;
+  }
+  :root[data-theme="light"] .studio-head .bar-wrap{background:#dedee3}
+  :root[data-theme="light"] .card{
+    background:#fff;
+    border-color:rgba(0,0,0,.08);
+    box-shadow:0 3px 14px rgba(0,0,0,.06);
+  }
+  :root[data-theme="light"] .card:hover{
+    border-color:rgba(0,0,0,.14);
+    box-shadow:0 10px 28px rgba(0,0,0,.1);
+  }
+  :root[data-theme="light"] .card.watched{
+    border-color:rgba(0,113,227,.42);
+    box-shadow:0 4px 18px rgba(0,113,227,.08);
+  }
+  :root[data-theme="light"] .card-body h3,
+  :root[data-theme="light"] .card.watched .card-body h3{color:#1d1d1f}
+  :root[data-theme="light"] .card.watched .card-body::after{
+    color:#0066cc;
+    background:#eef6ff;
+    border-color:rgba(0,113,227,.14);
+  }
+  :root[data-theme="light"] .check{color:#86868b;background:#f2f2f7;border-color:rgba(0,0,0,.08)}
+  :root[data-theme="light"] .card.watched .check{color:#fff;background:#0071e3;border-color:#0071e3}
+  :root[data-theme="light"] .footer-panel{
+    background:transparent;
+    border:0;
+    border-top:1px solid rgba(0,0,0,.1);
+    box-shadow:none;
+  }
+  :root[data-theme="light"] footer button,
+  :root[data-theme="light"] .btn.ghost,
+  :root[data-theme="light"] .btn-share{
+    color:#515154;
+    background:#e8e8ed;
+    border-color:transparent;
+    box-shadow:none;
+  }
+  :root[data-theme="light"] .footer-main .btn-add,
+  :root[data-theme="light"] .btn{color:#fff;background:#0071e3;border:0;box-shadow:none}
+  :root[data-theme="light"] .apikey,
+  :root[data-theme="light"] .apikey-set{
+    background:#fff;
+    border-color:rgba(0,0,0,.08);
+    box-shadow:none;
+  }
+  :root[data-theme="light"] .apikey-set h3{color:#1d1d1f}
+  :root[data-theme="light"] .modal,
+  :root[data-theme="light"] .share-box{
+    background:rgba(255,255,255,.96);
+    border-color:rgba(0,0,0,.08);
+    box-shadow:0 28px 80px rgba(0,0,0,.22);
+  }
+  :root[data-theme="light"] .modal-mask,
+  :root[data-theme="light"] .share-modal{background:rgba(0,0,0,.34)}
+  :root[data-theme="light"] .result-item{background:#f5f5f7;border-color:transparent}
+  :root[data-theme="light"] .result-item:hover{background:#eeeef2;border-color:transparent}
+  :root[data-theme="light"] .result-item.selected,
+  :root[data-theme="light"] .selected-preview{background:#eef6ff;border-color:rgba(0,113,227,.22)}
+  :root[data-theme="light"] .result-item .r-check{background:#fff;border-color:#c7c7cc;color:#fff}
+  :root[data-theme="light"] .result-item.selected .r-check{background:#0071e3;border-color:#0071e3}
+  :root[data-theme="light"] .modal .emoji-pick span.sel{background:#eef6ff;border-color:#0071e3}
+
+  @media(prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --bg:#000;
+      --bg-2:#1c1c1e;
+      --card:#1c1c1e;
+      --card-2:#2c2c2e;
+      --text:#f5f5f7;
+      --muted:#98989d;
+      --line:rgba(255,255,255,.12);
+      --ink:#f5f5f7;
+      --shadow:0 18px 50px rgba(0,0,0,.4);
+    }
+    :root:not([data-theme="light"]) body{background:#000;color:#f5f5f7}
+    :root:not([data-theme="light"]) .hero h1,
+    :root:not([data-theme="light"]) .overall,
+    :root:not([data-theme="light"]) .ring span,
+    :root:not([data-theme="light"]) .profile-switch select,
+    :root:not([data-theme="light"]) .studio-head h2,
+    :root:not([data-theme="light"]) .card-body h3,
+    :root:not([data-theme="light"]) .card.watched .card-body h3,
+    :root:not([data-theme="light"]) .modal h3,
+    :root:not([data-theme="light"]) .share-box h3{color:#f5f5f7}
+    :root:not([data-theme="light"]) .hero p,
+    :root:not([data-theme="light"]) .overall small,
+    :root:not([data-theme="light"]) .studio-head .pct,
+    :root:not([data-theme="light"]) .card-body p{color:#98989d}
+    :root:not([data-theme="light"]) .profile-switch,
+    :root:not([data-theme="light"]) .overall,
+    :root:not([data-theme="light"]) .controls{
+      background:rgba(28,28,30,.82);
+      border-color:rgba(255,255,255,.1);
+    }
+    :root:not([data-theme="light"]) .ring::before{background:#1c1c1e}
+    :root:not([data-theme="light"]) .ring{background:conic-gradient(#0a84ff calc(var(--p)*1%),#3a3a3c 0)}
+    :root:not([data-theme="light"]) .chip,
+    :root:not([data-theme="light"]) .search,
+    :root:not([data-theme="light"]) .filter-group,
+    :root:not([data-theme="light"]) .view-select{background:#2c2c2e;border-color:transparent;color:#aeaeb2}
+    :root:not([data-theme="light"]) .chip:hover{background:#3a3a3c;color:#f5f5f7}
+    :root:not([data-theme="light"]) .chip.active{background:#0a84ff;border-color:#0a84ff;color:#fff}
+    :root:not([data-theme="light"]) .search:focus-within,
+    :root:not([data-theme="light"]) .view-select:focus-within{background:#1c1c1e;border-color:#0a84ff}
+    :root:not([data-theme="light"]) .search input,
+    :root:not([data-theme="light"]) .view-select select{color:#f5f5f7;background:transparent}
+    :root:not([data-theme="light"]) .filter-group button.active{background:#636366;color:#fff}
+    :root:not([data-theme="light"]) .studio-head .bar-wrap{background:#3a3a3c}
+    :root:not([data-theme="light"]) .card{background:#1c1c1e;border-color:rgba(255,255,255,.1);box-shadow:0 4px 18px rgba(0,0,0,.3)}
+    :root:not([data-theme="light"]) .card:hover{border-color:rgba(255,255,255,.18);box-shadow:0 12px 30px rgba(0,0,0,.42)}
+    :root:not([data-theme="light"]) .card.watched{border-color:rgba(10,132,255,.5)}
+    :root:not([data-theme="light"]) .card.watched .card-body::after{color:#64aaff;background:rgba(10,132,255,.12);border-color:rgba(10,132,255,.25)}
+    :root:not([data-theme="light"]) .check{color:#aeaeb2;background:#2c2c2e;border-color:#48484a}
+    :root:not([data-theme="light"]) .card.watched .check{color:#fff;background:#0a84ff;border-color:#0a84ff}
+    :root:not([data-theme="light"]) .footer-panel{border-top-color:rgba(255,255,255,.12)}
+    :root:not([data-theme="light"]) footer button,
+    :root:not([data-theme="light"]) .btn.ghost,
+    :root:not([data-theme="light"]) .btn-share{background:#2c2c2e;color:#f5f5f7;border-color:transparent}
+    :root:not([data-theme="light"]) .apikey,
+    :root:not([data-theme="light"]) .apikey-set,
+    :root:not([data-theme="light"]) .modal,
+    :root:not([data-theme="light"]) .share-box{background:rgba(28,28,30,.96);border-color:rgba(255,255,255,.1)}
+    :root:not([data-theme="light"]) .apikey input,
+    :root:not([data-theme="light"]) .modal input,
+    :root:not([data-theme="light"]) .modal select,
+    :root:not([data-theme="light"]) .modal textarea,
+    :root:not([data-theme="light"]) .result-item{background:#2c2c2e;color:#f5f5f7;border-color:transparent}
+    :root:not([data-theme="light"]) .result-item.selected,
+    :root:not([data-theme="light"]) .selected-preview{background:rgba(10,132,255,.13);border-color:rgba(10,132,255,.3)}
+  }
+
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#000;
+    --bg-2:#1c1c1e;
+    --card:#1c1c1e;
+    --card-2:#2c2c2e;
+    --text:#f5f5f7;
+    --muted:#98989d;
+    --line:rgba(255,255,255,.12);
+    --ink:#f5f5f7;
+    --shadow:0 18px 50px rgba(0,0,0,.4);
+  }
+  :root[data-theme="dark"] body{background:#000;color:#f5f5f7}
+  :root[data-theme="dark"] .hero h1,
+  :root[data-theme="dark"] .overall,
+  :root[data-theme="dark"] .ring span,
+  :root[data-theme="dark"] .profile-switch select,
+  :root[data-theme="dark"] .studio-head h2,
+  :root[data-theme="dark"] .card-body h3,
+  :root[data-theme="dark"] .card.watched .card-body h3,
+  :root[data-theme="dark"] .modal h3,
+  :root[data-theme="dark"] .share-box h3{color:#f5f5f7}
+  :root[data-theme="dark"] .hero p,
+  :root[data-theme="dark"] .overall small,
+  :root[data-theme="dark"] .studio-head .pct,
+  :root[data-theme="dark"] .card-body p{color:#98989d}
+  :root[data-theme="dark"] .profile-switch,
+  :root[data-theme="dark"] .overall,
+  :root[data-theme="dark"] .controls{
+    background:rgba(28,28,30,.82);
+    border-color:rgba(255,255,255,.1);
+  }
+  :root[data-theme="dark"] .ring::before{background:#1c1c1e}
+  :root[data-theme="dark"] .ring{background:conic-gradient(#0a84ff calc(var(--p)*1%),#3a3a3c 0)}
+  :root[data-theme="dark"] .chip,
+  :root[data-theme="dark"] .search,
+  :root[data-theme="dark"] .filter-group,
+  :root[data-theme="dark"] .view-select{background:#2c2c2e;border-color:transparent;color:#aeaeb2}
+  :root[data-theme="dark"] .chip:hover{background:#3a3a3c;color:#f5f5f7}
+  :root[data-theme="dark"] .chip.active{background:#0a84ff;border-color:#0a84ff;color:#fff}
+  :root[data-theme="dark"] .search:focus-within,
+  :root[data-theme="dark"] .view-select:focus-within{background:#1c1c1e;border-color:#0a84ff}
+  :root[data-theme="dark"] .search input,
+  :root[data-theme="dark"] .view-select select{color:#f5f5f7;background:transparent}
+  :root[data-theme="dark"] .filter-group button.active{background:#636366;color:#fff}
+  :root[data-theme="dark"] .studio-head .bar-wrap{background:#3a3a3c}
+  :root[data-theme="dark"] .card{background:#1c1c1e;border-color:rgba(255,255,255,.1);box-shadow:0 4px 18px rgba(0,0,0,.3)}
+  :root[data-theme="dark"] .card:hover{border-color:rgba(255,255,255,.18);box-shadow:0 12px 30px rgba(0,0,0,.42)}
+  :root[data-theme="dark"] .card.watched{border-color:rgba(10,132,255,.5)}
+  :root[data-theme="dark"] .card.watched .card-body::after{color:#64aaff;background:rgba(10,132,255,.12);border-color:rgba(10,132,255,.25)}
+  :root[data-theme="dark"] .check{color:#aeaeb2;background:#2c2c2e;border-color:#48484a}
+  :root[data-theme="dark"] .card.watched .check{color:#fff;background:#0a84ff;border-color:#0a84ff}
+  :root[data-theme="dark"] .footer-panel{border-top-color:rgba(255,255,255,.12)}
+  :root[data-theme="dark"] footer button,
+  :root[data-theme="dark"] .btn.ghost,
+  :root[data-theme="dark"] .btn-share{background:#2c2c2e;color:#f5f5f7;border-color:transparent}
+  :root[data-theme="dark"] .apikey,
+  :root[data-theme="dark"] .apikey-set,
+  :root[data-theme="dark"] .modal,
+  :root[data-theme="dark"] .share-box{background:rgba(28,28,30,.96);border-color:rgba(255,255,255,.1)}
+  :root[data-theme="dark"] .apikey input,
+  :root[data-theme="dark"] .modal input,
+  :root[data-theme="dark"] .modal select,
+  :root[data-theme="dark"] .modal textarea,
+  :root[data-theme="dark"] .result-item{background:#2c2c2e;color:#f5f5f7;border-color:transparent}
+  :root[data-theme="dark"] .result-item.selected,
+  :root[data-theme="dark"] .selected-preview{background:rgba(10,132,255,.13);border-color:rgba(10,132,255,.3)}
+
+  @media(max-width:720px){
+    :root{--control-h:36px}
+    html{scroll-padding-top:154px}
+    .wrap{padding:12px 12px 56px}
+    header.hero{gap:10px;padding:10px 2px 16px}
+    .hero h1{font-size:24px;line-height:1.15}
+    .hero p{display:none}
+    .hero-profile{margin-top:9px}
+    .profile-switch{height:32px;padding-left:10px;font-size:12px}
+    .profile-switch select{max-width:68px;font-size:12px}
+    .profile-add{width:24px;height:24px}
+    .overall{min-width:0;gap:8px;padding:8px 10px;border-radius:12px}
+    .ring{width:44px;height:44px}
+    .ring::before{inset:5px}
+    .ring span{font-size:12px}
+    .overall strong{font-size:14px}
+    .overall small{font-size:10px;white-space:nowrap}
+    .controls{top:8px;width:auto;max-width:none;margin:0 -2px 22px;padding:8px;border-radius:14px}
+    .chip{min-height:32px;padding:6px 10px;font-size:12px}
+    .controls>.row+.row{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 150px;
+      gap:6px;
+    }
+    .search{width:auto;min-width:0;max-width:none;flex:none;padding:0 10px}
+    .filter-group{width:150px;min-width:0}
+    .filter-group button{min-width:0;padding:0 6px;font-size:12px}
+    .view-options{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%}
+    .view-select{justify-content:space-between;padding:0 9px}
+    .view-select select{min-width:0;max-width:88px}
+    .studio-section{margin-top:26px}
+    .studio-head{gap:8px;margin-bottom:9px}
+    .studio-head h2{font-size:17px;white-space:nowrap}
+    .studio-head h2>span:last-child{display:none}
+    .studio-head .pct{min-width:58px;font-size:11px}
+    .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .card-body{min-height:84px;padding:9px}
+    .card-title-row{gap:4px}
+    .card-body h3{
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:2;
+      overflow:hidden;
+      font-size:13px;
+      line-height:1.32;
+    }
+    .card-body p{
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:2;
+      overflow:hidden;
+      margin-top:4px;
+      color:#86868b;
+      font-size:10.5px;
+      line-height:1.42;
+    }
+    .poster .yr,.badge{top:6px;padding:3px 5px;font-size:9px}
+    .poster .yr{left:6px}
+    .badge{right:6px}
+    .check{height:20px;padding:0 5px;gap:3px;font-size:9.5px}
+    .check svg{width:9px;height:9px}
+    .card.watched .card-body h3{padding-right:0}
+    footer{margin-top:42px}
+    .footer-panel{padding-top:18px}
+    .footer-actions{gap:10px}
+    .footer-main{grid-template-columns:1fr 1fr}
+    .footer-tools{border-top-color:rgba(0,0,0,.1)}
+    .apikey{padding:12px}
+    .modal{padding:22px 18px;border-radius:16px}
+  }
+  @media(max-width:380px){
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+    .controls>.row+.row{grid-template-columns:minmax(0,1fr) 142px}
+    .filter-group{width:142px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-text">
+      <h1>亲子动画打卡 <span class="spark">✨</span></h1>
+      <p>和两个小男子汉一起，把童年经典一部部补齐。点一下卡片就能标记「已看」，进度自动保存。</p>
+      <div class="hero-profile">
+        <div class="profile-switch">
+          <span>陪伴</span>
+          <select id="profileSelect" title="选择陪伴角色"></select>
+          <button class="profile-add" id="addProfile" title="添加陪伴角色">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="overall">
+      <div class="ring" id="ring"><span id="ringTxt">0%</span></div>
+      <div>
+        <strong id="watchedCount">0</strong> / <span id="totalCount">0</span> 部
+        <small id="overallLabel">已陪宝贝看完</small>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="row role-row">
+      <div class="chips" id="studioChips"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="search">
+        <span>🔍</span>
+        <input id="search" type="text" placeholder="搜索片名…">
+      </div>
+      <div class="filter-group" id="statusFilter">
+        <button data-s="all" class="active">全部</button>
+        <button data-s="done">已看</button>
+        <button data-s="todo">未看</button>
+      </div>
+      <div class="view-options">
+        <label class="view-select">分组
+          <select id="groupBy">
+            <option value="studio">厂牌</option>
+            <option value="decade">年代</option>
+            <option value="year">年份</option>
+            <option value="director">导演</option>
+            <option value="cast">演员</option>
+            <option value="genre">类型</option>
+          </select>
+        </label>
+        <label class="view-select">排序
+          <select id="movieSort">
+            <option value="default">年份顺序</option>
+            <option value="yearAsc">年份 ↑</option>
+            <option value="yearDesc">年份 ↓</option>
+            <option value="title">片名</option>
+            <option value="watchedFirst">已看优先</option>
+            <option value="todoFirst">未看优先</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <footer>
+    <div class="footer-panel">
+      <p class="footer-note">数据保存在本机浏览器，换设备或清缓存前记得备份。</p>
+      <div class="footer-actions">
+        <div class="footer-main">
+          <button class="btn-add" id="openAdd">➕ 添加电影</button>
+          <button class="btn-share" id="shareCard">📤 分享已看清单</button>
+        </div>
+        <div class="footer-tools">
+          <button id="reloadPosters">🔄 重新抓取海报</button>
+          <button id="changeKey">🔑 API Key</button>
+          <button class="backup-row" id="exportData">📦 备份</button>
+          <button class="backup-row" id="importData">📥 导入</button>
+          <button class="danger" id="reset">🗑 重置</button>
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </div>
+      </div>
+      <!-- API Key 设置区 -->
+      <div class="apikey" id="apikeyBox">
+        <h3>🎬 接入高清电影海报（TMDB）</h3>
+        <p>用真实电影海报替换彩色方块。完全免费，只需一次性粘贴一个 API Key：</p>
+        <ol>
+          <li>打开 <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener">themoviedb.org</a> 免费注册一个账号（邮箱即可，无需绑卡）</li>
+          <li>登录后进入 <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">设置 → API</a>，点 <strong>Request a new key</strong>（选 Developer，网址随便填）</li>
+          <li>复制 <strong>API Key (v3 auth)</strong> 那一长串字符，粘贴到下面</li>
+        </ol>
+        <div class="input-row">
+          <input id="apikeyInput" type="text" placeholder="粘贴你的 TMDB API Key（v3）…" autocomplete="off">
+          <button class="btn" id="saveKey">保存并加载海报</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- 添加电影弹窗 -->
+<div class="modal-mask" id="addModal">
+  <div class="modal">
+    <h3>➕ 添加电影</h3>
+
+    <!-- 步骤1：搜索 -->
+    <div id="step-search">
+      <label>搜索片名 *</label>
+      <div class="search-row">
+        <input id="m-search" type="text" placeholder="输入片名，如「铃芽之旅」">
+        <button class="btn" id="doSearch">搜索</button>
+      </div>
+      <div class="search-status" id="searchStatus"></div>
+      <div class="search-results" id="searchResults"></div>
+      <div class="modal-actions" id="search-actions" style="display:none">
+        <button class="btn ghost" id="clearSelected">清空选择</button>
+        <button class="btn" id="useSelected">下一步（0）</button>
+      </div>
+    </div>
+
+    <!-- 步骤2：确认信息 -->
+    <div id="step-confirm" style="display:none">
+      <div class="selected-preview" id="selectedPreview"></div>
+
+      <label style="margin-top:16px">分类</label>
+      <select id="m-studio"></select>
+      <div class="hint">会应用到本次选择的所有电影，选错没关系，之后还能删除重加。</div>
+
+      <label>一句话推荐（可选）</label>
+      <textarea id="m-note" placeholder="写给自己的小备注，比如「适合周末全家看」"></textarea>
+
+      <label>海报图标（无海报时显示）</label>
+      <div class="emoji-pick" id="m-emoji"></div>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="backToSearch">← 重新搜索</button>
+        <button class="btn" id="confirmAdd">添加</button>
+      </div>
+    </div>
+
+    <div class="modal-actions" id="footer-cancel">
+      <button class="btn ghost" id="cancelAdd">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- 分享图片弹窗 -->
+<div class="share-modal" id="shareModal">
+  <div class="share-box">
+    <h3>📤 分享已看清单</h3>
+    <img id="sharePreview" src="" alt="已看清单预览">
+    <div class="modal-actions">
+      <button class="btn ghost" id="closeShare">取消</button>
+      <button class="btn" id="downloadShare">💾 保存到本地</button>
+      <button class="btn" id="doShare" style="display:none">📤 分享给朋友</button>
+    </div>
+  </div>
+</div>
+
+<!-- 添加陪伴角色弹窗 -->
+<div class="modal-mask" id="profileModal">
+  <div class="modal">
+    <h3>👨‍👩‍👧 添加陪伴角色</h3>
+    <label>角色名称</label>
+    <input id="profileNameInput" type="text" placeholder="比如：大宝、二宝、老婆" maxlength="12">
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelProfile">取消</button>
+      <button class="btn" id="confirmProfile">添加</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============== 数据 ============== */
+const STUDIOS = [
+  { id:'pixar',     name:'皮克斯', en:'Pixar',         color:'#86bdd0', emoji:'🚀', logo:'PIXAR' },
+  { id:'disney',    name:'迪士尼', en:'Disney',        color:'#d98799', emoji:'🏰', logo:'Disney' },
+  { id:'dreamworks',name:'梦工厂', en:'DreamWorks',    color:'#a98dd4', emoji:'🌙', logo:'DREAM' },
+  { id:'ghibli',    name:'吉卜力', en:'Studio Ghibli', color:'#72c7ae', emoji:'🌿', logo:'GHIBLI' },
+  { id:'shinkai',   name:'新海诚', en:'Makoto Shinkai',color:'#d88bbb', emoji:'🌌', logo:'SHINKAI' },
+  { id:'other',     name:'其他',   en:'Other',         color:'#dfcf75', emoji:'⭐', logo:'OTHER' },
+];
+
+// 内置片单
+const BUILTIN_MOVIES = [
+  // ---------- 皮克斯 ----------
+  {s:'pixar', t:'玩具总动员', y:1995, e:'🤠', n:'胡迪与巴斯光年的友谊开端，经典中的经典。'},
+  {s:'pixar', t:'玩具总动员2', y:1999, e:'🤠', n:'翠丝加入，玩具们的冒险升级。'},
+  {s:'pixar', t:'玩具总动员3', y:2010, e:'🤠', n:'安迪长大，最催泪的一集，备好纸巾。'},
+  {s:'pixar', t:'玩具总动员4', y:2019, e:'🤠', n:'叉叉与牧羊女的全新旅程。'},
+  {s:'pixar', t:'虫虫危机', y:1998, e:'🐜', n:'蚂蚁飞力团结马戏团虫虫对抗蝗虫。'},
+  {s:'pixar', t:'怪兽电力公司', y:2001, e:'👹', n:'毛怪与大眼仔保护小女孩阿布。'},
+  {s:'pixar', t:'海底总动员', y:2003, e:'🐠', n:'马林跨洋寻找儿子尼莫。'},
+  {s:'pixar', t:'超人总动员', y:2004, e:'🦸', n:'超人一家重出江湖拯救世界。'},
+  {s:'pixar', t:'赛车总动员', y:2006, e:'🏎️', n:'闪电麦肯在水箱温泉镇学会人生。'},
+  {s:'pixar', t:'料理鼠王', y:2007, e:'🐭', n:'热爱烹饪的小老鼠雷米巴黎追梦。'},
+  {s:'pixar', t:'机器人总动员', y:2008, e:'🤖', n:'孤独清扫机器人瓦力的浪漫星际之旅。'},
+  {s:'pixar', t:'飞屋环游记', y:2009, e:'🎈', n:'开头十分钟就够让人泪目。'},
+  {s:'pixar', t:'勇敢传说', y:2012, e:'🏹', n:'苏格兰公主梅莉达的母女和解。'},
+  {s:'pixar', t:'头脑特工队', y:2015, e:'🧠', n:'五种情绪操控大脑，认识情绪的绝佳启蒙。'},
+  {s:'pixar', t:'恐龙当家', y:2015, e:'🦕', n:'男孩与恐龙的伴行成长。'},
+  {s:'pixar', t:'寻梦环游记', y:2017, e:'🎸', n:'亡灵节里的音乐与亲情，催泪神作。'},
+  {s:'pixar', t:'超人总动员2', y:2018, e:'🦸', n:'弹力女超人挑大梁。'},
+  {s:'pixar', t:'1/2的魔法', y:2020, e:'🪄', n:'精灵兄弟用魔法复活爸爸一天。'},
+  {s:'pixar', t:'心灵奇旅', y:2020, e:'🎵', n:'关于「活着是为了什么」的温柔思考。'},
+  {s:'pixar', t:'夏日友晴天', y:2021, e:'🚲', n:'意大利海岸的少年海怪友谊。'},
+  {s:'pixar', t:'青春变形记', y:2022, e:'🐼', n:'女孩一激动就变红熊猫，青春期共鸣。'},
+  {s:'pixar', t:'疯狂元素城', y:2023, e:'🔥', n:'水火不容却相爱，移民家庭故事。'},
+  {s:'pixar', t:'头脑特工队2', y:2024, e:'🧠', n:'青春期新情绪「焦虑」登场。'},
+
+  // ---------- 迪士尼 ----------
+  {s:'disney', t:'白雪公主与七个小矮人', y:1937, e:'🍎', n:'影史第一部长篇动画，里程碑。'},
+  {s:'disney', t:'木偶奇遇记', y:1940, e:'🤥', n:'匹诺曹学会诚实与勇敢。'},
+  {s:'disney', t:'仙履奇缘', y:1950, e:'👠', n:'灰姑娘的水晶鞋童话。'},
+  {s:'disney', t:'小飞侠', y:1953, e:'🧚', n:'永不长大的彼得·潘与梦幻岛。'},
+  {s:'disney', t:'睡美人', y:1959, e:'👸', n:'真爱之吻唤醒奥萝拉公主。'},
+  {s:'disney', t:'小美人鱼', y:1989, e:'🧜', n:'爱丽儿用声音换取双腿。'},
+  {s:'disney', t:'美女与野兽', y:1991, e:'🌹', n:'贝儿融化野兽的心。'},
+  {s:'disney', t:'阿拉丁', y:1992, e:'🧞', n:'神灯精灵与飞毯冒险。'},
+  {s:'disney', t:'狮子王', y:1994, e:'🦁', n:'辛巴的荣耀石王位归来。'},
+  {s:'disney', t:'花木兰', y:1998, e:'🌸', n:'木兰替父从军，孩子会有共鸣。'},
+  {s:'disney', t:'泰山', y:1999, e:'🌴', n:'猩猩养大的人类之子寻找自我。'},
+  {s:'disney', t:'星际宝贝', y:2002, e:'👽', n:'夏威夷女孩与外星实验体626。'},
+  {s:'disney', t:'魔发奇缘', y:2010, e:'💇', n:'长发公主乐佩探索外面的世界。'},
+  {s:'disney', t:'冰雪奇缘', y:2013, e:'❄️', n:'Let It Go！姐妹情深。'},
+  {s:'disney', t:'超能陆战队', y:2014, e:'🤍', n:'医疗机器人大白暖哭所有人。'},
+  {s:'disney', t:'疯狂动物城', y:2016, e:'🦊', n:'兔子警官朱迪与狐狸尼克的探案。'},
+  {s:'disney', t:'海洋奇缘', y:2016, e:'🌊', n:'莫阿娜扬帆寻找半神毛伊。'},
+  {s:'disney', t:'冰雪奇缘2', y:2019, e:'❄️', n:'艾莎探寻魔力的源头。'},
+  {s:'disney', t:'寻龙传说', y:2021, e:'🐉', n:'拉雅集齐龙晶拯救世界。'},
+  {s:'disney', t:'魔法满屋', y:2021, e:'🏡', n:'哥伦比亚魔法家族里唯一的普通人。'},
+
+  // ---------- 梦工厂 ----------
+  {s:'dreamworks', t:'怪物史莱克', y:2001, e:'🧌', n:'颠覆童话的绿色怪物喜剧。'},
+  {s:'dreamworks', t:'怪物史莱克2', y:2004, e:'🧌', n:'见岳父母，穿靴子的猫首登场。'},
+  {s:'dreamworks', t:'怪物史莱克3', y:2007, e:'🧌', n:'史莱克寻找亚瑟王继承王位。'},
+  {s:'dreamworks', t:'马达加斯加', y:2005, e:'🦁', n:'纽约动物园四宝流落荒岛。'},
+  {s:'dreamworks', t:'功夫熊猫', y:2008, e:'🐼', n:'阿宝成为神龙大侠。'},
+  {s:'dreamworks', t:'功夫熊猫2', y:2011, e:'🐼', n:'阿宝面对身世与沈王爷。'},
+  {s:'dreamworks', t:'功夫熊猫3', y:2016, e:'🐼', n:'阿宝回熊猫村教小伙伴功夫。'},
+  {s:'dreamworks', t:'驯龙高手', y:2010, e:'🐉', n:'希卡普与没牙的友谊。'},
+  {s:'dreamworks', t:'驯龙高手2', y:2014, e:'🐉', n:'希卡普发现母亲与龙族首领。'},
+  {s:'dreamworks', t:'驯龙高手3', y:2019, e:'🐉', n:'与龙族告别，结局动人。'},
+  {s:'dreamworks', t:'超级大坏蛋', y:2010, e:'🦹', n:'反派当主角的爆笑反套路。'},
+  {s:'dreamworks', t:'疯狂原始人', y:2013, e:'🪨', n:'原始人家族走向光明新世界。'},
+  {s:'dreamworks', t:'魔发精灵', y:2016, e:'🌈', n:'色彩缤纷的音乐冒险。'},
+  {s:'dreamworks', t:'穿靴子的猫', y:2011, e:'👢', n:'靴猫的独立传奇冒险。'},
+  {s:'dreamworks', t:'穿靴子的猫2', y:2022, e:'👢', n:'画风惊艳，口碑爆棚的续作。'},
+  {s:'dreamworks', t:'坏蛋联盟', y:2022, e:'🐺', n:'五大坏蛋「改邪归正」的爆笑反转。'},
+
+  // ---------- 吉卜力（宫崎骏等） ----------
+  {s:'ghibli', t:'天空之城', y:1986, e:'☁️', n:'巴鲁与希塔守护悬浮的拉普达。'},
+  {s:'ghibli', t:'龙猫', y:1988, e:'🌳', n:'姐妹俩与森林精灵龙猫的夏天，最治愈。'},
+  {s:'ghibli', t:'魔女宅急便', y:1989, e:'🧹', n:'小魔女琪琪独立生活的成长物语。'},
+  {s:'ghibli', t:'幽灵公主', y:1997, e:'🐺', n:'人与自然的史诗冲突（含战斗场面，建议陪同观看）。'},
+  {s:'ghibli', t:'千与千寻', y:2001, e:'🏮', n:'千寻在神隐世界救父母，宫崎骏巅峰。'},
+  {s:'ghibli', t:'哈尔的移动城堡', y:2004, e:'🏰', n:'苏菲与俊美魔法师哈尔的浪漫。'},
+  {s:'ghibli', t:'悬崖上的金鱼姬', y:2008, e:'🐟', n:'最适合小朋友的宫崎骏，纯真可爱。'},
+  {s:'ghibli', t:'借东西的小人阿莉埃蒂', y:2010, e:'📌', n:'地板下的小人族与人类少年。'},
+  {s:'ghibli', t:'起风了', y:2013, e:'✈️', n:'零式战机设计师的半生（偏成人向）。'},
+  {s:'ghibli', t:'回忆中的玛妮', y:2014, e:'🌙', n:'少女在海边解开身世之谜。'},
+
+  // ---------- 新海诚 ----------
+  {s:'shinkai', t:'星之声', y:2002, e:'💌', n:'新海诚处女作，跨越星际的少男少女短信。'},
+  {s:'shinkai', t:'云之彼端，约定的地方', y:2004, e:'🛰️', n:'平行世界与少年们的约定。'},
+  {s:'shinkai', t:'秒速五厘米', y:2007, e:'🌸', n:'樱花飘落的速度，淡淡的遗憾之美（偏少年向）。'},
+  {s:'shinkai', t:'追逐繁星的孩子', y:2011, e:'⭐', n:'最吉卜力风的一部，地下世界的冒险。'},
+  {s:'shinkai', t:'言叶之庭', y:2013, e:'🌧️', n:'雨中亭子的相遇，画面美到窒息（短片，偏少年向）。'},
+  {s:'shinkai', t:'你的名字', y:2016, e:'☄️', n:'少男少女身体互换+彗星之灾，现象级神作。'},
+  {s:'shinkai', t:'天气之子', y:2019, e:'☔', n:'能改变天气的少女，为爱对抗整个东京的雨。'},
+  {s:'shinkai', t:'铃芽之旅', y:2022, e:'🚪', n:'少女关门之旅，公路冒险，最适合和孩子一起看。'},
+];
+
+const EMOJI_CHOICES = ['🎬','⭐','🌟','💫','🍿','🌈','❤️','🔥','✨','🌙','☀️','🎈','🎪','🎭','🎼','🎸','🚀','🌌','🦄','🐉','🐱','🐶','🦊','🐰','🐻','🐼','🐧','🦖','🤖','👑','💎','🍀'];
+const TMDB_GENRES = {
+  12:'冒险', 14:'奇幻', 16:'动画', 18:'剧情', 28:'动作', 35:'喜剧', 36:'历史',
+  53:'惊悚', 80:'犯罪', 99:'纪录', 878:'科幻', 9648:'悬疑', 10402:'音乐',
+  10749:'爱情', 10751:'家庭', 10752:'战争', 10770:'电视电影'
+};
+
+/* ============== 状态 ============== */
+const KEY_WATCHED = 'family-movie-watchlist-v1';
+const KEY_PROFILES = 'family-movie-profiles-v1';
+const KEY_ACTIVE_PROFILE = 'family-movie-active-profile-v1';
+const KEY_WATCHED_BY_PROFILE = 'family-movie-watchlist-by-profile-v1';
+const KEY_APIKEY  = 'family-movie-tmdb-key-v1';
+const KEY_POSTERS = 'family-movie-posters-v1';
+const KEY_CUSTOM  = 'family-movie-custom-v1';
+const KEY_META    = 'family-movie-meta-v1';
+
+let profiles = loadProfiles();
+let activeProfileId = loadActiveProfile();
+let watchedByProfile = loadWatchedByProfile();
+let watched = currentWatched();
+let posters = loadPosters();
+let customMovies = loadCustom();
+let movieMeta = loadMeta();
+let apiKey = localStorage.getItem(KEY_APIKEY) || '';
+let studioFilter = 'all';
+let statusFilter = 'all';
+let groupBy = 'studio';
+let movieSort = 'default';
+let query = '';
+
+function uid(prefix='profile'){
+  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
+}
+function normalizeProfileName(name){
+  return String(name || '').trim().slice(0, 12);
+}
+function loadProfiles(){
+  try{
+    const list = JSON.parse(localStorage.getItem(KEY_PROFILES) || '[]');
+    if(Array.isArray(list) && list.length){
+      return list.map(p=>({id:String(p.id || uid()), name:normalizeProfileName(p.name) || '家人'}));
+    }
+  }catch(e){}
+  return [{id:'family', name:'全家'}];
+}
+function loadActiveProfile(){
+  const stored = localStorage.getItem(KEY_ACTIVE_PROFILE);
+  return profiles.some(p=>p.id===stored) ? stored : profiles[0].id;
+}
+function loadLegacyWatched(){
+  try{ return JSON.parse(localStorage.getItem(KEY_WATCHED)||'[]'); }catch(e){ return []; }
+}
+function loadWatchedByProfile(){
+  let data = {};
+  try{ data = JSON.parse(localStorage.getItem(KEY_WATCHED_BY_PROFILE)||'{}') || {}; }catch(e){ data = {}; }
+  const legacy = loadLegacyWatched();
+  if(!Object.keys(data).length && legacy.length) data[activeProfileId] = legacy;
+  for(const p of profiles){
+    if(!Array.isArray(data[p.id])) data[p.id] = [];
+  }
+  return data;
+}
+function loadPosters(){ try{ return JSON.parse(localStorage.getItem(KEY_POSTERS)||'{}'); }catch(e){ return {}; } }
+function loadCustom(){ try{ return JSON.parse(localStorage.getItem(KEY_CUSTOM)||'[]'); }catch(e){ return []; } }
+function loadMeta(){ try{ return JSON.parse(localStorage.getItem(KEY_META)||'{}'); }catch(e){ return {}; } }
+function saveProfiles(){
+  localStorage.setItem(KEY_PROFILES, JSON.stringify(profiles));
+  localStorage.setItem(KEY_ACTIVE_PROFILE, activeProfileId);
+}
+function currentProfile(){
+  return profiles.find(p=>p.id===activeProfileId) || profiles[0];
+}
+function currentWatched(){
+  const id = activeProfileId || profiles[0].id;
+  if(!Array.isArray(watchedByProfile[id])) watchedByProfile[id] = [];
+  return new Set(watchedByProfile[id]);
+}
+function syncCurrentWatched(){
+  watched = currentWatched();
+}
+function saveWatched(){
+  watchedByProfile[activeProfileId] = [...watched];
+  localStorage.setItem(KEY_WATCHED_BY_PROFILE, JSON.stringify(watchedByProfile));
+  localStorage.setItem(KEY_WATCHED, JSON.stringify([...watched]));
+}
+function saveAllWatched(){
+  localStorage.setItem(KEY_WATCHED_BY_PROFILE, JSON.stringify(watchedByProfile));
+  localStorage.setItem(KEY_WATCHED, JSON.stringify([...(currentWatched())]));
+}
+function savePosters(){ localStorage.setItem(KEY_POSTERS, JSON.stringify(posters)); }
+function saveCustom(){ localStorage.setItem(KEY_CUSTOM, JSON.stringify(customMovies)); }
+function saveMeta(){ localStorage.setItem(KEY_META, JSON.stringify(movieMeta)); }
+saveProfiles();
+saveAllWatched();
+
+// 合并内置 + 自定义片单
+function key(m){ return m.s + '|' + m.t; }
+function enrichMovie(m){
+  const meta = movieMeta[key(m)] || {};
+  return {...meta, ...m, director:m.director || meta.director, cast:m.cast || meta.cast, genres:m.genres || meta.genres};
+}
+function allMovies(){ return [...BUILTIN_MOVIES, ...customMovies].map(enrichMovie); }
+function posterPathOf(m){
+  const cached = posters[key(m)];
+  if(cached && cached !== '__failed__') return cached;
+  return m.poster_path || m.p || '';
+}
+function isPosterFailed(p){ return !p || p === '__failed__'; }
+function tmdbImg(p, size='w500'){
+  if(isPosterFailed(p)) return '';
+  if(/^https?:\/\//i.test(p) || /^data:/i.test(p) || /^blob:/i.test(p)) return p;
+  return `https://image.tmdb.org/t/p/${size}${p}`;
+}
+function posterProxyUrl(url){
+  if(!/^https:\/\/image\.tmdb\.org\/t\/p\//i.test(url)) return '';
+  if(location.protocol === 'file:' || /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(location.hostname)) return '';
+  return `/poster?src=${encodeURIComponent(url)}`;
+}
+function sharePosterUrls(p){
+  return uniq(['w154','w300','w500'].flatMap(size=>{
+    const url = tmdbImg(p, size);
+    return [posterProxyUrl(url), url];
+  }));
+}
+const IMG = p => tmdbImg(p, 'w500');
+function cardPosterSrc(m){
+  const img = sectionsEl.querySelector(`.card[data-key="${CSS.escape(key(m))}"] .poster img`);
+  return img ? (img.currentSrc || img.src || img.getAttribute('src') || '') : '';
+}
+function uniq(list){
+  return [...new Set(list.filter(Boolean))];
+}
+function asArray(v){
+  if(Array.isArray(v)) return v.filter(Boolean);
+  return v ? [v] : [];
+}
+
+/* ============== TMDB 抓取 ============== */
+async function fetchPosterPath(movie){
+  const base = 'https://api.themoviedb.org/3/search/movie';
+  const url = `${base}?api_key=${encodeURIComponent(apiKey)}&language=zh-CN&include_adult=false&query=${encodeURIComponent(movie.t)}&page=1`;
+  const res = await fetch(url);
+  if(!res.ok){ if(res.status===401) throw new Error('API Key 无效'); throw new Error('TMDB 请求失败('+res.status+')'); }
+  const data = await res.json();
+  const results = data.results || [];
+  if(!results.length) return null;
+  const hasPoster = r => r.poster_path;
+  const byYear = results.filter(r => hasPoster(r) && r.release_date && Math.abs(new Date(r.release_date).getFullYear() - movie.y) <= 1);
+  const pool = byYear.length ? byYear : results.filter(hasPoster);
+  if(!pool.length) return null;
+  pool.sort((a,b)=>(b.popularity||0)-(a.popularity||0));
+  return pool[0].poster_path;
+}
+
+async function recoverPosterPath(movie){
+  if(!apiKey) return '';
+  try{
+    const p = await fetchPosterPath(movie);
+    posters[key(movie)] = p || '__failed__';
+    if(p){
+      const custom = customMovies.find(m => key(m)===key(movie));
+      if(custom && !custom.poster_path && !custom.p){
+        custom.poster_path = p;
+        saveCustom();
+      }
+    }
+    savePosters();
+    refreshCardPoster(movie);
+    return p || '';
+  }catch(e){
+    if(!String(e.message).includes('API Key 无效')) posters[key(movie)] = '__failed__';
+    savePosters();
+    return '';
+  }
+}
+
+// 搜索 TMDB，返回多个候选
+async function searchTMDB(queryText){
+  if(!apiKey) throw new Error('NO_KEY');
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${encodeURIComponent(apiKey)}&language=zh-CN&include_adult=false&query=${encodeURIComponent(queryText)}&page=1`;
+  const res = await fetch(url);
+  if(!res.ok){ if(res.status===401) throw new Error('API Key 无效'); throw new Error('TMDB 请求失败('+res.status+')'); }
+  const data = await res.json();
+  return (data.results || [])
+    .sort((a,b)=>(b.popularity||0)-(a.popularity||0))
+    .slice(0, 8);
+}
+
+async function findTMDBMovie(movie){
+  if(movie.tmdb_id || movie.id) return {id: movie.tmdb_id || movie.id};
+  const results = await searchTMDB(movie.t);
+  if(!results.length) return null;
+  const withYear = results.filter(r => r.release_date && Math.abs(new Date(r.release_date).getFullYear() - movie.y) <= 1);
+  return (withYear[0] || results[0]) || null;
+}
+
+async function fetchMovieMeta(movie){
+  const found = await findTMDBMovie(movie);
+  if(!found || !found.id) return null;
+  const url = `https://api.themoviedb.org/3/movie/${found.id}?api_key=${encodeURIComponent(apiKey)}&language=zh-CN&append_to_response=credits`;
+  const res = await fetch(url);
+  if(!res.ok){ if(res.status===401) throw new Error('API Key 无效'); throw new Error('TMDB 详情请求失败('+res.status+')'); }
+  const data = await res.json();
+  const crew = data.credits?.crew || [];
+  const cast = data.credits?.cast || [];
+  const director = crew.filter(x=>x.job==='Director').map(x=>x.name).filter(Boolean);
+  const actors = cast.slice(0, 5).map(x=>x.name).filter(Boolean);
+  const genres = (data.genres || []).map(g=>g.name).filter(Boolean);
+  return {
+    tmdb_id: data.id,
+    director,
+    cast: actors,
+    genres,
+    original_title: data.original_title || '',
+    runtime: data.runtime || null,
+    metaFetchedAt: new Date().toISOString()
+  };
+}
+
+function needsMeta(m){
+  if(m.metaFailed) return false;
+  return !asArray(m.director || m.directors).length ||
+    !asArray(m.cast || m.actors).length ||
+    !asArray(m.genres || m.genre).length;
+}
+
+let metadataFetching = false;
+async function ensureMetadata(force=false, onlyMovie=null){
+  if(!apiKey || metadataFetching) return;
+  metadataFetching = true; updateKeyUI();
+  const list = onlyMovie ? [onlyMovie] : allMovies().filter(m => force || needsMeta(m));
+  for(const m of list){
+    try{
+      const meta = await fetchMovieMeta(m);
+      if(meta) movieMeta[key(m)] = {...(movieMeta[key(m)] || {}), ...meta};
+      else movieMeta[key(m)] = {...(movieMeta[key(m)] || {}), metaFailed: true};
+      saveMeta();
+    }catch(e){
+      if(String(e.message).includes('API Key 无效')) break;
+      movieMeta[key(m)] = {...(movieMeta[key(m)] || {}), metaFailed: true};
+      saveMeta();
+    }
+  }
+  metadataFetching = false; updateKeyUI(); render();
+}
+
+let fetching = false;
+async function ensurePosters(force=false, onlyMovie=null){
+  if(!apiKey || fetching) return;
+  fetching = true; updateKeyUI();
+  const list = onlyMovie ? [onlyMovie] : allMovies().filter(m => force || !posters[key(m)]);
+  let ok=0, fail=0;
+  for(const m of list){
+    try{ const p = await fetchPosterPath(m); posters[key(m)] = p || '__failed__'; ok++; }
+    catch(e){ posters[key(m)] = '__failed__'; fail++; if(String(e.message).includes('API Key 无效')) break; }
+    savePosters(); refreshCardPoster(m);
+  }
+  fetching = false; updateKeyUI();
+  if(fail>0 && ok===0 && !onlyMovie) alert('海报抓取失败。请检查 API Key 是否正确（v3 auth），或稍后重试。');
+}
+
+/* ============== 渲染 ============== */
+const sectionsEl = document.getElementById('sections');
+const chipsEl = document.getElementById('studioChips');
+const profileSelectEl = document.getElementById('profileSelect');
+
+function renderProfiles(){
+  profileSelectEl.innerHTML = profiles.map(p=>`<option value="${p.id}" ${p.id===activeProfileId?'selected':''}>${p.name}</option>`).join('');
+}
+
+function addProfileByName(rawName){
+  const name = normalizeProfileName(rawName);
+  if(!name) return false;
+  if(profiles.some(p=>p.name===name)){ alert('这个角色已经存在啦'); return false; }
+  const profile = {id:uid('profile'), name};
+  profiles.push(profile);
+  activeProfileId = profile.id;
+  watchedByProfile[profile.id] = [];
+  saveProfiles();
+  saveAllWatched();
+  syncCurrentWatched();
+  render();
+  return true;
+}
+
+function renderChips(){
+  const movies = allMovies();
+  const usedStudios = [...new Set(movies.map(m=>m.s))];
+  const order = STUDIOS.filter(s=>usedStudios.includes(s.id));
+  const chips = [`<div class="chip ${studioFilter==='all'?'active':''}" data-studio="all">全部 <span class="cnt">${movies.length}</span></div>`];
+  for(const s of order){
+    const c = movies.filter(m=>m.s===s.id).length;
+    chips.push(`<div class="chip ${studioFilter===s.id?'active':''}" data-studio="${s.id}">
+      <span class="dot" style="background:${s.color}"></span>${s.name} <span class="cnt">${c}</span>
+    </div>`);
+  }
+  chipsEl.innerHTML = chips.join('');
+  chipsEl.querySelectorAll('.chip').forEach(c=>{ c.onclick = ()=>{ studioFilter = c.dataset.studio; render(); }; });
+}
+
+function renderOverall(){
+  syncCurrentWatched();
+  const movies = allMovies();
+  const total = movies.length;
+  const done = [...watched].filter(k=>movies.some(m=>key(m)===k)).length;
+  const pct = total? Math.round(done/total*100):0;
+  document.getElementById('ring').style.setProperty('--p', pct);
+  document.getElementById('ringTxt').textContent = pct+'%';
+  document.getElementById('watchedCount').textContent = done;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('overallLabel').textContent = `${currentProfile().name}已看完`;
+}
+
+function matches(m){
+  if(studioFilter!=='all' && m.s!==studioFilter) return false;
+  if(statusFilter==='done' && !watched.has(key(m))) return false;
+  if(statusFilter==='todo' && watched.has(key(m))) return false;
+  if(query){
+    const q = query.toLowerCase();
+    const meta = [...asArray(m.director || m.directors), ...asArray(m.cast || m.actors), ...asArray(m.genres || m.genre)].join(' ').toLowerCase();
+    if(!(m.t.toLowerCase().includes(q) || String(m.y).includes(q) || (m.n||'').toLowerCase().includes(q) || meta.includes(q))) return false;
+  }
+  return true;
+}
+
+function decadeOf(y){
+  const n = Number(y);
+  if(!n) return '未知年代';
+  return `${Math.floor(n / 10) * 10}s`;
+}
+
+function groupValues(m){
+  const s = studioOf(m);
+  if(groupBy==='studio') return [{id:s.id, title:s.name, sub:s.en, color:s.color, logo:studioLogoHtml(s), order:STUDIOS.findIndex(x=>x.id===s.id)}];
+  if(groupBy==='decade') return [{id:decadeOf(m.y), title:decadeOf(m.y), sub:'按上映年代', color:'#b9a47c', logo:'', order:Number(m.y)||9999}];
+  if(groupBy==='year') return [{id:String(m.y || 'unknown'), title:m.y ? `${m.y}` : '未知年份', sub:'按上映年份', color:'#b9a47c', logo:'', order:Number(m.y)||9999}];
+  if(groupBy==='director'){
+    const names = asArray(m.director || m.directors);
+    return (names.length ? names : ['未知导演']).map(name=>({id:`director|${name}`, title:name, sub:'导演', color:'#9eb3c7', logo:'', order:name.charCodeAt(0)||0}));
+  }
+  if(groupBy==='cast'){
+    const names = asArray(m.cast || m.actors).slice(0, 5);
+    return (names.length ? names : ['未知演员']).map(name=>({id:`cast|${name}`, title:name, sub:'演员', color:'#c5a4bd', logo:'', order:name.charCodeAt(0)||0}));
+  }
+  if(groupBy==='genre'){
+    const names = asArray(m.genres || m.genre);
+    return (names.length ? names : ['未分类']).map(name=>({id:`genre|${name}`, title:name, sub:'类型', color:'#a8b98c', logo:'', order:name.charCodeAt(0)||0}));
+  }
+  return [{id:'all', title:'全部', sub:'', color:'#b9a47c', logo:'', order:0}];
+}
+
+function sortMovies(list){
+  const arr = [...list];
+  if(movieSort==='default' || movieSort==='yearAsc') arr.sort((a,b)=>(a.y||9999)-(b.y||9999) || a.t.localeCompare(b.t,'zh-CN'));
+  else if(movieSort==='yearDesc') arr.sort((a,b)=>(b.y||0)-(a.y||0) || a.t.localeCompare(b.t,'zh-CN'));
+  else if(movieSort==='title') arr.sort((a,b)=>a.t.localeCompare(b.t,'zh-CN'));
+  else if(movieSort==='watchedFirst') arr.sort((a,b)=>Number(watched.has(key(b)))-Number(watched.has(key(a))) || (a.y||9999)-(b.y||9999));
+  else if(movieSort==='todoFirst') arr.sort((a,b)=>Number(watched.has(key(a)))-Number(watched.has(key(b))) || (a.y||9999)-(b.y||9999));
+  return arr;
+}
+
+function groupedMovies(movies){
+  const map = new Map();
+  for(const m of movies){
+    for(const g of groupValues(m)){
+      if(!map.has(g.id)) map.set(g.id, {...g, movies:[]});
+      map.get(g.id).movies.push(m);
+    }
+  }
+  const groups = [...map.values()];
+  if(groupBy==='studio') groups.sort((a,b)=>a.order-b.order);
+  else if(groupBy==='year' || groupBy==='decade') groups.sort((a,b)=>a.order-b.order);
+  else groups.sort((a,b)=>b.movies.length-a.movies.length || a.title.localeCompare(b.title,'zh-CN'));
+  groups.forEach(g=>{ g.movies = sortMovies(g.movies); });
+  return groups;
+}
+
+function render(){
+  syncCurrentWatched();
+  renderProfiles(); renderChips(); renderOverall();
+  const movies = allMovies();
+  const filtered = movies.filter(matches);
+  let html = '';
+  for(const g of groupedMovies(filtered)){
+    const list = g.movies;
+    if(list.length===0) continue;
+    const totalInGroup = list.length;
+    const doneInGroup = list.filter(m=>watched.has(key(m))).length;
+    const pct = totalInGroup? Math.round(doneInGroup/totalInGroup*100):0;
+    html += `<section class="studio-section">
+      <div class="studio-head">
+        <h2>${g.logo || ''} ${g.title} <span style="color:var(--muted);font-weight:500;font-size:13px">${g.sub || ''}</span></h2>
+        <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:linear-gradient(90deg,${g.color},${g.color}aa)"></div></div>
+        <div class="pct">${doneInGroup}/${totalInGroup} · ${pct}%</div>
+      </div>
+      <div class="grid">${list.map(cardHtml).join('')}</div>
+    </section>`;
+  }
+  if(!html) html = `<div class="empty">😅 没有匹配的影片，换个筛选条件试试。</div>`;
+  sectionsEl.innerHTML = html;
+  sectionsEl.querySelectorAll('.card').forEach(el=>{
+    el.onclick = e=>{
+      if(e.target.closest('.del-btn')) return;   // 删除按钮单独处理
+      const k = el.dataset.key;
+      if(watched.has(k)) watched.delete(k); else watched.add(k);
+      saveWatched(); render();
+    };
+  });
+  sectionsEl.querySelectorAll('.del-btn').forEach(b=>{
+    b.onclick = e=>{
+      e.stopPropagation();
+      const k = b.dataset.key;
+      if(confirm('从片单删除这部电影？（已看记录也会清掉）')){
+        customMovies = customMovies.filter(m => key(m)!==k);
+        for(const id of Object.keys(watchedByProfile)){
+          watchedByProfile[id] = (watchedByProfile[id] || []).filter(x=>x!==k);
+        }
+        syncCurrentWatched();
+        saveCustom(); saveAllWatched(); render();
+      }
+    };
+  });
+}
+
+function studioOf(m){ return STUDIOS.find(x=>x.id===m.s) || STUDIOS.find(x=>x.id==='other'); }
+function studioLogoHtml(s){
+  return `<span class="studio-logo logo-${s.id}" style="background:${s.color}">${s.logo || s.name}</span>`;
+}
+
+function posterHtml(m){
+  const cached = posterPathOf(m);
+  if(!isPosterFailed(cached)) return `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
+  if(!cached || cached==='__failed__' || !apiKey) return `<div class="fallback">${m.e||'🎬'}</div>`;
+  return `<div class="poster-load">⏳</div><div class="fallback" style="opacity:.4">${m.e||'🎬'}</div>`;
+}
+
+function cardHtml(m){
+  const k = key(m);
+  const isW = watched.has(k);
+  const s = studioOf(m);
+  const isCustom = customMovies.some(c=>key(c)===k);
+  return `<div class="card ${isW?'watched':''} ${isCustom?'custom':''}" data-key="${k}">
+    <div class="poster" style="background:linear-gradient(150deg,${s.color}55,${s.color}22 60%,#00000033)">
+      <span class="yr">${m.y||''}</span>
+      <span class="badge" style="background:${s.color}d9">${s.name}</span>
+      ${posterHtml(m)}
+    </div>
+    <div class="card-body">
+      <div class="card-title-row">
+        <h3>${m.t}</h3>
+        <div class="check" aria-label="${isW?'已看':'未看'}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>${isW?'已看':'未看'}</span>
+        </div>
+      </div>
+      <p>${m.n||''}</p>
+    </div>
+    ${isCustom?`<button class="del-btn" data-key="${k}" title="删除">×</button>`:''}
+  </div>`;
+}
+
+function refreshCardPoster(m){
+  const el = sectionsEl.querySelector(`.card[data-key="${CSS.escape(key(m))}"] .poster`);
+  if(!el) return;
+  const s = studioOf(m);
+  const cached = posterPathOf(m);
+  let inner = `<span class="yr">${m.y||''}</span><span class="badge" style="background:${s.color}d9">${s.name}</span>`;
+  if(!isPosterFailed(cached)) inner += `<img src="${IMG(cached)}" alt="${m.t}" loading="lazy">`;
+  else inner += `<div class="fallback">${m.e||'🎬'}</div>`;
+  el.innerHTML = inner;
+}
+
+/* ============== API Key UI ============== */
+const apikeyBox = document.getElementById('apikeyBox');
+const apikeySetupHtml = apikeyBox.innerHTML;
+function bindApiKeyForm(){
+  const input = document.getElementById('apikeyInput');
+  const button = document.getElementById('saveKey');
+  if(!input || !button) return;
+  button.onclick = ()=>{
+    const v = input.value.trim();
+    if(!v){ alert('请先粘贴 API Key'); return; }
+    apiKey = v; localStorage.setItem(KEY_APIKEY, v); updateKeyUI(); ensurePosters(true); ensureMetadata(true);
+  };
+  input.onkeydown = e=>{ if(e.key==='Enter') button.click(); };
+}
+function updateKeyUI(){
+  if(apiKey){
+    apikeyBox.classList.add('apikey-set');
+    let status = '✅ 海报已启用';
+    if(fetching) status += ' · 正在加载海报…';
+    if(metadataFetching) status += ' · 正在补导演/演员…';
+    apikeyBox.innerHTML = `<div>
+        <h3>🎬 海报已接入（TMDB）</h3>
+        <p>${status}，Key 已保存到本机。</p>
+      </div>
+      <div class="input-row"><button class="btn ghost" id="changeKey2">更换 / 清除</button></div>`;
+    document.getElementById('changeKey2').onclick = clearKey;
+  } else {
+    apikeyBox.classList.remove('apikey-set');
+    if(!document.getElementById('apikeyInput')){
+      apikeyBox.innerHTML = apikeySetupHtml;
+      bindApiKeyForm();
+    }
+  }
+}
+function clearKey(){
+  if(!confirm('清除 API Key？海报会回到彩色卡片（观看进度不受影响）。')) return;
+  apiKey=''; localStorage.removeItem(KEY_APIKEY); updateKeyUI(); render();
+}
+bindApiKeyForm();
+
+/* ============== 添加电影弹窗 ============== */
+const modal = document.getElementById('addModal');
+let pickedEmoji = '🎬';
+let selectedResults = [];   // 选中的 TMDB 候选列表
+let searchResultsCache = [];
+let lastSearchQuery = '';
+
+function fillStudioSelect(){
+  document.getElementById('m-studio').innerHTML = STUDIOS.map(s=>`<option value="${s.id}">${s.emoji} ${s.name}</option>`).join('');
+}
+function fillEmojiPicker(){
+  document.getElementById('m-emoji').innerHTML = EMOJI_CHOICES.map(e=>`<span class="${e===pickedEmoji?'sel':''}" data-e="${e}">${e}</span>`).join('');
+  document.querySelectorAll('#m-emoji span').forEach(sp=>{
+    sp.onclick = ()=>{ pickedEmoji = sp.dataset.e; fillEmojiPicker(); };
+  });
+}
+
+function openAdd(){
+  document.getElementById('m-search').value='';
+  document.getElementById('searchStatus').innerHTML='';
+  document.getElementById('searchResults').innerHTML='';
+  selectedResults = [];
+  searchResultsCache = [];
+  lastSearchQuery = '';
+  updateSearchActions();
+  showStep('search');
+  document.getElementById('footer-cancel').style.display = 'flex';
+  modal.classList.add('show');
+  setTimeout(()=>document.getElementById('m-search').focus(),50);
+}
+function closeAdd(){ modal.classList.remove('show'); }
+
+function showStep(step){
+  document.getElementById('step-search').style.display = step==='search'?'block':'none';
+  document.getElementById('step-confirm').style.display = step==='confirm'?'block':'none';
+  document.getElementById('footer-cancel').style.display = step==='search'?'flex':'none';
+}
+
+// 执行搜索
+async function doSearch(){
+  const q = document.getElementById('m-search').value.trim();
+  const statusEl = document.getElementById('searchStatus');
+  const resultsEl = document.getElementById('searchResults');
+  if(!q){ statusEl.innerHTML = '<span style="color:var(--pink)">请输入片名</span>'; return; }
+  if(!apiKey){
+    statusEl.innerHTML = '<span class="err">⚠️ 还没设置 TMDB API Key，无法搜索。请先在上方设置 API Key。</span>';
+    return;
+  }
+  statusEl.innerHTML = '<span class="spinner"></span> 搜索中…';
+  resultsEl.innerHTML = '';
+  try{
+    const results = await searchTMDB(q);
+    searchResultsCache = results;
+    selectedResults = [];
+    lastSearchQuery = q;
+    updateSearchActions();
+    if(!results.length){
+      statusEl.innerHTML = '<span class="err">😕 没找到相关电影，换个关键词试试。</span>';
+      return;
+    }
+    statusEl.innerHTML = `找到 <strong>${results.length}</strong> 个结果，可多选后一起添加：`;
+    renderSearchResults();
+  }catch(e){
+    statusEl.innerHTML = `<span class="err">❌ ${e.message}</span>`;
+  }
+}
+
+function resultItemHtml(r,i){
+  const title = r.title || r.original_title || '未知';
+  const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
+  const selected = selectedResults.some(x => resultKey(x)===resultKey(r));
+  const poster = r.poster_path
+    ? `<img class="r-poster" src="https://image.tmdb.org/t/p/w154${r.poster_path}" alt="">`
+    : `<div class="r-noimg">🎬</div>`;
+  const overview = r.overview ? `<div class="r-overview">${escapeHtml(r.overview)}</div>` : '';
+  return `<div class="result-item ${selected?'selected':''}" data-idx="${i}">
+    <div class="r-check">${selected?'✓':''}</div>
+    ${poster}
+    <div class="r-info">
+      <div class="r-title">${escapeHtml(title)}</div>
+      <div class="r-meta">${year} · ${(r.original_language||'').toUpperCase()}</div>
+      ${overview}
+    </div>
+  </div>`;
+}
+
+function resultKey(r){
+  return String(r.id || `${r.title || r.original_title || ''}|${r.release_date || ''}`);
+}
+
+function renderSearchResults(){
+  const resultsEl = document.getElementById('searchResults');
+  resultsEl.innerHTML = searchResultsCache.map((r,i)=>resultItemHtml(r,i)).join('');
+  resultsEl.querySelectorAll('.result-item').forEach(el=>{
+    el.onclick = ()=>{
+      const idx = parseInt(el.dataset.idx);
+      const r = searchResultsCache[idx];
+      const k = resultKey(r);
+      if(selectedResults.some(x=>resultKey(x)===k)) selectedResults = selectedResults.filter(x=>resultKey(x)!==k);
+      else selectedResults.push(r);
+      renderSearchResults();
+      updateSearchActions();
+    };
+  });
+}
+
+function updateSearchActions(){
+  const actions = document.getElementById('search-actions');
+  const useBtn = document.getElementById('useSelected');
+  const hasResults = searchResultsCache.length > 0;
+  actions.style.display = hasResults ? 'flex' : 'none';
+  useBtn.textContent = `下一步（${selectedResults.length}）`;
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// 根据搜索词猜厂牌
+function guessStudio(q){
+  const map = [
+    {re:/玩具总动员|飞屋|寻梦|头脑特工|海底总动员|超人总动员|赛车总动员|料理鼠王|虫虫|怪兽电力|瓦力|wall-?e|勇敢|恐龙当家|1\/2|心灵|夏日友|青春变形|元素|皮克斯|pixar/i, s:'pixar'},
+    {re:/白雪公主|木偶|灰姑娘|仙履|彼得.?潘|小飞侠|睡美人|美人鱼|美女与野兽|阿拉丁|狮子王|花木兰|泰山|星际宝贝|魔发奇缘|冰雪奇缘|超能陆战队|大白|疯狂动物城|海洋奇缘|寻龙|魔法满屋|迪士尼|disney/i, s:'disney'},
+    {re:/史莱克|马达加斯加|功夫熊猫|驯龙高手|没牙|疯狂原始人|魔发精灵|穿靴子|坏蛋联盟|梦工厂|dreamworks/i, s:'dreamworks'},
+    {re:/宫崎骏|吉卜力|龙猫|千与千寻|哈尔|金鱼姬|阿莉埃蒂|幽灵公主|魔女宅急便|天空之城|ghibli/i, s:'ghibli'},
+    {re:/新海诚|你的名字|天气之子|铃芽|秒速|言叶之庭|星之声|云之彼端|shinkai/i, s:'shinkai'},
+  ];
+  for(const m of map){ if(m.re.test(q)){ document.getElementById('m-studio').value = m.s; return; } }
+  // 否则用当前筛选
+  if(studioFilter!=='all') document.getElementById('m-studio').value = studioFilter;
+}
+
+// 渲染已选预览
+function renderSelectedPreview(){
+  const el = document.getElementById('selectedPreview');
+  if(selectedResults.length===1){
+    const r = selectedResults[0];
+    const title = r.title || r.original_title || '';
+    const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
+    el.className = 'selected-preview';
+    el.innerHTML = `<div>
+        ${r.poster_path
+          ? `<img src="https://image.tmdb.org/t/p/w300${r.poster_path}" alt="">`
+          : `<div class="sp-noimg">${pickedEmoji}</div>`}
+      </div>
+      <div class="sp-info">
+        <div class="sp-title">${escapeHtml(title)}</div>
+        <div class="sp-meta">${year} · 海报将自动匹配</div>
+        <span class="sp-change" id="sp-change">← 重新选择</span>
+      </div>`;
+  } else {
+    el.className = 'selected-preview multi';
+    el.innerHTML = `<div class="sp-title">已选择 ${selectedResults.length} 部电影</div>
+      <div class="sp-meta">会使用同一个分类和备注添加到片单。</div>
+      <div class="sp-list">
+        ${selectedResults.map(r=>{
+          const title = r.title || r.original_title || '';
+          const year = r.release_date ? new Date(r.release_date).getFullYear() : '—';
+          const poster = r.poster_path
+            ? `<img class="sp-thumb" src="https://image.tmdb.org/t/p/w154${r.poster_path}" alt="">`
+            : `<div class="sp-thumb">${pickedEmoji}</div>`;
+          return `<div class="sp-row">${poster}<span>${escapeHtml(title)} · ${year}</span></div>`;
+        }).join('')}
+      </div>
+      <span class="sp-change" id="sp-change">← 重新选择</span>
+    `;
+  }
+  document.getElementById('sp-change').onclick = ()=>{ showStep('search'); document.getElementById('m-search').focus(); };
+}
+
+document.getElementById('openAdd').onclick = openAdd;
+document.getElementById('cancelAdd').onclick = closeAdd;
+document.getElementById('doSearch').onclick = doSearch;
+document.getElementById('m-search').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSearch(); } });
+modal.addEventListener('click', e=>{ if(e.target===modal) closeAdd(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeAdd(); });
+document.getElementById('clearSelected').onclick = ()=>{
+  selectedResults = [];
+  renderSearchResults();
+  updateSearchActions();
+};
+document.getElementById('useSelected').onclick = ()=>{
+  if(selectedResults.length===0){ alert('请先勾选至少一部电影'); return; }
+  guessStudio(lastSearchQuery);
+  pickedEmoji='🎬'; fillEmojiPicker();
+  renderSelectedPreview();
+  showStep('confirm');
+};
+document.getElementById('backToSearch').onclick = ()=>{ showStep('search'); document.getElementById('m-search').focus(); };
+
+document.getElementById('confirmAdd').onclick = ()=>{
+  if(selectedResults.length===0){ alert('请先搜索并选择电影'); return; }
+  const studio = document.getElementById('m-studio').value;
+  const note = document.getElementById('m-note').value.trim();
+  let added = 0;
+  let skipped = 0;
+  for(const r of selectedResults){
+    const t = r.title || r.original_title || '';
+    const y = r.release_date ? new Date(r.release_date).getFullYear() : new Date().getFullYear();
+    const newMovie = { s: studio, t, e: pickedEmoji, y, n: note };
+    if(r.id) newMovie.tmdb_id = r.id;
+    if(r.poster_path) newMovie.poster_path = r.poster_path;
+    if(Array.isArray(r.genre_ids)){
+      const genres = r.genre_ids.map(id=>TMDB_GENRES[id]).filter(Boolean);
+      if(genres.length) newMovie.genres = genres;
+    }
+    if(allMovies().some(m=>key(m)===key(newMovie))){
+      skipped++;
+      continue;
+    }
+    customMovies.push(newMovie);
+    if(r.poster_path) posters[key(newMovie)] = r.poster_path;
+    added++;
+  }
+  if(added===0){
+    alert('选中的电影都已经在片单里啦。');
+    return;
+  }
+  saveCustom();
+  savePosters();
+  closeAdd();
+  render();
+  if(apiKey) ensureMetadata(false);
+  if(skipped>0) alert(`已添加 ${added} 部，跳过 ${skipped} 部重复电影。`);
+};
+
+/* ============== 其它事件 ============== */
+profileSelectEl.addEventListener('change', e=>{
+  activeProfileId = e.target.value;
+  saveProfiles();
+  syncCurrentWatched();
+  render();
+});
+document.getElementById('addProfile').addEventListener('click', ()=>{
+  document.getElementById('profileModal').classList.add('show');
+  const input = document.getElementById('profileNameInput');
+  input.value = '';
+  setTimeout(()=>input.focus(), 0);
+});
+document.getElementById('cancelProfile').addEventListener('click', ()=>{
+  document.getElementById('profileModal').classList.remove('show');
+});
+document.getElementById('confirmProfile').addEventListener('click', ()=>{
+  const input = document.getElementById('profileNameInput');
+  if(addProfileByName(input.value)){
+    document.getElementById('profileModal').classList.remove('show');
+  }
+});
+document.getElementById('profileNameInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') document.getElementById('confirmProfile').click();
+  if(e.key==='Escape') document.getElementById('cancelProfile').click();
+});
+document.getElementById('profileModal').addEventListener('click', e=>{
+  if(e.target.id === 'profileModal') document.getElementById('cancelProfile').click();
+});
+document.getElementById('statusFilter').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  statusFilter = b.dataset.s;
+  document.querySelectorAll('#statusFilter button').forEach(x=>x.classList.toggle('active', x===b));
+  render();
+});
+document.getElementById('search').addEventListener('input', e=>{ query = e.target.value.trim(); render(); });
+document.getElementById('groupBy').addEventListener('change', e=>{ groupBy = e.target.value; render(); });
+document.getElementById('movieSort').addEventListener('change', e=>{ movieSort = e.target.value; render(); });
+document.getElementById('reset').addEventListener('click', ()=>{
+  if(confirm(`确定要清空「${currentProfile().name}」的已看记录吗？其他陪伴角色不会受影响。`)){ watched.clear(); saveWatched(); render(); }
+});
+document.getElementById('reloadPosters').addEventListener('click', ()=>{ if(!apiKey){ alert('请先设置 API Key'); return; } ensurePosters(true); ensureMetadata(true); });
+document.getElementById('changeKey').addEventListener('click', clearKey);
+
+/* ============== 备份/导入 ============== */
+document.getElementById('exportData').onclick = ()=>{
+  syncCurrentWatched();
+  const data = {
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    watched: [...watched],
+    profiles,
+    activeProfileId,
+    watchedByProfile,
+    posters,
+    customMovies,
+    movieMeta,
+    apiKey
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `family-movie-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById('importData').onclick = ()=> document.getElementById('importFile').click();
+document.getElementById('importFile').onchange = (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      if(!data.customMovies || (!data.watched && !data.watchedByProfile)) throw new Error('格式不对');
+      const nextProfiles = Array.isArray(data.profiles) && data.profiles.length
+        ? data.profiles.map(p=>({id:String(p.id || uid()), name:normalizeProfileName(p.name) || '家人'}))
+        : [{id:'family', name:'全家'}];
+      const nextActive = nextProfiles.some(p=>p.id===data.activeProfileId) ? data.activeProfileId : nextProfiles[0].id;
+      let nextWatchedByProfile = data.watchedByProfile || {};
+      if(!data.watchedByProfile && Array.isArray(data.watched)) nextWatchedByProfile = {[nextActive]: data.watched};
+      for(const p of nextProfiles){
+        if(!Array.isArray(nextWatchedByProfile[p.id])) nextWatchedByProfile[p.id] = [];
+      }
+      const recordCount = Object.values(nextWatchedByProfile).reduce((sum, list)=>sum + (Array.isArray(list) ? list.length : 0), 0);
+      if(!confirm(`将导入 ${data.customMovies.length} 部自定义电影、${nextProfiles.length} 个陪伴角色和 ${recordCount} 条观看记录，覆盖当前数据？`)) return;
+      profiles = nextProfiles;
+      activeProfileId = nextActive;
+      watchedByProfile = nextWatchedByProfile;
+      syncCurrentWatched();
+      posters = data.posters || {};
+      customMovies = data.customMovies;
+      movieMeta = data.movieMeta || data.meta || {};
+      if(data.apiKey){ apiKey = data.apiKey; localStorage.setItem(KEY_APIKEY, apiKey); }
+      saveProfiles(); saveAllWatched(); savePosters(); saveCustom(); saveMeta();
+      render();
+      alert('导入成功！');
+    }catch(err){ alert('导入失败：'+err.message); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
+
+/* 默认示例 */
+const hasAnyWatched = Object.values(watchedByProfile).some(list=>Array.isArray(list) && list.length);
+if(!hasAnyWatched && profiles.length===1 && activeProfileId==='family'){
+  watched.add('pixar|玩具总动员'); watched.add('pixar|玩具总动员2'); saveWatched();
+}
+
+/* ============== 分享已看清单 ============== */
+let shareBlob = null;
+
+function generateShareCard(){
+  return new Promise((resolve, reject) => {
+    const W = 750, PAD = 40;
+    syncCurrentWatched();
+    const movies = allMovies();
+    const watchedSet = watched;
+    const profileName = currentProfile().name;
+    const total = movies.length;
+    const done = [...watchedSet].filter(k=>movies.some(m=>key(m)===k)).length;
+    const pct = total ? Math.round(done/total*100) : 0;
+
+    const activeStudios = STUDIOS.filter(s=>movies.some(m=>m.s===s.id));
+
+    // 预计算实际绘制高度
+    const CW = 108, CH = 66, CGAP = 4, COLS = 6, ROW_H = CH + 22 + CGAP;
+    let H = 56 + 110 + 30; // header
+    let yy = H;
+    for(const s of activeStudios){
+      const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
+      if(!sMovies.length) continue;
+      const rows = Math.ceil(sMovies.length / COLS);
+      yy += 28 + rows * ROW_H + 12;
+    }
+    yy += 38; // summary + date + minimal padding
+    H = yy;
+
+    const canvas = document.createElement('canvas');
+    const dpr = 2;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // 加载海报图片：手机端一次性并发加载远程图容易失败，限制并发并优先转成 blob 再画。
+    const imgMap = {};
+    const imgTasks = [];
+    const _dbg = {ok:[], fail:[]};
+    function loadImg(url, useCors=true){
+      return new Promise(res=>{
+        const img = new Image();
+        if(useCors) img.crossOrigin = 'anonymous';
+        img.onload = ()=>res(img);
+        img.onerror = ()=>res(null);
+        img.src = url;
+      });
+    }
+    async function fetchImg(url){
+      try{
+        const r = await fetch(url, {cache:'force-cache'});
+        if(!r.ok) return null;
+        const blob = await r.blob();
+        const objUrl = URL.createObjectURL(blob);
+        return await loadImg(objUrl, false);
+      }catch(e){
+        return null;
+      }
+    }
+    async function runLimited(tasks, limit=4){
+      let next = 0;
+      const workers = Array.from({length:Math.min(limit, tasks.length)}, async ()=>{
+        while(next < tasks.length){
+          const task = tasks[next++];
+          await task();
+        }
+      });
+      await Promise.all(workers);
+    }
+    for(const s of activeStudios){
+      const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
+      for(const m of sMovies){
+        imgTasks.push(async ()=>{
+          let pp = posterPathOf(m);
+          if(isPosterFailed(pp)) pp = await recoverPosterPath(m);
+          const urls = uniq([
+            ...sharePosterUrls(pp),
+            posterProxyUrl(cardPosterSrc(m)),
+            cardPosterSrc(m)
+          ]);
+          if(isPosterFailed(pp) && urls.length===0){
+            _dbg.fail.push(m.t+'(无路径)');
+            return;
+          }
+          // 先用 fetch 变成本页 blob，避免移动端 canvas 绘制远程图不稳定。
+          for(let i=0;i<urls.length;i++){
+            const img = await fetchImg(urls[i]);
+            if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+(i>0?'(blob候选'+i+')':'(blob)')); return; }
+          }
+          // fetch 不可用时，再用跨域图片加载兜底。
+          for(let i=0;i<urls.length;i++){
+            const img = await loadImg(urls[i]);
+            if(img){ imgMap[key(m)] = img; _dbg.ok.push(m.t+(i>0?'(候选'+i+')':'')); return; }
+          }
+          _dbg.fail.push(m.t+'(路径:'+pp+')');
+        });
+      }
+    }
+
+    runLimited(imgTasks, 4).then(()=>{
+      console.log('[ShareCard] 海报:', _dbg);
+      // 背景
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#fffaf0');
+      bg.addColorStop(0.5, '#f7f4ed');
+      bg.addColorStop(1, '#eef6f5');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // 标题背景
+      ctx.fillStyle = '#202538';
+      roundRect(ctx, PAD, 28, W - PAD*2, 90, 16);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 26px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(`🎬 亲子动画打卡 · ${profileName}已看清单`, PAD + 24, 72);
+      ctx.font = '14px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillStyle = '#bcc4d5';
+      ctx.fillText(`和${profileName}一起看过的动画电影`, PAD + 24, 100);
+
+      // 统计卡片
+      const sx = W - PAD - 170;
+      ctx.fillStyle = 'rgba(255,255,255,.12)';
+      roundRect(ctx, sx, 42, 148, 62, 10);
+      ctx.fill();
+      ctx.fillStyle = '#68b8a8';
+      ctx.font = 'bold 32px -apple-system, sans-serif';
+      ctx.fillText(`${pct}%`, sx + 16, 82);
+      ctx.fillStyle = '#bcc4d5';
+      ctx.font = '13px -apple-system, sans-serif';
+      ctx.fillText(`${done}/${total} 部`, sx + 86, 72);
+      ctx.fillText('已看完', sx + 86, 90);
+
+      let y = 140;
+
+      // 各厂牌
+      for(const s of activeStudios){
+        const sMovies = movies.filter(m=>m.s===s.id && watchedSet.has(key(m)));
+        if(!sMovies.length) continue;
+        const sTotal = movies.filter(m=>m.s===s.id).length;
+        const sPct = Math.round(sMovies.length/sTotal*100);
+
+        // 厂牌标题
+        const logoText = s.logo || s.name;
+        ctx.font = 'bold 9.5px -apple-system, "PingFang SC", sans-serif';
+        const logoW = Math.max(42, ctx.measureText(logoText).width + 14);
+        ctx.fillStyle = s.color;
+        roundRect(ctx, PAD + 6, y - 3, logoW, 20, 5);
+        ctx.fill();
+        ctx.fillStyle = '#111827';
+        ctx.fillText(logoText, PAD + 13, y + 11);
+        ctx.fillStyle = '#111827';
+        ctx.font = 'bold 17px -apple-system, "PingFang SC", sans-serif';
+        const labelX = PAD + 14 + logoW;
+        ctx.fillText(s.name, labelX, y + 14);
+        ctx.fillStyle = '#687083';
+        ctx.font = '13px -apple-system, sans-serif';
+        const statText = `${sMovies.length}/${sTotal} · ${sPct}%`;
+        ctx.fillText(statText, W - PAD - ctx.measureText(statText).width - 6, y + 14);
+
+        // 进度条
+        ctx.font = 'bold 17px -apple-system, "PingFang SC", sans-serif';
+        const barX = labelX + ctx.measureText(s.name).width + 20;
+        const statW = ctx.measureText(statText).width;
+        const barEndX = W - PAD - statW - 16;
+        const barW = barEndX - barX;
+        if(barW > 40){
+          ctx.fillStyle = '#e7e2d8';
+          roundRect(ctx, barX, y + 7, barW, 6, 3);
+          ctx.fill();
+          ctx.fillStyle = s.color;
+          roundRect(ctx, barX, y + 7, barW * sPct / 100, 6, 3);
+          ctx.fill();
+        }
+
+        y += 28;
+
+        // 横条卡片网格
+        for(let i = 0; i < sMovies.length; i++){
+          const col = i % COLS, row = Math.floor(i / COLS);
+          const px = PAD + col * (CW + CGAP);
+          const py = y + row * ROW_H;
+          const m = sMovies[i];
+
+          // 卡片背景
+          ctx.fillStyle = '#fff';
+          roundRect(ctx, px, py, CW, CH, 6);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(0,0,0,.06)';
+          ctx.lineWidth = 1;
+          roundRect(ctx, px, py, CW, CH, 6);
+          ctx.stroke();
+
+          // 缩略图
+          const thumbW = 40, thumbH = CH;
+          const img = imgMap[key(m)];
+          if(img){
+            ctx.save();
+            roundRect(ctx, px, py, thumbW, thumbH, 6);
+            ctx.clip();
+            const scale = Math.max(thumbW / img.width, thumbH / img.height);
+            const dw = img.width * scale, dh = img.height * scale;
+            ctx.drawImage(img, px + (thumbW - dw)/2, py + (thumbH - dh)/2, dw, dh);
+            ctx.restore();
+          } else {
+            ctx.fillStyle = `${s.color}33`;
+            roundRect(ctx, px, py, thumbW, thumbH, 6);
+            ctx.fill();
+            ctx.font = '20px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(m.e || '🎬', px + thumbW/2, py + thumbH/2 + 7);
+            ctx.textAlign = 'left';
+          }
+
+          // 片名（自动换行）+ 年份
+          const tx = px + thumbW + 5;
+          const maxW = CW - thumbW - 9;
+          ctx.fillStyle = '#111827';
+          ctx.font = 'bold 10px -apple-system, "PingFang SC", sans-serif';
+          const name = m.t;
+          let line1, line2 = '';
+          if(name.length <= 5){
+            line1 = name;
+          } else {
+            line1 = name.slice(0, 5);
+            line2 = name.slice(5);
+            if(ctx.measureText(line2).width > maxW) line2 = line2.slice(0, 5) + '…';
+          }
+          ctx.fillText(line1, tx, py + 24);
+          if(line2) ctx.fillText(line2, tx, py + 36);
+          ctx.fillStyle = '#687083';
+          ctx.font = '9.5px -apple-system, sans-serif';
+          ctx.fillText(m.y || '', tx, py + 48);
+        }
+
+        const rows = Math.ceil(sMovies.length / COLS);
+        y += rows * ROW_H + 12;
+      }
+
+      // 底部统计
+      ctx.fillStyle = '#687083';
+      ctx.font = '13px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(`共 ${activeStudios.length} 个厂牌 · ${done} 部已看 · ${total - done} 部待看`, PAD + 6, y + 8);
+      ctx.fillText(new Date().toLocaleDateString('zh-CN'), PAD + 6, y + 28);
+
+      canvas.toBlob(blob => {
+        if(blob) resolve(blob);
+        else reject(new Error('生成图片失败'));
+      }, 'image/png');
+    });
+  });
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+// 分享按钮事件
+document.getElementById('shareCard').onclick = async ()=>{
+  syncCurrentWatched();
+  const movies = allMovies();
+  const done = [...watched].filter(k=>movies.some(m=>key(m)===k)).length;
+  if(done === 0){ alert(`「${currentProfile().name}」还没有标记任何电影为「已看」，先去看一部吧！🎬`); return; }
+  const btn = document.getElementById('shareCard');
+  btn.textContent = '⏳ 生成中…';
+  btn.disabled = true;
+  try {
+    shareBlob = await generateShareCard();
+    const url = URL.createObjectURL(shareBlob);
+    document.getElementById('sharePreview').src = url;
+    document.querySelector('#shareModal h3').textContent = `📤 ${currentProfile().name}已看清单`;
+    document.getElementById('shareModal').classList.add('show');
+    // 检查是否支持原生分享
+    if(navigator.share){
+      document.getElementById('doShare').style.display = 'inline-block';
+    }
+  } catch(e){
+    alert('生成图片失败：' + e.message);
+  }
+  btn.textContent = '📤 分享已看清单';
+  btn.disabled = false;
+};
+
+document.getElementById('closeShare').onclick = ()=>{
+  document.getElementById('shareModal').classList.remove('show');
+  const img = document.getElementById('sharePreview');
+  if(img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
+  img.src = '';
+};
+
+document.getElementById('downloadShare').onclick = ()=>{
+  if(!shareBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(shareBlob);
+  a.download = `亲子动画打卡-${currentProfile().name}-${new Date().toISOString().slice(0,10)}.png`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById('doShare').onclick = async ()=>{
+  if(!shareBlob || !navigator.share) return;
+  const file = new File([shareBlob], `亲子动画打卡-${currentProfile().name}.png`, {type:'image/png'});
+  try {
+    await navigator.share({ title:`亲子动画打卡 · ${currentProfile().name}已看清单`, files:[file] });
+  } catch(e){
+    if(e.name !== 'AbortError') alert('分享失败：' + e.message);
+  }
+};
+
+document.getElementById('shareModal').addEventListener('click', e=>{
+  if(e.target.id === 'shareModal') document.getElementById('closeShare').click();
+});
+
+/* 初始化 */
+fillStudioSelect();
+render();
+updateKeyUI();
+if(apiKey){
+  ensurePosters(false);
+  ensureMetadata(false);
+}
+</script>
+</body>
+</html>
